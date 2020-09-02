@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/temp_value"
@@ -12,13 +13,13 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="29°"
         android:textAppearance="?attr/textAppearanceHeadline5"
         app:layout_constraintBottom_toTopOf="@id/hour_value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        tools:text="@sample/custom_hourly_sample_data.json/data/temp"/>
 
     <TextView
         android:id="@+id/hour_value"
@@ -28,11 +29,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="12:00AM"
         android:textAppearance="?attr/textAppearanceBody2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/temp_value" />
+        app:layout_constraintTop_toBottomOf="@id/temp_value"
+        tools:text="@sample/custom_hourly_sample_data.json/data/time"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
