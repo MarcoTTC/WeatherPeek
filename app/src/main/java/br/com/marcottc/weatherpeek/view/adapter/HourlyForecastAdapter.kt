@@ -2,19 +2,31 @@ package br.com.marcottc.weatherpeek.view.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import br.com.marcottc.weatherpeek.model.SingleHourForecastData
 import br.com.marcottc.weatherpeek.view.adapter.viewholder.HourlyForecastViewHolder
 
 class HourlyForecastAdapter : RecyclerView.Adapter<HourlyForecastViewHolder>() {
 
+    private var hourlyForecastDataList: List<SingleHourForecastData>? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
-        TODO("Not yet implemented")
+        return HourlyForecastViewHolder.inflate(parent)
     }
 
     override fun onBindViewHolder(holder: HourlyForecastViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        holder.bind(hourlyForecastDataList!![position])
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return if (hourlyForecastDataList == null) {
+            0
+        } else {
+            hourlyForecastDataList!!.size
+        }
+    }
+
+    fun setHourlyForecastDataList(list: List<SingleHourForecastData>?) {
+        hourlyForecastDataList = list
+        notifyDataSetChanged()
     }
 }
