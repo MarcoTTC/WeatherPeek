@@ -14,9 +14,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="48dp"
             android:layout_marginEnd="8dp"
             android:text="Sunny"
+            android:textColor="@color/textOnNegative"
             android:textAppearance="?attr/textAppearanceHeadline5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintEnd_toStartOf="@id/weather_icon"
@@ -27,6 +28,7 @@
             android:id="@+id/weather_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:tint="@color/textOnNegative"
             app:srcCompat="@drawable/ic_sunny"
             app:layout_constraintStart_toEndOf="@id/weather_description"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +42,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:text="34°"
-            android:textAppearance="?attr/textAppearanceHeadline2"
+            android:textAppearance="?attr/textAppearanceHeadline1"
+            android:textColor="@color/textOnNegative"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/weather_description" />
@@ -54,6 +57,7 @@
             android:layout_marginEnd="8dp"
             android:text="Urumqi"
             android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textColor="@color/textOnNegative"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/temperature_label" />
@@ -78,6 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    app:tint="?attr/colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_thermometer_mid" />
@@ -120,8 +125,9 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_gravity="top|end"
+        android:layout_marginBottom="120dp"
+        android:layout_gravity="bottom|center_horizontal"
+        app:tint="@color/primaryColor"
         app:srcCompat="@drawable/ic_thermometer_mid" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
