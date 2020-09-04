@@ -1,33 +1,27 @@
 package br.com.marcottc.weatherpeek.view.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
+import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
 import br.com.marcottc.weatherpeek.model.mock.SingleHourForecastDataMockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 
-class MainActivity : AppCompatActivity() {
+class WeatherActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainLayoutBinding
+    private lateinit var binding: ActivityWeatherLayoutBinding
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainLayoutBinding.inflate(LayoutInflater.from(this))
+        binding = ActivityWeatherLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.hourlyForecastRecyclerView.adapter = hourlyForecastAdapter
 
         hourlyForecastAdapter.setHourlyForecastDataList(SingleHourForecastDataMockGenerator.generate())
-
-        binding.fab.setOnClickListener {
-            val intent = Intent(this, WeatherActivity::class.java)
-            startActivity(intent)
-        }
     }
 }
