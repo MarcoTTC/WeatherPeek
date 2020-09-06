@@ -79,7 +79,7 @@
                 app:layout_constraintTop_toTopOf="@id/week_forecast_icon" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/weekly_forecast_recycler_view"
+                android:id="@+id/daily_forecast_recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -92,7 +92,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/week_forecast_title"
                 tools:itemCount="5"
-                tools:listitem="@layout/item_weekly_forecast" />
+                tools:listitem="@layout/item_daily_forecast" />
 
             <ImageView
                 android:id="@+id/air_quality_icon"
@@ -101,7 +101,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/weekly_forecast_recycler_view"
+                app:layout_constraintTop_toBottomOf="@id/daily_forecast_recycler_view"
                 app:srcCompat="@drawable/ic_wind"
                 app:tint="?attr/colorPrimary" />
 

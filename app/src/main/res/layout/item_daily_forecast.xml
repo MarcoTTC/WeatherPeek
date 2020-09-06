@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="MON" />
+        tools:text="@sample/custom_daily_sample_data.json/data/day" />
 
     <ImageView
         android:id="@+id/weather_icon"
@@ -46,7 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/weather_icon"
-        tools:text="34°" />
+        tools:text="@sample/custom_daily_sample_data.json/data/maxTemp" />
 
     <TextView
         android:id="@+id/min_temp_value"
@@ -61,6 +61,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/max_temp_value"
-        tools:text="29°" />
+        tools:text="@sample/custom_daily_sample_data.json/data/minTemp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,9 @@
+{
+  "data" :[
+    {"day": "MON", "maxTemp" : "34°", "minTemp" :  "29°"},
+    {"day": "TUE", "maxTemp" : "34°", "minTemp" :  "27°"},
+    {"day": "WED", "maxTemp" : "32°", "minTemp" :  "28°"},
+    {"day": "THU", "maxTemp" : "35°", "minTemp" :  "30°"},
+    {"day": "FRI", "maxTemp" : "34°", "minTemp" :  "28°"}
+  ]
+}
