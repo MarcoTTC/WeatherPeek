@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         hourlyForecastAdapter = HourlyForecastAdapter()
-        binding.hourlyForecastRecyclerView.adapter = hourlyForecastAdapter
+        binding.forecastRecyclerView.adapter = hourlyForecastAdapter
 
         hourlyForecastAdapter.setHourlyForecastDataList(SingleHourForecastDataMockGenerator.generate())
 
