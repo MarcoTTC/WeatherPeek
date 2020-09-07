@@ -1,7 +1,5 @@
 package br.com.marcottc.weatherpeek.model
 
-import br.com.marcottc.weatherpeek.model.RainData
-import br.com.marcottc.weatherpeek.model.WeatherData
 import com.google.gson.annotations.SerializedName
 
 data class HourlyWeatherData(
