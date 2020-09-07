@@ -39,11 +39,12 @@ dependencies {
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin_version}"
-    implementation "androidx.core:core-ktx:${versions.ktx_core}"
 
     // AndroidX
+    implementation "androidx.core:core-ktx:${versions.ktx_core}"
     implementation "androidx.appcompat:appcompat:${versions.appcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.constraint}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.viewmodel}"
 
     // Material
     implementation "com.google.android.material:material:${versions.material}"
