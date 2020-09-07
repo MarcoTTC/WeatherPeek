@@ -16,4 +16,8 @@ data class HourlyWeatherData(
     @SerializedName("weather") var weatherList: List<WeatherData>,
     var pop: Double,
     var rain: RainData
-)
+) {
+    constructor(dt: Long, temp: Double) : this(dt, temp, 0.0, 0, 0,
+        0.0, 0, 0, 0, 0.0, emptyList(), 0.0,
+        RainData(0.0))
+}

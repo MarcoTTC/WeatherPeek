@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
-import br.com.marcottc.weatherpeek.model.mock.SingleHourForecastDataMockGenerator
+import br.com.marcottc.weatherpeek.model.mock.HourlyDataForecastMockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 
 class MainActivity : AppCompatActivity() {
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.forecastRecyclerView.adapter = hourlyForecastAdapter
 
-        hourlyForecastAdapter.setHourlyForecastDataList(SingleHourForecastDataMockGenerator.generate())
+        hourlyForecastAdapter.setHourlyForecastDataList(HourlyDataForecastMockGenerator.generate())
 
         binding.fab.setOnClickListener {
             val intent = Intent(this, WeatherActivity::class.java)
