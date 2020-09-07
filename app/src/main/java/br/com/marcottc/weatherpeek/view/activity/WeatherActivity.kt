@@ -31,5 +31,9 @@ class WeatherActivity : AppCompatActivity() {
         binding.dailyForecastRecyclerView.adapter = dailyForecastAdapter
 
         dailyForecastAdapter.setDailyForecastDataList(SingleDayForecastDataMockGenerator.generate())
+
+        binding.closeIcon.setOnClickListener {
+            onBackPressed()
+        }
     }
 }

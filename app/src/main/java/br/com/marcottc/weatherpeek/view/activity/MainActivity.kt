@@ -1,5 +1,6 @@
 package br.com.marcottc.weatherpeek.view.activity
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,7 +28,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.fab.setOnClickListener {
             val intent = Intent(this, WeatherActivity::class.java)
-            startActivity(intent)
+            val options = ActivityOptions.makeSceneTransitionAnimation(this, binding.forecastCard, "forecast_card")
+            startActivity(intent, options.toBundle())
         }
     }
 }

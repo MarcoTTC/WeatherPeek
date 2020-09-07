@@ -3,10 +3,11 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="android:colorBackground">@color/backgroundColor</item>
-
         <item name="colorSecondary">@color/secondaryColor</item>
 
         <item name="materialCardViewStyle">@style/AppTheme.MaterialComponents.MaterialCardView</item>
+
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <style name="AppTheme.MaterialComponents.MaterialCardView" parent="Widget.MaterialComponents.CardView">
