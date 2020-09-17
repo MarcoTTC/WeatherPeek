@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">WeatherPeek</string>
+
+    <!-- StartActivity -->
+    <string name="app_cover_description">Weather Peek icon</string>
+    <string name="cover_title_description">Click to enter</string>
+
+    <!-- MainActivity -->
 </resources>
