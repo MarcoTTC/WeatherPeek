@@ -19,7 +19,6 @@
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/app_cover_description"
-            android:onClick="goToMainActivity"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toTopOf="@id/cover_description"
             app:layout_constraintDimensionRatio="1:1"
@@ -36,7 +35,6 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
-            android:onClick="goToMainActivity"
             android:text="@string/cover_title_description"
             android:textAppearance="?attr/textAppearanceHeadline5"
             android:textColor="@color/textOnNegative"
@@ -46,4 +44,5 @@
             app:layout_constraintTop_toBottomOf="@id/app_cover" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

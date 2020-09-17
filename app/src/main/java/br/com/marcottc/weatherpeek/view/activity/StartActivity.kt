@@ -1,12 +1,17 @@
 package br.com.marcottc.weatherpeek.view.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import br.com.marcottc.weatherpeek.databinding.ActivityStartLayoutBinding
 import br.com.marcottc.weatherpeek.util.NetworkUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class StartActivity : AppCompatActivity() {
@@ -17,16 +22,59 @@ class StartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityStartLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
+        binding.appCover.setOnClickListener(this::goToMainActivity)
+        binding.coverDescription.setOnClickListener(this::goToMainActivity)
     }
 
-    fun goToMainActivity(view: View) {
+    private fun goToMainActivity(view: View) {
         if (!NetworkUtil.hasConnectivity(this)) {
-            Snackbar.make(binding.coordinatorLayout, "No internet connectivity!", Snackbar.LENGTH_LONG)
+            Snackbar.make(
+                binding.coordinatorLayout,
+                "No internet connectivity!",
+                Snackbar.LENGTH_LONG
+            )
                 .show()
             return
         }
 
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        val requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    val builder = MaterialAlertDialogBuilder(this)
+                    builder.setTitle("Permission needed")
+                    builder.setMessage("This app can't function without access to your phone GPS system!")
+                    builder.create().show()
+                }
+            }
+
+        when {
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) -> {
+                val builder = MaterialAlertDialogBuilder(this)
+                builder.setTitle("Permission needed")
+                builder.setMessage("This app needs access to your GPS system to provide accurate weather information!\nIt gathers latitude and longitude data for weather prediction purposes.")
+                builder.setPositiveButton("I ACCEPT") { dialog, _ ->
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    dialog.dismiss()
+                }
+                builder.create().show()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
     }
 }

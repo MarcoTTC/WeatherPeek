@@ -6,6 +6,8 @@ buildscript {
             'targetSdk'             : 30,
             'versionCode'           : 1,
             'versionName'           : '1.0',
+            'activity'              : '1.2.0-alpha08',
+            'fragment'              : '1.3.0-alpha08',
             'appcompat'             : '1.2.0',
             'kotlin_plugin'         : '1.4.0',
             'kotlin_version'        : '1.4.0',
