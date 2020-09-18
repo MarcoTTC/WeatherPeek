@@ -48,6 +48,23 @@ class MainActivity : AppCompatActivity() {
 
         weatherDataViewModel = ViewModelProvider(this).get(WeatherDataViewModel::class.java)
 
+        weatherDataViewModel.viewModelState.observe(this, { currentState ->
+            when (currentState) {
+                WeatherDataViewModel.State.LOADING -> {
+
+                }
+                WeatherDataViewModel.State.SUCCESS -> {
+
+                }
+                WeatherDataViewModel.State.FAILED -> {
+
+                }
+                else -> {
+
+                }
+            }
+        })
+
         weatherDataViewModel.availableWeatherData.observe(this, { data ->
             if (data != null) {
                 updatingWeatherData(data)

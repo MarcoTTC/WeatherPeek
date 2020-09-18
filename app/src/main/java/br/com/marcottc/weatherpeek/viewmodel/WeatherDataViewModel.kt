@@ -16,6 +16,16 @@ import retrofit2.Retrofit
 
 class WeatherDataViewModel : ViewModel() {
 
+    enum class State {
+        LOADING,
+        SUCCESS,
+        FAILED
+    }
+
+    private val _viewModelState: MutableLiveData<State> = MutableLiveData()
+    val viewModelState: LiveData<State>
+        get() = _viewModelState
+
     private val _requestingWeatherData: MutableLiveData<Boolean> = MutableLiveData()
     val requestingWeatherData: LiveData<Boolean>
         get() = _requestingWeatherData
@@ -34,6 +44,7 @@ class WeatherDataViewModel : ViewModel() {
     private lateinit var requestWeatherDataCall: Call<OneCallWeatherData>
 
     init {
+        _viewModelState.value = State.LOADING
         _requestingWeatherData.value = false
         _availableWeatherData.value = null
         _showMessage.value = ""
@@ -49,8 +60,11 @@ class WeatherDataViewModel : ViewModel() {
             if (OneCallAppId.appId.isEmpty()) {
                 _showMessage.value = "Please set up an app id before building the project!"
                 _requestingWeatherData.value = false
+                _viewModelState.value = State.FAILED
                 return
             }
+
+            _viewModelState.value = State.LOADING
 
             // TODO - The fine location permission must be used to access latitude and longitude
             val latitude = 0.0
@@ -69,9 +83,11 @@ class WeatherDataViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         val oneWeatherDataResponse = gson.fromJson(body.toString(), OneCallWeatherData::class.java)
                         _availableWeatherData.value = oneWeatherDataResponse
+                        _viewModelState.value = State.SUCCESS
                     } else {
                         val errorResponse = gson.fromJson(response.errorBody()!!.charStream(), ErrorResponse::class.java)
                         _showMessage.value = errorResponse.message
+                        _viewModelState.value = State.FAILED
                     }
 
                     _requestingWeatherData.value = false
@@ -79,6 +95,7 @@ class WeatherDataViewModel : ViewModel() {
 
                 override fun onFailure(call: Call<OneCallWeatherData>, t: Throwable) {
                     _requestingWeatherData.value = false
+                    _viewModelState.value = State.FAILED
                 }
             })
         }
