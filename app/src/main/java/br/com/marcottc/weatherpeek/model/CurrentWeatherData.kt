@@ -17,4 +17,8 @@ data class CurrentWeatherData(
     @SerializedName("wind_deg") var windDeg: Double,
     @SerializedName("weather") var weatherList: List<WeatherData>,
     var rain: RainData
-)
+) {
+    constructor(dt: Long, sunrise: Long, sunset: Long, temp: Double, pressure: Int, humidity: Int, clouds: Int) :
+        this(dt, sunrise, sunset, temp, 0.0, pressure, humidity, 0.0, clouds, 0, 0, 0.0,
+        emptyList(), RainData(0.0))
+}

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
+import br.com.marcottc.weatherpeek.model.CurrentWeatherData
 import br.com.marcottc.weatherpeek.model.mock.MockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
@@ -29,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             weatherDataViewModel.getWeatherData()
         }
+
+        val currentWeatherData = MockGenerator.generateCurrentWeatherData()
+        binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
+        binding.pressureValue.text = String.format("%d hPa", currentWeatherData.pressure)
+        binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
+        binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
 
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.forecastRecyclerView.adapter = hourlyForecastAdapter

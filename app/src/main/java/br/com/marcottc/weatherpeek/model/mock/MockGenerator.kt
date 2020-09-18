@@ -1,10 +1,16 @@
 package br.com.marcottc.weatherpeek.model.mock
 
+import br.com.marcottc.weatherpeek.model.CurrentWeatherData
 import br.com.marcottc.weatherpeek.model.DailyWeatherData
 import br.com.marcottc.weatherpeek.model.HourlyWeatherData
 
 class MockGenerator {
     companion object {
+        fun generateCurrentWeatherData(): CurrentWeatherData {
+            return CurrentWeatherData(1600434690000, 1600422677000, 1600463008000,
+            34.0, 102, 42, 23)
+        }
+
         fun generateDailyWeatherData(): List<DailyWeatherData> {
             return listOf(
                 DailyWeatherData(1599490800000, 34.0, 29.0),

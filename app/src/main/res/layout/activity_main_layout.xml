@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
                 android:text="Sunny"
                 android:textAppearance="?attr/textAppearanceHeadline5"
@@ -43,32 +43,99 @@
                 app:tint="@color/textOnNegative" />
 
             <TextView
-                android:id="@+id/temperature_label"
+                android:id="@+id/temperature_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="34°"
+                android:text="34°c"
                 android:textAppearance="?attr/textAppearanceHeadline1"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/weather_description" />
 
+            <ImageView
+                android:id="@+id/pressure_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/pressure_icon_description"
+                app:layout_constraintBottom_toBottomOf="@id/pressure_value"
+                app:layout_constraintEnd_toStartOf="@id/pressure_value"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/pressure_value"
+                app:srcCompat="@drawable/ic_wind"
+                app:tint="@color/textOnNegative" />
+
             <TextView
-                android:id="@+id/location_description"
+                android:id="@+id/pressure_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="Urumqi"
+                android:text="102 hPa"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/pressure_icon"
+                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
+
+            <ImageView
+                android:id="@+id/humidity_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/pressure_icon_description"
+                app:layout_constraintBottom_toBottomOf="@id/humidity_value"
+                app:layout_constraintEnd_toStartOf="@id/humidity_value"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/temperature_label" />
+                app:layout_constraintTop_toTopOf="@id/humidity_value"
+                app:srcCompat="@drawable/ic_water_drop"
+                app:tint="@color/textOnNegative" />
+
+            <TextView
+                android:id="@+id/humidity_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="42 %"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/humidity_icon"
+                app:layout_constraintTop_toBottomOf="@id/pressure_value" />
+
+            <ImageView
+                android:id="@+id/cloudiness_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/pressure_icon_description"
+                app:layout_constraintBottom_toBottomOf="@id/cloudiness_value"
+                app:layout_constraintEnd_toStartOf="@id/cloudiness_value"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cloudiness_value"
+                app:srcCompat="@drawable/ic_heavy_cloudy"
+                app:tint="@color/textOnNegative" />
+
+            <TextView
+                android:id="@+id/cloudiness_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="23 %"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cloudiness_icon"
+                app:layout_constraintTop_toBottomOf="@id/humidity_value" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -138,6 +205,6 @@
         app:layout_anchor="@id/main_layout"
         app:layout_anchorGravity="center_horizontal|bottom"
         app:srcCompat="@drawable/ic_thermometer_mid"
-        app:tint="@color/primaryColor" />
+        app:tint="@color/primaryColor"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
