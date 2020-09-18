@@ -7,6 +7,7 @@ import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.util.OneCallAppId
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -45,6 +46,12 @@ class WeatherDataViewModel : ViewModel() {
         if (_requestingWeatherData.value == true) {
             _showMessage.value = "Please wait a moment..."
         } else {
+            if (OneCallAppId.appId.isEmpty()) {
+                _showMessage.value = "Please set up an app id before building the project!"
+                _requestingWeatherData.value = false
+                return
+            }
+
             val latitude = 0.0
             val longitude = 0.0
             _requestingWeatherData.value = true
