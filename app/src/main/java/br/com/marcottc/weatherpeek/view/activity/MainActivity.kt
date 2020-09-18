@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
-import br.com.marcottc.weatherpeek.model.mock.HourlyDataForecastMockGenerator
+import br.com.marcottc.weatherpeek.model.mock.MockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -33,11 +33,15 @@ class MainActivity : AppCompatActivity() {
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.forecastRecyclerView.adapter = hourlyForecastAdapter
 
-        hourlyForecastAdapter.setHourlyForecastDataList(HourlyDataForecastMockGenerator.generate())
+        hourlyForecastAdapter.setHourlyForecastDataList(MockGenerator.generateHourlyWeatherData())
 
         binding.fab.setOnClickListener {
             val intent = Intent(this, WeatherActivity::class.java)
-            val options = ActivityOptions.makeSceneTransitionAnimation(this, binding.forecastCard, "forecast_card")
+            val options = ActivityOptions.makeSceneTransitionAnimation(
+                this,
+                binding.forecastCard,
+                "forecast_card"
+            )
             startActivity(intent, options.toBundle())
         }
 

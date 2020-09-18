@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
-import br.com.marcottc.weatherpeek.model.mock.DailyDataForecastMockGenerator
-import br.com.marcottc.weatherpeek.model.mock.HourlyDataForecastMockGenerator
+import br.com.marcottc.weatherpeek.model.mock.MockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 
@@ -25,12 +24,12 @@ class WeatherActivity : AppCompatActivity() {
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.hourlyForecastRecyclerView.adapter = hourlyForecastAdapter
 
-        hourlyForecastAdapter.setHourlyForecastDataList(HourlyDataForecastMockGenerator.generate())
+        hourlyForecastAdapter.setHourlyForecastDataList(MockGenerator.generateHourlyWeatherData())
 
         dailyForecastAdapter = DailyForecastAdapter()
         binding.dailyForecastRecyclerView.adapter = dailyForecastAdapter
 
-        dailyForecastAdapter.setDailyForecastDataList(DailyDataForecastMockGenerator.generate())
+        dailyForecastAdapter.setDailyForecastDataList(MockGenerator.generateDailyWeatherData())
 
         binding.closeIcon.setOnClickListener {
             onBackPressed()

@@ -52,6 +52,7 @@ class WeatherDataViewModel : ViewModel() {
                 return
             }
 
+            // TODO - The fine location permission must be used to access latitude and longitude
             val latitude = 0.0
             val longitude = 0.0
             _requestingWeatherData.value = true
