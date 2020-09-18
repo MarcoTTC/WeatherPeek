@@ -14,7 +14,8 @@ buildscript {
             'ktx_core'              : '1.3.1',
             'constraint'            : '2.0.1',
             'material'              : '1.3.0-alpha02',
-            'viewmodel'             : '2.2.0'
+            'viewmodel'             : '2.2.0',
+            'swiperefresh'          : '1.1.0'
     ]
 
     repositories {

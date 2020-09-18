@@ -47,6 +47,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${versions.appcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.constraint}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.viewmodel}"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:${versions.swiperefresh}"
 
     // Material
     implementation "com.google.android.material:material:${versions.material}"

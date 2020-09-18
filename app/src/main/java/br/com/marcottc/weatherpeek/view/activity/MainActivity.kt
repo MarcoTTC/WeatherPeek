@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            weatherDataViewModel.getWeatherData()
+        }
+
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.forecastRecyclerView.adapter = hourlyForecastAdapter
 
@@ -38,6 +42,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         weatherDataViewModel = ViewModelProvider(this).get(WeatherDataViewModel::class.java)
+
+        weatherDataViewModel.requestingWeatherData.observe(this, { isRequesting ->
+            if (!isRequesting) {
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        })
 
         weatherDataViewModel.showMessage.observe(this, { message ->
             if (message.isNotEmpty()) {
