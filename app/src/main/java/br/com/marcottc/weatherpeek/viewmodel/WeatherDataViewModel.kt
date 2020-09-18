@@ -3,6 +3,7 @@ package br.com.marcottc.weatherpeek.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
@@ -29,6 +30,8 @@ class WeatherDataViewModel : ViewModel() {
     private var retrofitInstance: Retrofit
     private var oneCallService: OneCallService
 
+    private lateinit var requestWeatherDataCall: Call<OneCallWeatherData>
+
     init {
         _requestingWeatherData.value = false
         _availableWeatherData.value = null
@@ -44,8 +47,8 @@ class WeatherDataViewModel : ViewModel() {
         } else {
             _requestingWeatherData.value = true
 
-            val requestWeatherDataCall = oneCallService.getWeatherData(lat = 0.0, lon = 0.0)
-            requestWeatherDataCall.enqueue(object : Callback<OneCallWeatherData>{
+            requestWeatherDataCall = oneCallService.getWeatherData(lat = 0.0, lon = 0.0)
+            requestWeatherDataCall.enqueue(object : Callback<OneCallWeatherData> {
                 override fun onResponse(
                     call: Call<OneCallWeatherData>,
                     response: Response<OneCallWeatherData>
@@ -57,7 +60,8 @@ class WeatherDataViewModel : ViewModel() {
                         val oneWeatherDataResponse = gson.fromJson(body.toString(), OneCallWeatherData::class.java)
                         _availableWeatherData.value = oneWeatherDataResponse
                     } else {
-                        _showMessage.value = "Failed to retrieve weather data"
+                        val errorResponse = gson.fromJson(response.errorBody()!!.charStream(), ErrorResponse::class.java)
+                        _showMessage.value = errorResponse.message
                     }
 
                     _requestingWeatherData.value = false
@@ -67,6 +71,12 @@ class WeatherDataViewModel : ViewModel() {
                     _requestingWeatherData.value = false
                 }
             })
+        }
+    }
+
+    override fun onCleared() {
+        if (::requestWeatherDataCall.isInitialized && requestWeatherDataCall.isExecuted) {
+            requestWeatherDataCall.cancel()
         }
     }
 }

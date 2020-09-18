@@ -5,13 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.mock.HourlyDataForecastMockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
+import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainLayoutBinding
+    private lateinit var weatherDataViewModel: WeatherDataViewModel
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 
@@ -31,5 +34,9 @@ class MainActivity : AppCompatActivity() {
             val options = ActivityOptions.makeSceneTransitionAnimation(this, binding.forecastCard, "forecast_card")
             startActivity(intent, options.toBundle())
         }
+
+        weatherDataViewModel = ViewModelProvider(this).get(WeatherDataViewModel::class.java)
+
+        weatherDataViewModel.getWeatherData()
     }
 }
