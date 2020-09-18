@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.mock.HourlyDataForecastMockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +38,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         weatherDataViewModel = ViewModelProvider(this).get(WeatherDataViewModel::class.java)
+
+        weatherDataViewModel.showMessage.observe(this, { message ->
+            if (message.isNotEmpty()) {
+                Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
+                    .setAnchorView(R.id.fab)
+                    .show()
+            }
+        })
 
         weatherDataViewModel.getWeatherData()
     }

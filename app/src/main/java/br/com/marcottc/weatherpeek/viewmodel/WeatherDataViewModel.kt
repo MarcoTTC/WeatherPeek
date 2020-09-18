@@ -45,9 +45,11 @@ class WeatherDataViewModel : ViewModel() {
         if (_requestingWeatherData.value == true) {
             _showMessage.value = "Please wait a moment..."
         } else {
+            val latitude = 0.0
+            val longitude = 0.0
             _requestingWeatherData.value = true
 
-            requestWeatherDataCall = oneCallService.getWeatherData(lat = 0.0, lon = 0.0)
+            requestWeatherDataCall = oneCallService.getWeatherData(lat = latitude, lon = longitude)
             requestWeatherDataCall.enqueue(object : Callback<OneCallWeatherData> {
                 override fun onResponse(
                     call: Call<OneCallWeatherData>,
