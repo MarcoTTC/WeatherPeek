@@ -30,14 +30,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_thermometer_mid"
-                app:tint="?attr/colorPrimary" />
+                app:tint="?attr/colorPrimary"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/hour_forecast_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="FORECAST"
+                android:text="@string/forecast_label"
                 android:textAppearance="?attr/textAppearanceBody1"
                 app:layout_constraintBottom_toBottomOf="@id/hour_forecast_icon"
                 app:layout_constraintStart_toEndOf="@id/hour_forecast_icon"
@@ -49,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/btn_close_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
@@ -78,14 +80,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/hourly_forecast_recycler_view"
                 app:srcCompat="@drawable/ic_sunny"
-                app:tint="?attr/colorPrimary" />
+                app:tint="?attr/colorPrimary"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/week_forecast_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="THIS WEEK"
+                android:text="@string/this_week_label"
                 android:textAppearance="?attr/textAppearanceBody1"
                 app:layout_constraintBottom_toBottomOf="@id/week_forecast_icon"
                 app:layout_constraintStart_toEndOf="@id/week_forecast_icon"
@@ -116,7 +119,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/daily_forecast_recycler_view"
                 app:srcCompat="@drawable/ic_wind"
-                app:tint="?attr/colorPrimary" />
+                app:tint="?attr/colorPrimary"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/air_quality_title"

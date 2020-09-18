@@ -9,6 +9,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityStartLayoutBinding
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -31,7 +32,7 @@ class StartActivity : AppCompatActivity() {
         if (!NetworkUtil.hasConnectivity(this)) {
             Snackbar.make(
                 binding.coordinatorLayout,
-                "No internet connectivity!",
+                R.string.no_internet_connectivity,
                 Snackbar.LENGTH_LONG
             )
                 .show()
@@ -43,10 +44,11 @@ class StartActivity : AppCompatActivity() {
                 if (isGranted) {
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
+                    finish()
                 } else {
                     val builder = MaterialAlertDialogBuilder(this)
-                    builder.setTitle("Permission needed")
-                    builder.setMessage("This app can't function without access to your phone GPS system!")
+                    builder.setTitle(R.string.permission_needed_title)
+                    builder.setMessage(R.string.fine_location_denied)
                     builder.create().show()
                 }
             }
@@ -58,15 +60,16 @@ class StartActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) -> {
                 val builder = MaterialAlertDialogBuilder(this)
-                builder.setTitle("Permission needed")
-                builder.setMessage("This app needs access to your GPS system to provide accurate weather information!\nIt gathers latitude and longitude data for weather prediction purposes.")
-                builder.setPositiveButton("I ACCEPT") { dialog, _ ->
+                builder.setTitle(R.string.permission_needed_title)
+                builder.setMessage(R.string.need_fine_location)
+                builder.setPositiveButton(R.string.btn_label_i_accept) { dialog, _ ->
                     requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                     dialog.dismiss()
                 }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".view.activity.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -86,14 +87,15 @@
                     app:tint="?attr/colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_thermometer_mid" />
+                    app:srcCompat="@drawable/ic_thermometer_mid"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/forecast_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="FORECAST"
+                    android:text="@string/forecast_label"
                     android:textAppearance="?attr/textAppearanceBody1"
                     app:layout_constraintBottom_toBottomOf="@id/forecast_icon"
                     app:layout_constraintStart_toEndOf="@id/forecast_icon"
@@ -125,6 +127,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="120dp"
         android:layout_gravity="bottom|center_horizontal"
+        android:contentDescription="@string/btn_navigate_to_weather_activity_description"
         app:tint="@color/primaryColor"
         app:srcCompat="@drawable/ic_thermometer_mid" />
 
