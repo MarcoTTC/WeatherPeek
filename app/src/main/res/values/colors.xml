@@ -6,5 +6,5 @@
     <color name="secondaryColor">#ffeb3b</color>
 
     <color name="backgroundColor">#FFA000</color>
-    <color name="textOnNegative">#D9D9D9</color>
+    <color name="textOnNegative">#FFFFFF</color>
 </resources>

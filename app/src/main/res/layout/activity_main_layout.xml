@@ -18,29 +18,30 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/weather_description"
+                android:id="@+id/timezone_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:text="Sunny"
+                android:text="America/Chicago"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
-                app:layout_constraintEnd_toStartOf="@id/weather_icon"
-                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/weather_icon"
+            <TextView
+                android:id="@+id/current_time_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@id/weather_description"
+                android:layout_marginTop="8dp"
+                android:text="15:25"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/weather_description"
-                app:srcCompat="@drawable/ic_sunny"
-                app:tint="@color/textOnNegative" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/timezone_type" />
 
             <TextView
                 android:id="@+id/temperature_value"
@@ -54,7 +55,91 @@
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/weather_description" />
+                app:layout_constraintTop_toBottomOf="@id/current_time_value" />
+
+            <TextView
+                android:id="@+id/weather_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="Sunny"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
+                app:layout_constraintEnd_toStartOf="@id/weather_icon"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
+
+            <ImageView
+                android:id="@+id/weather_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@id/weather_type"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/weather_type"
+                app:layout_constraintTop_toTopOf="@+id/weather_type"
+                app:srcCompat="@drawable/ic_sunny"
+                app:tint="@color/textOnNegative" />
+
+            <ImageView
+                android:id="@+id/sunrise_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/pressure_icon_description"
+                app:layout_constraintBottom_toBottomOf="@+id/sunrise_time"
+                app:layout_constraintEnd_toStartOf="@+id/sunrise_time"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/sunrise_time"
+                app:srcCompat="@drawable/ic_sunny"
+                app:tint="@color/textOnNegative" />
+
+            <TextView
+                android:id="@+id/sunrise_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="06:53"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
+                app:layout_constraintEnd_toStartOf="@+id/sunset_icon"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/sunrise_icon"
+                app:layout_constraintTop_toBottomOf="@id/weather_type" />
+
+            <ImageView
+                android:id="@+id/sunset_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:contentDescription="@string/pressure_icon_description"
+                app:layout_constraintBottom_toBottomOf="@+id/sunset_time"
+                app:layout_constraintEnd_toStartOf="@+id/sunset_time"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/sunrise_time"
+                app:layout_constraintTop_toTopOf="@+id/sunset_time"
+                app:srcCompat="@drawable/ic_starry_moon"
+                app:tint="@color/textOnNegative" />
+
+            <TextView
+                android:id="@+id/sunset_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="18:07"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/sunset_icon"
+                app:layout_constraintTop_toBottomOf="@id/weather_type" />
 
             <ImageView
                 android:id="@+id/pressure_icon"
@@ -76,17 +161,18 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="102 hPa"
+                android:text="1016 hPa"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/pressure_icon"
-                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
+                app:layout_constraintTop_toBottomOf="@id/sunrise_time" />
 
             <ImageView
                 android:id="@+id/humidity_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:contentDescription="@string/pressure_icon_description"
                 app:layout_constraintBottom_toBottomOf="@id/humidity_value"
                 app:layout_constraintEnd_toStartOf="@id/humidity_value"
@@ -106,7 +192,7 @@
                 android:text="42 %"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/cloudiness_icon"
                 app:layout_constraintStart_toEndOf="@id/humidity_icon"
                 app:layout_constraintTop_toBottomOf="@id/pressure_value" />
 
@@ -114,11 +200,12 @@
                 android:id="@+id/cloudiness_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
                 android:contentDescription="@string/pressure_icon_description"
                 app:layout_constraintBottom_toBottomOf="@id/cloudiness_value"
                 app:layout_constraintEnd_toStartOf="@id/cloudiness_value"
                 app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/humidity_value"
                 app:layout_constraintTop_toTopOf="@id/cloudiness_value"
                 app:srcCompat="@drawable/ic_heavy_cloudy"
                 app:tint="@color/textOnNegative" />
@@ -135,7 +222,7 @@
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cloudiness_icon"
-                app:layout_constraintTop_toBottomOf="@id/humidity_value" />
+                app:layout_constraintTop_toBottomOf="@id/pressure_value" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
