@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
-import br.com.marcottc.weatherpeek.model.CurrentWeatherData
+import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.model.mock.MockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import com.google.android.material.snackbar.Snackbar
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var weatherDataViewModel: WeatherDataViewModel
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
+
+    private lateinit var oneCallWeatherData: OneCallWeatherData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +35,19 @@ class MainActivity : AppCompatActivity() {
             weatherDataViewModel.getWeatherData()
         }
 
-        val currentWeatherData = MockGenerator.generateCurrentWeatherData()
+        oneCallWeatherData = MockGenerator.generateOneCallWeatherData()
+
+        binding.timezoneType.text = oneCallWeatherData.timezone
+
+        val timeFormatter = SimpleDateFormat("HH:mm")
+
+        val currentWeatherData = oneCallWeatherData.current
+        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt))
         binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
+        binding.weatherType.text = currentWeatherData.weatherList[0].main
+        binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
+        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise))
+        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset))
         binding.pressureValue.text = String.format("%d hPa", currentWeatherData.pressure)
         binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
         binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
@@ -40,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.forecastRecyclerView.adapter = hourlyForecastAdapter
 
-        hourlyForecastAdapter.setHourlyForecastDataList(MockGenerator.generateHourlyWeatherData())
+        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherData.hourlyDataList)
 
         binding.fab.setOnClickListener {
             val intent = Intent(this, WeatherActivity::class.java)

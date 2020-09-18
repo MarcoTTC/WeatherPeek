@@ -24,24 +24,24 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:text="America/Chicago"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="America/Chicago" />
 
             <TextView
                 android:id="@+id/current_time_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="15:25"
-                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textAppearance="?attr/textAppearanceHeadline4"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/timezone_type" />
+                app:layout_constraintTop_toBottomOf="@id/timezone_type"
+                tools:text="15:25"/>
 
             <TextView
                 android:id="@+id/temperature_value"
@@ -50,12 +50,12 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="34°c"
                 android:textAppearance="?attr/textAppearanceHeadline1"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/current_time_value" />
+                app:layout_constraintTop_toBottomOf="@id/current_time_value"
+                tools:text="34°c"/>
 
             <TextView
                 android:id="@+id/weather_type"
@@ -64,13 +64,13 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="Sunny"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toStartOf="@id/weather_icon"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
+                app:layout_constraintTop_toBottomOf="@id/temperature_value"
+                tools:text="Sunny" />
 
             <ImageView
                 android:id="@+id/weather_icon"
@@ -81,7 +81,8 @@
                 app:layout_constraintStart_toEndOf="@id/weather_type"
                 app:layout_constraintTop_toTopOf="@+id/weather_type"
                 app:srcCompat="@drawable/ic_sunny"
-                app:tint="@color/textOnNegative" />
+                app:tint="@color/textOnNegative"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/sunrise_icon"
@@ -104,13 +105,13 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="06:53"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toStartOf="@+id/sunset_icon"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/sunrise_icon"
-                app:layout_constraintTop_toBottomOf="@id/weather_type" />
+                app:layout_constraintTop_toBottomOf="@id/weather_type"
+                tools:text="06:53"/>
 
             <ImageView
                 android:id="@+id/sunset_icon"
@@ -133,13 +134,13 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="18:07"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/sunset_icon"
-                app:layout_constraintTop_toBottomOf="@id/weather_type" />
+                app:layout_constraintTop_toBottomOf="@id/weather_type"
+                tools:text="18:07"/>
 
             <ImageView
                 android:id="@+id/pressure_icon"
@@ -161,12 +162,12 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="1016 hPa"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/pressure_icon"
-                app:layout_constraintTop_toBottomOf="@id/sunrise_time" />
+                app:layout_constraintTop_toBottomOf="@id/sunrise_time"
+                tools:text="1016 hPa"/>
 
             <ImageView
                 android:id="@+id/humidity_icon"
@@ -189,12 +190,12 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="42 %"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toStartOf="@id/cloudiness_icon"
                 app:layout_constraintStart_toEndOf="@id/humidity_icon"
-                app:layout_constraintTop_toBottomOf="@id/pressure_value" />
+                app:layout_constraintTop_toBottomOf="@id/pressure_value"
+                tools:text="42 %"/>
 
             <ImageView
                 android:id="@+id/cloudiness_icon"
@@ -217,12 +218,12 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="23 %"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cloudiness_icon"
-                app:layout_constraintTop_toBottomOf="@id/pressure_value" />
+                app:layout_constraintTop_toBottomOf="@id/pressure_value"
+                tools:text="23 %"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

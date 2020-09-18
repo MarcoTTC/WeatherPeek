@@ -3,15 +3,24 @@ package br.com.marcottc.weatherpeek.model.mock
 import br.com.marcottc.weatherpeek.model.CurrentWeatherData
 import br.com.marcottc.weatherpeek.model.DailyWeatherData
 import br.com.marcottc.weatherpeek.model.HourlyWeatherData
+import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 
 class MockGenerator {
     companion object {
-        fun generateCurrentWeatherData(): CurrentWeatherData {
+        fun generateOneCallWeatherData(): OneCallWeatherData {
+            return OneCallWeatherData(0.0, 0.0, "America/Chicago", "-18000",
+                generateCurrentWeatherData(),
+                generateHourlyWeatherData(),
+                generateDailyWeatherData()
+            )
+        }
+
+        private fun generateCurrentWeatherData(): CurrentWeatherData {
             return CurrentWeatherData(1600434690000, 1600422677000, 1600463008000,
             34.0, 102, 42, 23)
         }
 
-        fun generateDailyWeatherData(): List<DailyWeatherData> {
+        private fun generateDailyWeatherData(): List<DailyWeatherData> {
             return listOf(
                 DailyWeatherData(1599490800000, 34.0, 29.0),
                 DailyWeatherData(1599577200000, 34.0, 27.0),
@@ -21,7 +30,7 @@ class MockGenerator {
             )
         }
 
-        fun generateHourlyWeatherData(): List<HourlyWeatherData> {
+        private fun generateHourlyWeatherData(): List<HourlyWeatherData> {
             return listOf(
                 HourlyWeatherData(1599487200000, 29.0),
                 HourlyWeatherData(1599490800000, 34.0),

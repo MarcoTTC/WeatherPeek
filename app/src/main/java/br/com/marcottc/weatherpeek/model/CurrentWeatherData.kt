@@ -20,5 +20,5 @@ data class CurrentWeatherData(
 ) {
     constructor(dt: Long, sunrise: Long, sunset: Long, temp: Double, pressure: Int, humidity: Int, clouds: Int) :
         this(dt, sunrise, sunset, temp, 0.0, pressure, humidity, 0.0, clouds, 0, 0, 0.0,
-        emptyList(), RainData(0.0))
+        listOf(WeatherData(304, "Sunny", "Clear sunny", "08n")), RainData(0.0))
 }
