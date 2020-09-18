@@ -6,13 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.OneCallWeatherData
-import br.com.marcottc.weatherpeek.model.mock.MockGenerator
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -32,7 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        binding.swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primaryColor))
+        binding.swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(
+                this,
+                R.color.primaryColor
+            )
+        )
         binding.swipeRefreshLayout.setOnRefreshListener {
             weatherDataViewModel.getWeatherData()
         }
