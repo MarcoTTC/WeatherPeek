@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 
-    private lateinit var oneCallWeatherData: OneCallWeatherData
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,27 +33,8 @@ class MainActivity : AppCompatActivity() {
             weatherDataViewModel.getWeatherData()
         }
 
-        oneCallWeatherData = MockGenerator.generateOneCallWeatherData()
-
-        binding.timezoneType.text = oneCallWeatherData.timezone
-
-        val timeFormatter = SimpleDateFormat("HH:mm")
-
-        val currentWeatherData = oneCallWeatherData.current
-        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt))
-        binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
-        binding.weatherType.text = currentWeatherData.weatherList[0].main
-        binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
-        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise))
-        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset))
-        binding.pressureValue.text = String.format("%d hPa", currentWeatherData.pressure)
-        binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
-        binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
-
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.forecastRecyclerView.adapter = hourlyForecastAdapter
-
-        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherData.hourlyDataList)
 
         binding.fab.setOnClickListener {
             val intent = Intent(this, WeatherActivity::class.java)
@@ -68,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         weatherDataViewModel = ViewModelProvider(this).get(WeatherDataViewModel::class.java)
+
+        weatherDataViewModel.availableWeatherData.observe(this, { data ->
+            if (data != null) {
+                updatingWeatherData(data)
+            }
+        })
 
         weatherDataViewModel.requestingWeatherData.observe(this, { isRequesting ->
             if (!isRequesting) {
@@ -84,5 +69,26 @@ class MainActivity : AppCompatActivity() {
         })
 
         weatherDataViewModel.getWeatherData()
+
+        updatingWeatherData(MockGenerator.generateOneCallWeatherData())
+    }
+
+    private fun updatingWeatherData(oneCallWeatherData: OneCallWeatherData) {
+        binding.timezoneType.text = oneCallWeatherData.timezone
+
+        val timeFormatter = SimpleDateFormat("HH:mm")
+
+        val currentWeatherData = oneCallWeatherData.current
+        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt))
+        binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
+        binding.weatherType.text = currentWeatherData.weatherList[0].main
+        binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
+        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise))
+        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset))
+        binding.pressureValue.text = String.format("%d hPa", currentWeatherData.pressure)
+        binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
+        binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
+
+        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherData.hourlyDataList)
     }
 }
