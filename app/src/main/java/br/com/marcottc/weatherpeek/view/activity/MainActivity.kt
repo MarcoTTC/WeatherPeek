@@ -4,7 +4,10 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
@@ -29,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
+        binding.swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primaryColor))
         binding.swipeRefreshLayout.setOnRefreshListener {
             weatherDataViewModel.getWeatherData()
         }
@@ -51,16 +55,76 @@ class MainActivity : AppCompatActivity() {
         weatherDataViewModel.viewModelState.observe(this, { currentState ->
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
-
+                    binding.loadingSymbol.visibility = View.VISIBLE
+                    binding.timezoneType.visibility = View.GONE
+                    binding.currentTimeValue.visibility = View.GONE
+                    binding.temperatureValue.visibility = View.GONE
+                    binding.weatherType.visibility = View.GONE
+                    binding.weatherIcon.visibility = View.GONE
+                    binding.sunriseIcon.visibility = View.GONE
+                    binding.sunriseTime.visibility = View.GONE
+                    binding.sunsetIcon.visibility = View.GONE
+                    binding.sunsetTime.visibility = View.GONE
+                    binding.pressureIcon.visibility = View.GONE
+                    binding.pressureIcon.visibility = View.GONE
+                    binding.humidityIcon.visibility = View.GONE
+                    binding.humidityValue.visibility = View.GONE
+                    binding.cloudinessIcon.visibility = View.GONE
+                    binding.cloudinessValue.visibility = View.GONE
+                    binding.reloadIcon.visibility = View.GONE
+                    binding.reloadText.visibility = View.GONE
+                    binding.forecastLoadingSymbol.visibility = View.VISIBLE
+                    binding.forecastReloadIcon.visibility = View.GONE
+                    binding.forecastReloadText.visibility = View.GONE
+                    binding.forecastRecyclerView.visibility = View.GONE
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
-
-                }
-                WeatherDataViewModel.State.FAILED -> {
-
+                    binding.loadingSymbol.visibility = View.GONE
+                    binding.timezoneType.visibility = View.VISIBLE
+                    binding.currentTimeValue.visibility = View.VISIBLE
+                    binding.temperatureValue.visibility = View.VISIBLE
+                    binding.weatherType.visibility = View.VISIBLE
+                    binding.weatherIcon.visibility = View.VISIBLE
+                    binding.sunriseIcon.visibility = View.VISIBLE
+                    binding.sunriseTime.visibility = View.VISIBLE
+                    binding.sunsetIcon.visibility = View.VISIBLE
+                    binding.sunsetTime.visibility = View.VISIBLE
+                    binding.pressureIcon.visibility = View.VISIBLE
+                    binding.pressureIcon.visibility = View.VISIBLE
+                    binding.humidityIcon.visibility = View.VISIBLE
+                    binding.humidityValue.visibility = View.VISIBLE
+                    binding.cloudinessIcon.visibility = View.VISIBLE
+                    binding.cloudinessValue.visibility = View.VISIBLE
+                    binding.reloadIcon.visibility = View.GONE
+                    binding.reloadText.visibility = View.GONE
+                    binding.forecastLoadingSymbol.visibility = View.GONE
+                    binding.forecastReloadIcon.visibility = View.GONE
+                    binding.forecastReloadText.visibility = View.GONE
+                    binding.forecastRecyclerView.visibility = View.VISIBLE
                 }
                 else -> {
-
+                    binding.loadingSymbol.visibility = View.GONE
+                    binding.timezoneType.visibility = View.GONE
+                    binding.currentTimeValue.visibility = View.GONE
+                    binding.temperatureValue.visibility = View.GONE
+                    binding.weatherType.visibility = View.GONE
+                    binding.weatherIcon.visibility = View.GONE
+                    binding.sunriseIcon.visibility = View.GONE
+                    binding.sunriseTime.visibility = View.GONE
+                    binding.sunsetIcon.visibility = View.GONE
+                    binding.sunsetTime.visibility = View.GONE
+                    binding.pressureIcon.visibility = View.GONE
+                    binding.pressureIcon.visibility = View.GONE
+                    binding.humidityIcon.visibility = View.GONE
+                    binding.humidityValue.visibility = View.GONE
+                    binding.cloudinessIcon.visibility = View.GONE
+                    binding.cloudinessValue.visibility = View.GONE
+                    binding.reloadIcon.visibility = View.VISIBLE
+                    binding.reloadText.visibility = View.VISIBLE
+                    binding.forecastLoadingSymbol.visibility = View.GONE
+                    binding.forecastReloadIcon.visibility = View.VISIBLE
+                    binding.forecastReloadText.visibility = View.VISIBLE
+                    binding.forecastRecyclerView.visibility = View.GONE
                 }
             }
         })
@@ -86,8 +150,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         weatherDataViewModel.getWeatherData()
-
-        updatingWeatherData(MockGenerator.generateOneCallWeatherData())
     }
 
     private fun updatingWeatherData(oneCallWeatherData: OneCallWeatherData) {

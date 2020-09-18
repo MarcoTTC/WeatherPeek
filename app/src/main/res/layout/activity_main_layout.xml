@@ -17,6 +17,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ProgressBar
+                android:id="@+id/loading_symbol"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.35"
+                tools:visibility="gone" />
+
             <TextView
                 android:id="@+id/timezone_type"
                 android:layout_width="wrap_content"
@@ -26,10 +38,12 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="America/Chicago" />
+                tools:text="America/Chicago"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/current_time_value"
@@ -38,10 +52,12 @@
                 android:layout_marginTop="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline4"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/timezone_type"
-                tools:text="15:25"/>
+                tools:text="15:25"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/temperature_value"
@@ -52,10 +68,12 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline1"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/current_time_value"
-                tools:text="34°c"/>
+                tools:text="34°c"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/weather_type"
@@ -66,29 +84,34 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/weather_icon"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/temperature_value"
-                tools:text="Sunny" />
+                tools:text="Sunny"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/weather_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/weather_type"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/weather_type"
                 app:layout_constraintTop_toTopOf="@+id/weather_type"
                 app:srcCompat="@drawable/ic_sunny"
                 app:tint="@color/textOnNegative"
-                tools:ignore="ContentDescription" />
+                tools:ignore="ContentDescription"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/sunrise_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/pressure_icon_description"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/sunrise_time"
                 app:layout_constraintEnd_toStartOf="@+id/sunrise_time"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -96,7 +119,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/sunrise_time"
                 app:srcCompat="@drawable/ic_sunny"
-                app:tint="@color/textOnNegative" />
+                app:tint="@color/textOnNegative"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/sunrise_time"
@@ -107,11 +131,13 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/sunset_icon"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/sunrise_icon"
                 app:layout_constraintTop_toBottomOf="@id/weather_type"
-                tools:text="06:53"/>
+                tools:text="06:53"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/sunset_icon"
@@ -119,13 +145,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:contentDescription="@string/pressure_icon_description"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/sunset_time"
                 app:layout_constraintEnd_toStartOf="@+id/sunset_time"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/sunrise_time"
                 app:layout_constraintTop_toTopOf="@+id/sunset_time"
                 app:srcCompat="@drawable/ic_starry_moon"
-                app:tint="@color/textOnNegative" />
+                app:tint="@color/textOnNegative"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/sunset_time"
@@ -136,24 +164,28 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/sunset_icon"
                 app:layout_constraintTop_toBottomOf="@id/weather_type"
-                tools:text="18:07"/>
+                tools:text="18:07"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/pressure_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/pressure_icon_description"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/pressure_value"
                 app:layout_constraintEnd_toStartOf="@id/pressure_value"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/pressure_value"
                 app:srcCompat="@drawable/ic_wind"
-                app:tint="@color/textOnNegative" />
+                app:tint="@color/textOnNegative"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/pressure_value"
@@ -164,10 +196,12 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/pressure_icon"
                 app:layout_constraintTop_toBottomOf="@id/sunrise_time"
-                tools:text="1016 hPa"/>
+                tools:text="1016 hPa"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/humidity_icon"
@@ -175,13 +209,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:contentDescription="@string/pressure_icon_description"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/humidity_value"
                 app:layout_constraintEnd_toStartOf="@id/humidity_value"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/humidity_value"
                 app:srcCompat="@drawable/ic_water_drop"
-                app:tint="@color/textOnNegative" />
+                app:tint="@color/textOnNegative"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/humidity_value"
@@ -192,10 +228,12 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/cloudiness_icon"
                 app:layout_constraintStart_toEndOf="@id/humidity_icon"
                 app:layout_constraintTop_toBottomOf="@id/pressure_value"
-                tools:text="42 %"/>
+                tools:text="42 %"
+                tools:visibility="visible" />
 
             <ImageView
                 android:id="@+id/cloudiness_icon"
@@ -203,13 +241,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:contentDescription="@string/pressure_icon_description"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/cloudiness_value"
                 app:layout_constraintEnd_toStartOf="@id/cloudiness_value"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@id/humidity_value"
                 app:layout_constraintTop_toTopOf="@id/cloudiness_value"
                 app:srcCompat="@drawable/ic_heavy_cloudy"
-                app:tint="@color/textOnNegative" />
+                app:tint="@color/textOnNegative"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/cloudiness_value"
@@ -220,10 +260,46 @@
                 android:layout_marginEnd="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cloudiness_icon"
                 app:layout_constraintTop_toBottomOf="@id/pressure_value"
-                tools:text="23 %"/>
+                tools:text="23 %"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/reload_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:src="@android:drawable/stat_notify_sync"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/reload_text"
+                app:layout_constraintEnd_toStartOf="@id/reload_text"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/reload_text"
+                tools:ignore="ContentDescription"
+                tools:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/reload_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/reload_text"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/textOnNegative"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.35"
+                app:layout_constraintStart_toEndOf="@id/reload_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -266,19 +342,71 @@
                 app:layout_constraintStart_toEndOf="@id/forecast_icon"
                 app:layout_constraintTop_toTopOf="@id/forecast_icon" />
 
+            <ProgressBar
+                android:id="@+id/forecast_loading_symbol"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:minHeight="85dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/forecast_icon"
+                tools:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/forecast_reload_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="85dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:src="@android:drawable/stat_notify_sync"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/forecast_reload_text"
+                app:layout_constraintEnd_toStartOf="@id/forecast_reload_text"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/forecast_reload_text"
+                app:tint="?attr/colorPrimary"
+                tools:ignore="ContentDescription"
+                tools:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/forecast_reload_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:minHeight="85dp"
+                android:text="@string/reload_text"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/primaryColor"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/forecast_reload_icon"
+                app:layout_constraintTop_toBottomOf="@id/forecast_icon"
+                tools:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/forecast_recycler_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/forecast_icon"
                 tools:itemCount="5"
-                tools:listitem="@layout/item_hourly_forecast" />
+                tools:listitem="@layout/item_hourly_forecast"
+                tools:visibility="visible"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
