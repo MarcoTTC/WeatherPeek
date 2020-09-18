@@ -231,6 +231,9 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# Sensible data project files
+app/src/main/java/br/com/marcottc/weatherpeek/util/OneCallAppId.kt
+
 ### AndroidStudio Patch ###
 
 !/gradle/wrapper/gradle-wrapper.jar
