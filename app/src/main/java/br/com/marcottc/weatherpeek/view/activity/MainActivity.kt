@@ -13,6 +13,7 @@ import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
+import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
@@ -53,7 +54,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent, options.toBundle())
         }
 
-        weatherDataViewModel = ViewModelProvider(this).get(WeatherDataViewModel::class.java)
+        val viewModelWithApplicationContextFactory = ViewModelWithApplicationContextFactory(applicationContext)
+        weatherDataViewModel = ViewModelProvider(this, viewModelWithApplicationContextFactory).get(WeatherDataViewModel::class.java)
 
         weatherDataViewModel.viewModelState.observe(this, { currentState ->
             when (currentState) {
