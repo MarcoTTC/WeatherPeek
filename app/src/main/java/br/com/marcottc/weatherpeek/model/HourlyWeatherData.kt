@@ -11,13 +11,13 @@ data class HourlyWeatherData(
     @SerializedName("dew_point") var dewPoint: Double,
     var clouds: Int,
     var visibility: Int,
-    @SerializedName("wind_speed") var windSpeed: Int,
+    @SerializedName("wind_speed") var windSpeed: Double,
     @SerializedName("wind_deg") var windDeg: Double,
     @SerializedName("weather") var weatherList: List<WeatherData>,
     var pop: Double,
     var rain: RainData
 ) {
     constructor(dt: Long, temp: Double) : this(dt, temp, 0.0, 0, 0,
-        0.0, 0, 0, 0, 0.0, emptyList(), 0.0,
+        0.0, 0, 0, 0.0, 0.0, emptyList(), 0.0,
         RainData(0.0))
 }

@@ -1,5 +1,6 @@
 package br.com.marcottc.weatherpeek.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -77,14 +78,12 @@ class WeatherDataViewModel : ViewModel() {
                     call: Call<OneCallWeatherData>,
                     response: Response<OneCallWeatherData>
                 ) {
-                    val body = response.body()
-                    val gson = Gson()
 
                     if (response.isSuccessful) {
-                        val oneWeatherDataResponse = gson.fromJson(body.toString(), OneCallWeatherData::class.java)
-                        _availableWeatherData.value = oneWeatherDataResponse
+                        _availableWeatherData.value = response.body()
                         _viewModelState.value = State.SUCCESS
                     } else {
+                        val gson = Gson()
                         val errorResponse = gson.fromJson(response.errorBody()!!.charStream(), ErrorResponse::class.java)
                         _showMessage.value = errorResponse.message
                         _viewModelState.value = State.FAILED
@@ -94,6 +93,7 @@ class WeatherDataViewModel : ViewModel() {
                 }
 
                 override fun onFailure(call: Call<OneCallWeatherData>, t: Throwable) {
+                    Log.e(WeatherDataViewModel::class.java.canonicalName, t.message, t)
                     _requestingWeatherData.value = false
                     _viewModelState.value = State.FAILED
                 }

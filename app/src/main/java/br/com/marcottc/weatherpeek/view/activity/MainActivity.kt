@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     binding.sunsetIcon.visibility = View.GONE
                     binding.sunsetTime.visibility = View.GONE
                     binding.pressureIcon.visibility = View.GONE
-                    binding.pressureIcon.visibility = View.GONE
+                    binding.pressureValue.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                     binding.sunsetIcon.visibility = View.VISIBLE
                     binding.sunsetTime.visibility = View.VISIBLE
                     binding.pressureIcon.visibility = View.VISIBLE
-                    binding.pressureIcon.visibility = View.VISIBLE
+                    binding.pressureValue.visibility = View.VISIBLE
                     binding.humidityIcon.visibility = View.VISIBLE
                     binding.humidityValue.visibility = View.VISIBLE
                     binding.cloudinessIcon.visibility = View.VISIBLE
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     binding.sunsetIcon.visibility = View.GONE
                     binding.sunsetTime.visibility = View.GONE
                     binding.pressureIcon.visibility = View.GONE
-                    binding.pressureIcon.visibility = View.GONE
+                    binding.pressureValue.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
