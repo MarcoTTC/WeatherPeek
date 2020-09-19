@@ -20,6 +20,7 @@
     <string name="permission_needed_title">Permission needed</string>
     <string name="need_fine_location">This app needs access to your GPS system to provide accurate weather information! It gathers latitude and longitude data for weather prediction purposes.</string>
     <string name="fine_location_denied">This app can\'t function without access to your phone GPS system!</string>
+    <string name="now_label">NOW</string>
 
     <!-- Common button labels -->
     <string name="btn_label_i_accept">I ACCEPT</string>
