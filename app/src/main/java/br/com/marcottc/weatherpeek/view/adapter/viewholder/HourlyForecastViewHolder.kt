@@ -9,12 +9,12 @@ import br.com.marcottc.weatherpeek.model.HourlyWeatherData
 class HourlyForecastViewHolder(private var binding: ItemHourlyForecastBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(hourlyData: HourlyWeatherData) {
-        binding.tempValue.text = String.format("%.0f°", hourlyData.temp)
-        if (String.format("%tH", System.currentTimeMillis()) == String.format("%tH", hourlyData.dt)) {
+        binding.tempValue.text = String.format("%.0f°c", hourlyData.temp)
+        if (String.format("%te%tH", System.currentTimeMillis(), System.currentTimeMillis()) == String.format("%te%tH", hourlyData.dt*1000, hourlyData.dt*1000)) {
             binding.hourValue.text = "NOW"
         } else {
             binding.hourValue.text =
-                String.format("%tH:%tM%Tp", hourlyData.dt, hourlyData.dt, hourlyData.dt)
+                String.format("%tH:%tM%Tp", hourlyData.dt*1000, hourlyData.dt*1000, hourlyData.dt*1000)
         }
     }
 

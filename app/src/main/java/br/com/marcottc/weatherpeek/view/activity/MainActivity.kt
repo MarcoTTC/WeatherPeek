@@ -161,12 +161,12 @@ class MainActivity : AppCompatActivity() {
         val timeFormatter = SimpleDateFormat("HH:mm")
 
         val currentWeatherData = oneCallWeatherData.current
-        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt))
+        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt*1000))
         binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
         binding.weatherType.text = currentWeatherData.weatherList[0].main
         binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
-        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise))
-        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset))
+        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise*1000))
+        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset*1000))
         binding.pressureValue.text = String.format("%d hPa", currentWeatherData.pressure)
         binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
         binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
