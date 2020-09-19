@@ -54,7 +54,7 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
-        private var countdown: Int = 5
+        private var countdown: Int = 3
 
         override fun onLocationChanged(location: Location) {
             val currentAccuracy = location.accuracy
@@ -63,7 +63,7 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                 countdown--
             } else {
                 previousAccuracy = 1000000.0F
-                countdown = 5
+                countdown = 3
                 recoveringWeatherData(location.latitude, location.longitude)
             }
         }
@@ -103,14 +103,23 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                 _requestingWeatherData.value = true
                 _viewModelState.value = State.LOADING
 
-                locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    1000,
-                    0.0F,
-                    mLocationListener
-                )
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        1000,
+                        0.0F,
+                        mLocationListener
+                    )
+                } else {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        1000,
+                        0.0F,
+                        mLocationListener
+                    )
+                }
             } else {
-                _showMessage.value = "No valid permission to recover device location"
+                _showMessage.value = "No valid provider to obtain device location"
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
             }
