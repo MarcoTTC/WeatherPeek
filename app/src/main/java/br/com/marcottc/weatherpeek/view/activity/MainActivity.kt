@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                     binding.loadingSymbol.visibility = View.VISIBLE
                     binding.timezoneType.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.GONE
+                    binding.dayNightIcon.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
                     binding.weatherIcon.visibility = View.GONE
@@ -87,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                     binding.loadingSymbol.visibility = View.GONE
                     binding.timezoneType.visibility = View.VISIBLE
                     binding.currentTimeValue.visibility = View.VISIBLE
+                    binding.dayNightIcon.visibility = View.VISIBLE
                     binding.temperatureValue.visibility = View.VISIBLE
                     binding.weatherType.visibility = View.VISIBLE
                     binding.weatherIcon.visibility = View.VISIBLE
@@ -111,6 +114,7 @@ class MainActivity : AppCompatActivity() {
                     binding.loadingSymbol.visibility = View.GONE
                     binding.timezoneType.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.GONE
+                    binding.dayNightIcon.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
                     binding.weatherIcon.visibility = View.GONE
@@ -164,6 +168,15 @@ class MainActivity : AppCompatActivity() {
 
         val currentWeatherData = oneCallWeatherData.current
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt*1000))
+
+        if (currentWeatherData.dt >= currentWeatherData.sunrise && currentWeatherData.dt < currentWeatherData.sunset) {
+            binding.dayNightIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_sunny))
+            binding.dayNightIcon.contentDescription = resources.getString(R.string.icon_description_day)
+        } else {
+            binding.dayNightIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_starry_moon))
+            binding.dayNightIcon.contentDescription = resources.getString(R.string.icon_description_night)
+        }
+
         binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
         binding.weatherType.text = currentWeatherData.weatherList[0].main
         binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
