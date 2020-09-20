@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
                     binding.forecastReloadIcon.visibility = View.GONE
                     binding.forecastReloadText.visibility = View.GONE
                     binding.forecastRecyclerView.visibility = View.GONE
+                    binding.fab.visibility = View.GONE
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
                     binding.loadingSymbol.visibility = View.GONE
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                     binding.forecastReloadIcon.visibility = View.GONE
                     binding.forecastReloadText.visibility = View.GONE
                     binding.forecastRecyclerView.visibility = View.VISIBLE
+                    binding.fab.visibility = View.VISIBLE
                 }
                 else -> {
                     binding.loadingSymbol.visibility = View.GONE
@@ -137,6 +139,7 @@ class MainActivity : AppCompatActivity() {
                     binding.forecastReloadIcon.visibility = View.VISIBLE
                     binding.forecastReloadText.visibility = View.VISIBLE
                     binding.forecastRecyclerView.visibility = View.GONE
+                    binding.fab.visibility = View.VISIBLE
                 }
             }
         })

@@ -443,9 +443,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="120dp"
         android:contentDescription="@string/btn_navigate_to_weather_activity_description"
+        android:visibility="gone"
         app:layout_anchor="@id/main_layout"
         app:layout_anchorGravity="center_horizontal|bottom"
         app:srcCompat="@drawable/ic_thermometer_mid"
-        app:tint="@color/primaryColor"/>
+        app:tint="@color/primaryColor"
+        tools:visibility="visible"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
