@@ -123,11 +123,11 @@
                 app:layout_constraintBottom_toBottomOf="@id/weather_type"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/weather_type"
-                app:layout_constraintTop_toTopOf="@+id/weather_type"
-                app:srcCompat="@drawable/ic_sunny"
-                app:tint="@color/textOnNegative"
+                app:layout_constraintTop_toTopOf="@id/weather_type"
                 tools:ignore="ContentDescription"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                tools:srcCompat="@drawable/ic_sunny"
+                tools:tint="@color/textOnNegative"/>
 
             <ImageView
                 android:id="@+id/sunrise_icon"
@@ -135,12 +135,12 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/pressure_icon_description"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/sunrise_time"
-                app:layout_constraintEnd_toStartOf="@+id/sunrise_time"
+                app:layout_constraintBottom_toBottomOf="@id/sunrise_time"
+                app:layout_constraintEnd_toStartOf="@id/sunrise_time"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/sunrise_time"
+                app:layout_constraintTop_toTopOf="@id/sunrise_time"
                 app:srcCompat="@drawable/ic_sunny"
                 app:tint="@color/textOnNegative"
                 tools:visibility="visible" />
@@ -155,9 +155,9 @@
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textColor="@color/textOnNegative"
                 android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/sunset_icon"
+                app:layout_constraintEnd_toStartOf="@id/sunset_icon"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/sunrise_icon"
+                app:layout_constraintStart_toEndOf="@id/sunrise_icon"
                 app:layout_constraintTop_toBottomOf="@id/weather_type"
                 tools:text="06:53"
                 tools:visibility="visible" />
@@ -169,11 +169,11 @@
                 android:layout_marginStart="32dp"
                 android:contentDescription="@string/pressure_icon_description"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/sunset_time"
-                app:layout_constraintEnd_toStartOf="@+id/sunset_time"
+                app:layout_constraintBottom_toBottomOf="@id/sunset_time"
+                app:layout_constraintEnd_toStartOf="@id/sunset_time"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/sunrise_time"
-                app:layout_constraintTop_toTopOf="@+id/sunset_time"
+                app:layout_constraintStart_toEndOf="@id/sunrise_time"
+                app:layout_constraintTop_toTopOf="@id/sunset_time"
                 app:srcCompat="@drawable/ic_starry_moon"
                 app:tint="@color/textOnNegative"
                 tools:visibility="visible" />
@@ -190,7 +190,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/sunset_icon"
+                app:layout_constraintStart_toEndOf="@id/sunset_icon"
                 app:layout_constraintTop_toBottomOf="@id/weather_type"
                 tools:text="18:07"
                 tools:visibility="visible" />

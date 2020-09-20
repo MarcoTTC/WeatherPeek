@@ -15,6 +15,7 @@ import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
@@ -179,6 +180,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
         binding.weatherType.text = currentWeatherData.weatherList[0].main
+        val iconRatio = (resources.displayMetrics.density * 48).toInt()
+        Glide.with(this)
+            .load(currentWeatherData.weatherList[0].getIconUrl())
+            .override(iconRatio, iconRatio)
+            .centerInside()
+            .into(binding.weatherIcon)
         binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
         binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise*1000))
         binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset*1000))
