@@ -348,6 +348,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:transitionName="forecast_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_thermometer_mid"
@@ -361,6 +362,7 @@
                 android:layout_marginStart="8dp"
                 android:text="@string/forecast_label"
                 android:textAppearance="?attr/textAppearanceBody1"
+                android:transitionName="forecast_title"
                 app:layout_constraintBottom_toBottomOf="@id/forecast_icon"
                 app:layout_constraintStart_toEndOf="@id/forecast_icon"
                 app:layout_constraintTop_toTopOf="@id/forecast_icon" />

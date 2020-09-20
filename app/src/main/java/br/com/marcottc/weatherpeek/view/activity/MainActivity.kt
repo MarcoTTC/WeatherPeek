@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
+import android.util.Pair as AndroidPair
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,8 +51,9 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, WeatherActivity::class.java)
             val options = ActivityOptions.makeSceneTransitionAnimation(
                 this,
-                binding.forecastCard,
-                "forecast_card"
+                AndroidPair.create(binding.forecastCard, "forecast_card"),
+                AndroidPair.create(binding.forecastIcon, "forecast_icon"),
+                AndroidPair.create(binding.forecastTitle, "forecast_title")
             )
             startActivity(intent, options.toBundle())
         }
