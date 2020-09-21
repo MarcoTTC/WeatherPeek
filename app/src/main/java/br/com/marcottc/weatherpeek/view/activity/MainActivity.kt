@@ -183,26 +183,38 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestingLocationPermission() {
         val requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 weatherDataViewModel.getWeatherData()
             }
+        val permissionArray = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
 
         when {
             ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
+            ) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED-> {
                 weatherDataViewModel.getWeatherData()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) -> {
+            ) &&
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )-> {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.need_perm_location)
                 builder.setPositiveButton(R.string.btn_label_i_accept) { dialog, _ ->
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    requestPermissionLauncher.launch(permissionArray)
                     dialog.dismiss()
                 }
                 builder.setOnCancelListener {
@@ -211,7 +223,7 @@ class MainActivity : AppCompatActivity() {
                 builder.create().show()
             }
             else -> {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                requestPermissionLauncher.launch(permissionArray)
             }
         }
     }
