@@ -59,107 +59,294 @@
                 app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
                 app:tint="?attr/colorPrimary" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/hourly_forecast_recycler_view"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/hourly_forecast_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:minHeight="85dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hour_forecast_icon"
-                tools:itemCount="5"
-                tools:listitem="@layout/item_hourly_forecast" />
+                app:layout_constraintTop_toBottomOf="@id/close_icon">
+
+                <ProgressBar
+                    android:id="@+id/hourly_forecast_loading_symbol"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateTint="?attr/colorPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/hourly_forecast_reload_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/stat_notify_sync"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/hourly_forecast_reload_text"
+                    app:layout_constraintEnd_toStartOf="@id/hourly_forecast_reload_text"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/hourly_forecast_reload_text"
+                    app:tint="?attr/colorPrimary"
+                    tools:ignore="ContentDescription"
+                    tools:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/hourly_forecast_reload_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:text="@string/reload_text"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textColor="@color/primaryColor"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@id/hourly_forecast_reload_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/hourly_forecast_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_hourly_forecast"
+                    tools:visibility="visible" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
-                android:id="@+id/week_forecast_icon"
+                android:id="@+id/daily_forecast_icon_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hourly_forecast_recycler_view"
+                app:layout_constraintTop_toBottomOf="@id/hourly_forecast_layout"
                 app:srcCompat="@drawable/ic_sunny"
                 app:tint="?attr/colorPrimary"
                 tools:ignore="ContentDescription" />
 
             <TextView
-                android:id="@+id/week_forecast_title"
+                android:id="@+id/daily_forecast_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@string/this_week_label"
+                android:text="@string/this_month_label"
                 android:textAppearance="?attr/textAppearanceBody1"
-                app:layout_constraintBottom_toBottomOf="@id/week_forecast_icon"
-                app:layout_constraintStart_toEndOf="@id/week_forecast_icon"
-                app:layout_constraintTop_toTopOf="@id/week_forecast_icon" />
+                app:layout_constraintBottom_toBottomOf="@id/daily_forecast_icon_left"
+                app:layout_constraintStart_toEndOf="@id/daily_forecast_icon_left"
+                app:layout_constraintTop_toTopOf="@id/daily_forecast_icon_left" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/daily_forecast_recycler_view"
-                android:layout_width="0dp"
+            <ImageView
+                android:id="@+id/daily_forecast_icon_right"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/daily_forecast_title"
+                app:layout_constraintStart_toEndOf="@id/daily_forecast_title"
+                app:layout_constraintTop_toTopOf="@id/daily_forecast_title"
+                app:srcCompat="@drawable/ic_starry_moon"
+                app:tint="?attr/colorPrimary"
+                tools:ignore="ContentDescription" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/daily_forecast_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:minHeight="85dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/week_forecast_title"
-                tools:itemCount="5"
-                tools:listitem="@layout/item_daily_forecast" />
+                app:layout_constraintTop_toBottomOf="@id/daily_forecast_icon_left">
+
+                <ProgressBar
+                    android:id="@+id/daily_forecast_loading_symbol"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateTint="?attr/colorPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/daily_forecast_reload_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/stat_notify_sync"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/daily_forecast_reload_text"
+                    app:layout_constraintEnd_toStartOf="@id/daily_forecast_reload_text"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/daily_forecast_reload_text"
+                    app:tint="?attr/colorPrimary"
+                    tools:ignore="ContentDescription"
+                    tools:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/daily_forecast_reload_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:text="@string/reload_text"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textColor="@color/primaryColor"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@id/daily_forecast_reload_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/daily_forecast_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_daily_forecast" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
-                android:id="@+id/air_quality_icon"
+                android:id="@+id/uvi_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/daily_forecast_recycler_view"
-                app:srcCompat="@drawable/ic_wind"
+                app:layout_constraintTop_toBottomOf="@id/daily_forecast_layout"
+                app:srcCompat="@drawable/ic_eclipse"
                 app:tint="?attr/colorPrimary"
                 tools:ignore="ContentDescription" />
 
             <TextView
-                android:id="@+id/air_quality_title"
+                android:id="@+id/uvi_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="AIR QUALITY"
+                android:text="ULTRAVIOLET INDEX"
                 android:textAppearance="?attr/textAppearanceBody1"
-                app:layout_constraintBottom_toBottomOf="@id/air_quality_icon"
-                app:layout_constraintStart_toEndOf="@id/air_quality_icon"
-                app:layout_constraintTop_toTopOf="@id/air_quality_icon" />
+                app:layout_constraintBottom_toBottomOf="@id/uvi_icon"
+                app:layout_constraintStart_toEndOf="@id/uvi_icon"
+                app:layout_constraintTop_toTopOf="@id/uvi_icon" />
 
-            <TextView
-                android:id="@+id/air_quality_evaluation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="GOOD"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:textColor="@color/primaryColor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/air_quality_title" />
-
-            <TextView
-                android:id="@+id/air_quality_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/uvi_forecast_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="85dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="80"
-                android:textAppearance="?attr/textAppearanceHeadline2"
-                android:textColor="@color/primaryColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/air_quality_evaluation" />
+                app:layout_constraintTop_toBottomOf="@id/uvi_icon">
+
+                <ProgressBar
+                    android:id="@+id/uvi_forecast_loading_symbol"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateTint="?attr/colorPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/uvi_forecast_reload_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/stat_notify_sync"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/uvi_forecast_reload_text"
+                    app:layout_constraintEnd_toStartOf="@id/uvi_forecast_reload_text"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/uvi_forecast_reload_text"
+                    app:tint="?attr/colorPrimary"
+                    tools:ignore="ContentDescription"
+                    tools:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/uvi_forecast_reload_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:text="@string/reload_text"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textColor="@color/primaryColor"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@id/uvi_forecast_reload_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/uvi_evaluation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="GOOD"
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:textColor="@color/primaryColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/uvi_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="02"
+                    android:textAppearance="?attr/textAppearanceHeadline2"
+                    android:textColor="@color/primaryColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/uvi_evaluation" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

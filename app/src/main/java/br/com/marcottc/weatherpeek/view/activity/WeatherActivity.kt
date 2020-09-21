@@ -56,13 +56,49 @@ class WeatherActivity : AppCompatActivity() {
         weatherDataViewModel.viewModelState.observe(this, { currentState ->
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
-                    // TODO - LOADING
+                    binding.hourlyForecastLoadingSymbol.visibility = View.VISIBLE
+                    binding.hourlyForecastReloadIcon.visibility = View.GONE
+                    binding.hourlyForecastReloadText.visibility = View.GONE
+                    binding.hourlyForecastRecyclerView.visibility = View.GONE
+                    binding.dailyForecastLoadingSymbol.visibility = View.VISIBLE
+                    binding.dailyForecastReloadIcon.visibility = View.GONE
+                    binding.dailyForecastReloadText.visibility = View.GONE
+                    binding.dailyForecastRecyclerView.visibility = View.GONE
+                    binding.uviForecastLoadingSymbol.visibility = View.VISIBLE
+                    binding.uviForecastReloadIcon.visibility = View.GONE
+                    binding.uviForecastReloadText.visibility = View.GONE
+                    binding.uviEvaluation.visibility = View.GONE
+                    binding.uviValue.visibility = View.GONE
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
-                    // TODO - SUCCESS
+                    binding.hourlyForecastLoadingSymbol.visibility = View.GONE
+                    binding.hourlyForecastReloadIcon.visibility = View.GONE
+                    binding.hourlyForecastReloadText.visibility = View.GONE
+                    binding.hourlyForecastRecyclerView.visibility = View.VISIBLE
+                    binding.dailyForecastLoadingSymbol.visibility = View.GONE
+                    binding.dailyForecastReloadIcon.visibility = View.GONE
+                    binding.dailyForecastReloadText.visibility = View.GONE
+                    binding.dailyForecastRecyclerView.visibility = View.VISIBLE
+                    binding.uviForecastLoadingSymbol.visibility = View.GONE
+                    binding.uviForecastReloadIcon.visibility = View.GONE
+                    binding.uviForecastReloadText.visibility = View.GONE
+                    binding.uviEvaluation.visibility = View.VISIBLE
+                    binding.uviValue.visibility = View.VISIBLE
                 }
                 else -> {
-                    // TODO - FAILURE
+                    binding.hourlyForecastLoadingSymbol.visibility = View.GONE
+                    binding.hourlyForecastReloadIcon.visibility = View.VISIBLE
+                    binding.hourlyForecastReloadText.visibility = View.VISIBLE
+                    binding.hourlyForecastRecyclerView.visibility = View.GONE
+                    binding.dailyForecastLoadingSymbol.visibility = View.GONE
+                    binding.dailyForecastReloadIcon.visibility = View.VISIBLE
+                    binding.dailyForecastReloadText.visibility = View.VISIBLE
+                    binding.dailyForecastRecyclerView.visibility = View.GONE
+                    binding.uviForecastLoadingSymbol.visibility = View.GONE
+                    binding.uviForecastReloadIcon.visibility = View.VISIBLE
+                    binding.uviForecastReloadText.visibility = View.VISIBLE
+                    binding.uviEvaluation.visibility = View.GONE
+                    binding.uviValue.visibility = View.GONE
                 }
             }
         })
