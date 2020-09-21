@@ -48,7 +48,7 @@ class StartActivity : AppCompatActivity() {
                 } else {
                     val builder = MaterialAlertDialogBuilder(this)
                     builder.setTitle(R.string.permission_needed_title)
-                    builder.setMessage(R.string.fine_location_denied)
+                    builder.setMessage(R.string.location_perm_denied)
                     builder.create().show()
                 }
             }
@@ -68,7 +68,7 @@ class StartActivity : AppCompatActivity() {
             ) -> {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
-                builder.setMessage(R.string.need_fine_location)
+                builder.setMessage(R.string.need_perm_location)
                 builder.setPositiveButton(R.string.btn_label_i_accept) { dialog, _ ->
                     requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                     dialog.dismiss()

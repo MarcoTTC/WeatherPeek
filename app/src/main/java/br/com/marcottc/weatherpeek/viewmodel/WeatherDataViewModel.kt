@@ -11,11 +11,14 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.OneCallAppId
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,6 +36,10 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
     private val _viewModelState: MutableLiveData<State> = MutableLiveData()
     val viewModelState: LiveData<State>
         get() = _viewModelState
+
+    private val _mustRequestPermissionFirst: MutableLiveData<Boolean> = MutableLiveData()
+    val mustRequestPermissionFirst: LiveData<Boolean>
+        get() = _mustRequestPermissionFirst
 
     private val _requestingWeatherData: MutableLiveData<Boolean> = MutableLiveData()
     val requestingWeatherData: LiveData<Boolean>
@@ -71,6 +78,7 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
     init {
         _viewModelState.value = State.LOADING
+        _mustRequestPermissionFirst.value = false
         _requestingWeatherData.value = false
         _availableWeatherData.value = null
         _showMessage.value = ""
@@ -90,7 +98,14 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                 _viewModelState.value = State.FAILED
                 return
             }
+            if (!NetworkUtil.hasConnectivity(context)) {
+                _showMessage.value = context.resources.getString(R.string.no_internet_connectivity)
+                _requestingWeatherData.value = false
+                _viewModelState.value = State.FAILED
+                return
+            }
 
+            _mustRequestPermissionFirst.value = false
             if (ActivityCompat.checkSelfPermission(
                     context,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -119,7 +134,7 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                     )
                 }
             } else {
-                _showMessage.value = "No valid provider to obtain device location"
+                _mustRequestPermissionFirst.value = true
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
             }

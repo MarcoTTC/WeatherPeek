@@ -1,12 +1,16 @@
 package br.com.marcottc.weatherpeek.view.activity
 
+import android.Manifest
 import android.app.ActivityOptions
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
@@ -16,6 +20,7 @@ import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
         binding.swipeRefreshLayout.setOnRefreshListener {
-            weatherDataViewModel.getWeatherData()
+            requestingLocationPermission()
         }
 
         hourlyForecastAdapter = HourlyForecastAdapter()
@@ -144,6 +149,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        weatherDataViewModel.mustRequestPermissionFirst.observe(this, { mustRequestPermission ->
+            if (mustRequestPermission) {
+                val builder = MaterialAlertDialogBuilder(this)
+                builder.setTitle(R.string.permission_needed_title)
+                builder.setMessage(R.string.location_perm_denied)
+                builder.create().show()
+            }
+        })
+
         weatherDataViewModel.availableWeatherData.observe(this, { data ->
             if (data != null) {
                 updatingWeatherData(data)
@@ -164,7 +178,42 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        weatherDataViewModel.getWeatherData()
+        requestingLocationPermission()
+    }
+
+    private fun requestingLocationPermission() {
+        val requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                weatherDataViewModel.getWeatherData()
+            }
+
+        when {
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                weatherDataViewModel.getWeatherData()
+            }
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) -> {
+                val builder = MaterialAlertDialogBuilder(this)
+                builder.setTitle(R.string.permission_needed_title)
+                builder.setMessage(R.string.need_perm_location)
+                builder.setPositiveButton(R.string.btn_label_i_accept) { dialog, _ ->
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    dialog.dismiss()
+                }
+                builder.setOnCancelListener {
+                    weatherDataViewModel.getWeatherData()
+                }
+                builder.create().show()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
     }
 
     private fun updatingWeatherData(oneCallWeatherData: OneCallWeatherData) {
