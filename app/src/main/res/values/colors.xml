@@ -7,4 +7,7 @@
 
     <color name="backgroundColor">#FFA000</color>
     <color name="textOnNegative">#FFFFFF</color>
+
+    <color name="hotColor">#D32F2F</color>
+    <color name="coldColor">#303F9F</color>
 </resources>

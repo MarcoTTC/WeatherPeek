@@ -149,7 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@string/this_month_label"
+                android:text="@string/this_week_label"
                 android:textAppearance="?attr/textAppearanceBody1"
                 app:layout_constraintBottom_toBottomOf="@id/daily_forecast_icon_left"
                 app:layout_constraintStart_toEndOf="@id/daily_forecast_icon_left"
@@ -174,7 +174,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:minHeight="85dp"
+                android:minHeight="72dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/daily_forecast_icon_left">
