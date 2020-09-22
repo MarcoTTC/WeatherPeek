@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
@@ -36,6 +37,16 @@ class WeatherActivity : AppCompatActivity() {
 
         binding = ActivityWeatherLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
+        binding.swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(
+                this,
+                R.color.primaryColor
+            )
+        )
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            requestingLocationPermission()
+        }
 
         hourlyForecastAdapter = HourlyForecastAdapter()
         binding.hourlyForecastRecyclerView.adapter = hourlyForecastAdapter
@@ -118,6 +129,12 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
 
+        weatherDataViewModel.requestingWeatherData.observe(this, { isRequesting ->
+            if (!isRequesting) {
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        })
+
         weatherDataViewModel.showMessage.observe(this, { message ->
             if (message.isNotEmpty()) {
                 Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
@@ -144,20 +161,20 @@ class WeatherActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED-> {
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED-> {
                 weatherDataViewModel.getWeatherData()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) &&
-                    ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )-> {
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )-> {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.need_perm_location)

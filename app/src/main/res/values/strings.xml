@@ -11,6 +11,7 @@
     <!-- WeatherActivity -->
     <string name="btn_close_description">Click to close</string>
     <string name="this_week_label">THIS WEEK</string>
+    <string name="uvi_title">ULTRAVIOLET INDEX</string>
 
     <!-- Common text messages -->
     <string name="forecast_label">FORECAST</string>
