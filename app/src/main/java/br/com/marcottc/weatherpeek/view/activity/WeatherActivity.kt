@@ -78,8 +78,7 @@ class WeatherActivity : AppCompatActivity() {
                     binding.uviForecastLoadingSymbol.visibility = View.VISIBLE
                     binding.uviForecastReloadIcon.visibility = View.GONE
                     binding.uviForecastReloadText.visibility = View.GONE
-                    binding.uviEvaluation.visibility = View.GONE
-                    binding.uviValue.visibility = View.GONE
+                    binding.uviMeter.visibility = View.GONE
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
                     binding.hourlyForecastLoadingSymbol.visibility = View.GONE
@@ -93,8 +92,7 @@ class WeatherActivity : AppCompatActivity() {
                     binding.uviForecastLoadingSymbol.visibility = View.GONE
                     binding.uviForecastReloadIcon.visibility = View.GONE
                     binding.uviForecastReloadText.visibility = View.GONE
-                    binding.uviEvaluation.visibility = View.VISIBLE
-                    binding.uviValue.visibility = View.VISIBLE
+                    binding.uviMeter.visibility = View.VISIBLE
                 }
                 else -> {
                     binding.hourlyForecastLoadingSymbol.visibility = View.GONE
@@ -108,8 +106,7 @@ class WeatherActivity : AppCompatActivity() {
                     binding.uviForecastLoadingSymbol.visibility = View.GONE
                     binding.uviForecastReloadIcon.visibility = View.VISIBLE
                     binding.uviForecastReloadText.visibility = View.VISIBLE
-                    binding.uviEvaluation.visibility = View.GONE
-                    binding.uviValue.visibility = View.GONE
+                    binding.uviMeter.visibility = View.GONE
                 }
             }
         })
