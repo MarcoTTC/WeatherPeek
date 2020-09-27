@@ -23,11 +23,11 @@ class UviMeter : View {
     private var drawableArcRect: RectF = RectF()
     private lateinit var gradientColorsArray: IntArray
     private var gradientPositionsArray: FloatArray = floatArrayOf(
-        0F/maximumValue,
-        3F/maximumValue,
-        6F/maximumValue,
-        8F/maximumValue,
-        11F/maximumValue
+        0F / maximumValue,
+        3F / maximumValue,
+        6F / maximumValue,
+        8F / maximumValue,
+        11F / maximumValue
     )
 
     constructor(context: Context) :
@@ -51,8 +51,27 @@ class UviMeter : View {
     }
 
     private fun setup(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
-        // TODO - Must setup the view based on the context and attribute set
-        val mDisplayMetrics = context.resources.displayMetrics;
+        if (attrs != null) {
+            val attrArray = context.theme.obtainStyledAttributes(attrs, R.styleable.UviMeter, defStyleAttr, defStyleRes)
+
+            if (attrArray.hasValue(R.styleable.UviMeter_currentValue)) {
+                currentValue = attrArray.getFloat(
+                    R.styleable.UviMeter_currentValue,
+                    0F
+                )
+            }
+
+            if (attrArray.hasValue(R.styleable.UviMeter_maximumValue)) {
+                maximumValue = attrArray.getFloat(
+                    R.styleable.UviMeter_maximumValue,
+                    11F
+                )
+            }
+
+            attrArray.recycle()
+        }
+
+        val mDisplayMetrics = context.resources.displayMetrics
 
         gradientColorsArray = intArrayOf(
             ContextCompat.getColor(context, R.color.green),
@@ -62,7 +81,8 @@ class UviMeter : View {
             ContextCompat.getColor(context, R.color.violet)
         )
 
-        densityAdjustedStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, mDisplayMetrics)
+        densityAdjustedStrokeWidth =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, mDisplayMetrics)
 
         arcBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         arcBackgroundPaint.style = Paint.Style.STROKE
@@ -120,15 +140,41 @@ class UviMeter : View {
         )
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas!!.drawArc(drawableArcRect, 180F, 180F, false, arcBackgroundPaint)
-        canvas!!.drawArc(drawableArcRect, 180F, 180F * (currentValue / maximumValue), false, arcForegroundPaint)
+        canvas.drawArc(drawableArcRect, 180F, 180F, false, arcBackgroundPaint)
+        canvas.drawArc(
+            drawableArcRect,
+            180F,
+            180F * (currentValue / maximumValue),
+            false,
+            arcForegroundPaint
+        )
     }
 
     fun setCurrentUvi(value: Double) {
-        currentValue = value.toFloat()
+        currentValue = if (value < maximumValue) {
+            value.toFloat()
+        } else {
+            maximumValue
+        }
+        invalidate()
+    }
+
+    fun setMaximumUvi(value: Double) {
+        if (value < currentValue) {
+            currentValue = value.toFloat()
+        }
+        maximumValue = value.toFloat()
+        gradientPositionsArray = floatArrayOf(
+            0F / maximumValue,
+            3F / maximumValue,
+            6F / maximumValue,
+            8F / maximumValue,
+            11F / maximumValue
+        )
+
         invalidate()
     }
 }
