@@ -11,6 +11,7 @@
     <color name="hotColor">#D32F2F</color>
     <color name="coldColor">#303F9F</color>
 
+    <color name="unused_grey">#B3CCCCCC</color>
     <color name="green">#4CAF50</color>
     <color name="yellow">#FFEB3B</color>
     <color name="orange">#FF9800</color>

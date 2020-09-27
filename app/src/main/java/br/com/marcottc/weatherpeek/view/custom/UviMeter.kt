@@ -13,10 +13,11 @@ import kotlin.math.min
 
 class UviMeter : View {
 
-    private lateinit var mBackgroundPaint: Paint
+    private lateinit var arcBackgroundPaint: Paint
+    private lateinit var arcForegroundPaint: Paint
 
     private var mStrokeWidth: Float = 0F
-    private var backgroundArcRect: RectF = RectF()
+    private var drawableArcRect: RectF = RectF()
     private lateinit var gradientColorsArray: IntArray
 
     constructor(context: Context) :
@@ -53,11 +54,18 @@ class UviMeter : View {
 
         mStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, mDisplayMetrics)
 
-        mBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        mBackgroundPaint.style = Paint.Style.STROKE
-        mBackgroundPaint.strokeWidth = mStrokeWidth
-        mBackgroundPaint.strokeCap = Paint.Cap.ROUND
-        mBackgroundPaint.isAntiAlias = true
+        arcBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        arcBackgroundPaint.style = Paint.Style.STROKE
+        arcBackgroundPaint.strokeWidth = mStrokeWidth
+        arcBackgroundPaint.color = ContextCompat.getColor(context, R.color.unused_grey)
+        arcBackgroundPaint.strokeCap = Paint.Cap.ROUND
+        arcBackgroundPaint.isAntiAlias = true
+
+        arcForegroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        arcForegroundPaint.style = Paint.Style.STROKE
+        arcForegroundPaint.strokeWidth = mStrokeWidth
+        arcForegroundPaint.strokeCap = Paint.Cap.ROUND
+        arcForegroundPaint.isAntiAlias = true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -84,14 +92,14 @@ class UviMeter : View {
         val backgroundArcXCenterPos = (width / 2).toFloat()
         val backgroundArcYCenterPos = height.toFloat()
 
-        backgroundArcRect.set(
+        drawableArcRect.set(
             backgroundArcXCenterPos - backgroundArcRadius + mStrokeWidth / 2,
             mStrokeWidth / 2,
             backgroundArcXCenterPos + backgroundArcRadius - mStrokeWidth / 2,
             (backgroundArcYCenterPos * 2) - (mStrokeWidth * 2)
         )
 
-        mBackgroundPaint.shader = LinearGradient(
+        arcForegroundPaint.shader = LinearGradient(
             backgroundArcXCenterPos - backgroundArcRadius + mStrokeWidth / 2,
             0F,
             backgroundArcXCenterPos + backgroundArcRadius - mStrokeWidth / 2,
@@ -105,6 +113,7 @@ class UviMeter : View {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        canvas!!.drawArc(backgroundArcRect, 180F, 180F, false, mBackgroundPaint)
+        canvas!!.drawArc(drawableArcRect, 180F, 180F, false, arcBackgroundPaint)
+        canvas!!.drawArc(drawableArcRect, 180F, 120F, false, arcForegroundPaint)
     }
 }
