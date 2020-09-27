@@ -8,33 +8,35 @@ import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
 import br.com.marcottc.weatherpeek.R
+import kotlin.math.max
 import kotlin.math.min
 
 
 class UviMeter : View {
 
     private var backgroundArcRect: RectF = RectF()
+    private lateinit var gradientColorsArray: IntArray
 
     private var mStrokeWidth: Float = 0F
     private lateinit var mBackgroundPaint: Paint
 
     constructor(context: Context) :
-    super(context) {
+            super(context) {
         setup(context, null, 0, 0)
     }
 
     constructor(context: Context, attrs: AttributeSet?) :
-    super(context, attrs) {
+            super(context, attrs) {
         setup(context, attrs, 0, 0)
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
-    super(context, attrs, defStyleAttr) {
+            super(context, attrs, defStyleAttr) {
         setup(context, attrs, defStyleAttr, 0)
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
-    super(context, attrs, defStyleAttr, defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes) {
         setup(context, attrs, defStyleAttr, defStyleRes)
     }
 
@@ -42,31 +44,32 @@ class UviMeter : View {
         // TODO - Must setup the view based on the context and attribute set
         val mDisplayMetrics = context.resources.displayMetrics;
 
+        gradientColorsArray = intArrayOf(
+            ContextCompat.getColor(context, R.color.green),
+            ContextCompat.getColor(context, R.color.yellow),
+            ContextCompat.getColor(context, R.color.orange),
+            ContextCompat.getColor(context, R.color.red),
+            ContextCompat.getColor(context, R.color.violet)
+        )
+
         mStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, mDisplayMetrics)
 
         mBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         mBackgroundPaint.style = Paint.Style.STROKE
         mBackgroundPaint.strokeWidth = mStrokeWidth
         mBackgroundPaint.strokeCap = Paint.Cap.ROUND
-//        mBackgroundPaint.color = ContextCompat.getColor(context, R.color.primaryColor)
         mBackgroundPaint.isAntiAlias = true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        Log.v("[View name] onMeasure w", MeasureSpec.toString(widthMeasureSpec))
-        Log.v("[View name] onMeasure h", MeasureSpec.toString(heightMeasureSpec))
+        val requestedWidth = paddingLeft + paddingRight + suggestedMinimumWidth
+        val measuredWidth = resolveSizeAndState(requestedWidth, widthMeasureSpec, 0)
 
-        val requestedWidth: Int = paddingLeft + paddingRight + suggestedMinimumWidth
-        var measuredWidth: Int = resolveSize(requestedWidth, widthMeasureSpec)
-        if (measuredWidth < minimumWidth) {
-            measuredWidth = minimumWidth
-        }
-
-        val requestedHeight: Int = paddingTop + paddingBottom + suggestedMinimumHeight
-        var measuredHeight: Int = resolveSize(requestedHeight, heightMeasureSpec)
-        if (measuredHeight < minimumHeight) {
-            measuredHeight = minimumHeight
-        }
+        val requestedHeight = paddingTop + paddingBottom + max(
+            suggestedMinimumHeight,
+            measuredWidth
+        )
+        val measuredHeight = resolveSizeAndState(requestedHeight, heightMeasureSpec, 0)
 
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
@@ -86,24 +89,12 @@ class UviMeter : View {
             (backgroundArcYCenterPos * 2) - (mStrokeWidth * 2)
         )
 
-        val mGradientColor1 = ContextCompat.getColor(context, R.color.green)
-        val mGradientColor2 = ContextCompat.getColor(context, R.color.yellow)
-        val mGradientColor3 = ContextCompat.getColor(context, R.color.orange)
-        val mGradientColor4 = ContextCompat.getColor(context, R.color.red)
-        val mGradientColor5 = ContextCompat.getColor(context, R.color.violet)
-        val mGradientColors = intArrayOf(
-            mGradientColor1,
-            mGradientColor2,
-            mGradientColor3,
-            mGradientColor4,
-            mGradientColor5
-        )
         mBackgroundPaint.shader = LinearGradient(
             backgroundArcXCenterPos - backgroundArcRadius,
             0F,
             backgroundArcXCenterPos + backgroundArcRadius,
             0F,
-            mGradientColors,
+            gradientColorsArray,
             null,
             Shader.TileMode.CLAMP
         )
