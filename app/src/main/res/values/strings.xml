@@ -23,4 +23,11 @@
 
     <!-- Common button labels -->
     <string name="btn_label_i_accept">I ACCEPT</string>
+
+    <!-- Uvi meter risk labels -->
+    <string name="uvi_risk_low">LOW</string>
+    <string name="uvi_risk_moderate">MODERATE</string>
+    <string name="uvi_risk_high">HIGH</string>
+    <string name="uvi_risk_very_high">VERY HIGH</string>
+    <string name="uvi_risk_extreme">EXTREME</string>
 </resources>

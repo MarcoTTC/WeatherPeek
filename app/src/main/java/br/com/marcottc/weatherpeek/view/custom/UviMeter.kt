@@ -1,6 +1,7 @@
 package br.com.marcottc.weatherpeek.view.custom
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -25,6 +26,7 @@ class UviMeter : View {
     private lateinit var arcForegroundPaint: Paint
     private lateinit var uvRiskLabelPaint: Paint
     private lateinit var uvValueLabelPaint: Paint
+    private lateinit var appResources: Resources
 
     private var densityAdjustedStrokeWidth: Float = 0F
     private var backgroundArcRadius: Float = 0F
@@ -67,7 +69,8 @@ class UviMeter : View {
     }
 
     private fun setup(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
-        val displayMetrics = context.resources.displayMetrics
+        appResources = context.resources
+        val displayMetrics = appResources.displayMetrics
 
         if (attrs != null) {
             val attrArray = context.theme.obtainStyledAttributes(
@@ -256,19 +259,19 @@ class UviMeter : View {
     private fun buildTextStrings() {
         when {
             0 <= currentValue && currentValue < 3 -> {
-                uvRiskLabel = "LOW"
+                uvRiskLabel = appResources.getString(R.string.uvi_risk_low)
             }
             3 <= currentValue && currentValue < 6 -> {
-                uvRiskLabel = "MODERATE"
+                uvRiskLabel = appResources.getString(R.string.uvi_risk_moderate)
             }
             6 <= currentValue && currentValue < 8 -> {
-                uvRiskLabel = "HIGH"
+                uvRiskLabel = appResources.getString(R.string.uvi_risk_high)
             }
             8 <= currentValue && currentValue < 11 -> {
-                uvRiskLabel = "VERY HIGH"
+                uvRiskLabel = appResources.getString(R.string.uvi_risk_very_high)
             }
             11 <= currentValue -> {
-                uvRiskLabel = "EXTREME"
+                uvRiskLabel = appResources.getString(R.string.uvi_risk_extreme)
             }
         }
 
