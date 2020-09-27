@@ -16,14 +16,26 @@ class UviMeter : View {
         private set
     var maximumValue: Float = 11F
         private set
+    var uvRiskLabel: String = "Low"
+        private set
+    var uvValueLabel: String = "00.00"
+        private set
 
     private lateinit var arcBackgroundPaint: Paint
     private lateinit var arcForegroundPaint: Paint
+    private lateinit var uvRiskLabelPaint: Paint
+    private lateinit var uvValueLabelPaint: Paint
 
     private var densityAdjustedStrokeWidth: Float = 0F
     private var backgroundArcRadius: Float = 0F
     private var backgroundArcXCenterPos: Float = 0F
     private var backgroundArcYCenterPos: Float = 0F
+    private var uvRiskLabelXCenterPos: Float = 0F
+    private var uvRiskLabelYCenterPos: Float = 0F
+    private var uvRiskBaselineOffset: Float = 0F
+    private var uvValueLabelXCenterPos: Float = 0F
+    private var uvValueLabelYCenterPos: Float = 0F
+    private var uvValueBaselineOffset: Float = 0F
     private var drawableArcRect: RectF = RectF()
     private lateinit var gradientColorsArray: IntArray
     private var gradientPositionsArray: FloatArray = floatArrayOf(
@@ -55,7 +67,7 @@ class UviMeter : View {
     }
 
     private fun setup(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
-        val mDisplayMetrics = context.resources.displayMetrics
+        val displayMetrics = context.resources.displayMetrics
 
         if (attrs != null) {
             val attrArray = context.theme.obtainStyledAttributes(
@@ -85,13 +97,13 @@ class UviMeter : View {
                     12F
                 )
             } else {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, mDisplayMetrics)
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, displayMetrics)
             }
 
             attrArray.recycle()
         } else {
             densityAdjustedStrokeWidth =
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, mDisplayMetrics)
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, displayMetrics)
         }
 
         gradientColorsArray = intArrayOf(
@@ -114,6 +126,28 @@ class UviMeter : View {
         arcForegroundPaint.strokeWidth = densityAdjustedStrokeWidth
         arcForegroundPaint.strokeCap = Paint.Cap.ROUND
         arcForegroundPaint.isAntiAlias = true
+
+        uvRiskLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        uvRiskLabelPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            20F,
+            displayMetrics
+        )
+        uvRiskLabelPaint.letterSpacing = 0.15F
+        uvRiskLabelPaint.textAlign = Paint.Align.CENTER
+        uvRiskLabelPaint.style = Paint.Style.FILL
+        uvRiskLabelPaint.color = ContextCompat.getColor(context, R.color.primaryColor)
+
+        uvValueLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        uvValueLabelPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            48F,
+            displayMetrics
+        )
+        uvValueLabelPaint.letterSpacing = 0F
+        uvValueLabelPaint.textAlign = Paint.Align.CENTER
+        uvValueLabelPaint.style = Paint.Style.FILL
+        uvValueLabelPaint.color = ContextCompat.getColor(context, R.color.primaryColor)
 
         buildViewLayout()
     }
@@ -151,6 +185,8 @@ class UviMeter : View {
             false,
             arcForegroundPaint
         )
+        canvas.drawText(uvRiskLabel, uvRiskLabelXCenterPos, uvRiskLabelYCenterPos + uvRiskBaselineOffset, uvRiskLabelPaint)
+        canvas.drawText(uvValueLabel, uvValueLabelXCenterPos, uvValueLabelYCenterPos + uvValueBaselineOffset, uvValueLabelPaint)
     }
 
     fun setCurrentUvi(value: Double) {
@@ -159,6 +195,7 @@ class UviMeter : View {
         } else {
             maximumValue
         }
+        buildTextStrings()
         invalidate()
     }
 
@@ -192,7 +229,16 @@ class UviMeter : View {
             (backgroundArcYCenterPos * 2) - (densityAdjustedStrokeWidth * 2)
         )
 
+        uvRiskLabelXCenterPos = (width / 2).toFloat()
+        uvRiskLabelYCenterPos = (height / 2).toFloat()
+        uvRiskBaselineOffset = uvRiskLabelPaint.descent()
+
+        uvValueLabelXCenterPos = (width / 2).toFloat()
+        uvValueLabelYCenterPos = height.toFloat()
+        uvValueBaselineOffset = uvRiskLabelPaint.ascent()
+
         buildGradientShader()
+        buildTextStrings()
     }
 
     private fun buildGradientShader() {
@@ -205,5 +251,27 @@ class UviMeter : View {
             gradientPositionsArray,
             Shader.TileMode.CLAMP
         )
+    }
+
+    private fun buildTextStrings() {
+        when {
+            0 <= currentValue && currentValue < 3 -> {
+                uvRiskLabel = "LOW"
+            }
+            3 <= currentValue && currentValue < 6 -> {
+                uvRiskLabel = "MODERATE"
+            }
+            6 <= currentValue && currentValue < 8 -> {
+                uvRiskLabel = "HIGH"
+            }
+            8 <= currentValue && currentValue < 11 -> {
+                uvRiskLabel = "VERY HIGH"
+            }
+            11 <= currentValue -> {
+                uvRiskLabel = "EXTREME"
+            }
+        }
+
+        uvValueLabel = String.format("%.2f", currentValue)
     }
 }
