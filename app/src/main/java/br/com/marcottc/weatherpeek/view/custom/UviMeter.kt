@@ -1,9 +1,7 @@
 package br.com.marcottc.weatherpeek.view.custom
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -50,7 +48,7 @@ class UviMeter : View {
         mBackgroundPaint.style = Paint.Style.STROKE
         mBackgroundPaint.strokeWidth = mStrokeWidth
         mBackgroundPaint.strokeCap = Paint.Cap.ROUND
-        mBackgroundPaint.color = ContextCompat.getColor(context, R.color.primaryColor)
+//        mBackgroundPaint.color = ContextCompat.getColor(context, R.color.primaryColor)
         mBackgroundPaint.isAntiAlias = true
     }
 
@@ -86,6 +84,28 @@ class UviMeter : View {
             mStrokeWidth / 2,
             backgroundArcXCenterPos + backgroundArcRadius,
             (backgroundArcYCenterPos * 2) - (mStrokeWidth * 2)
+        )
+
+        val mGradientColor1 = ContextCompat.getColor(context, R.color.green)
+        val mGradientColor2 = ContextCompat.getColor(context, R.color.yellow)
+        val mGradientColor3 = ContextCompat.getColor(context, R.color.orange)
+        val mGradientColor4 = ContextCompat.getColor(context, R.color.red)
+        val mGradientColor5 = ContextCompat.getColor(context, R.color.violet)
+        val mGradientColors = intArrayOf(
+            mGradientColor1,
+            mGradientColor2,
+            mGradientColor3,
+            mGradientColor4,
+            mGradientColor5
+        )
+        mBackgroundPaint.shader = LinearGradient(
+            backgroundArcXCenterPos - backgroundArcRadius,
+            0F,
+            backgroundArcXCenterPos + backgroundArcRadius,
+            0F,
+            mGradientColors,
+            null,
+            Shader.TileMode.CLAMP
         )
     }
 
