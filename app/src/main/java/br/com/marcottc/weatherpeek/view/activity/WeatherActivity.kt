@@ -193,5 +193,6 @@ class WeatherActivity : AppCompatActivity() {
     private fun updatingWeatherData(oneCallWeatherData: OneCallWeatherData) {
         hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherData.hourlyDataList)
         dailyForecastAdapter.setDailyForecastDataList(oneCallWeatherData.dailyDataList)
+        binding.uviMeter.setCurrentUvi(oneCallWeatherData.dailyDataList[0].uvi)
     }
 }

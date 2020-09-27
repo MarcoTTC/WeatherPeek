@@ -13,6 +13,8 @@ import kotlin.math.min
 
 class UviMeter : View {
 
+    private var uviValue: Float = 8.0F
+
     private lateinit var arcBackgroundPaint: Paint
     private lateinit var arcForegroundPaint: Paint
 
@@ -52,7 +54,7 @@ class UviMeter : View {
             ContextCompat.getColor(context, R.color.violet)
         )
 
-        mStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, mDisplayMetrics)
+        mStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, mDisplayMetrics)
 
         arcBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         arcBackgroundPaint.style = Paint.Style.STROKE
@@ -114,6 +116,11 @@ class UviMeter : View {
         super.onDraw(canvas)
 
         canvas!!.drawArc(drawableArcRect, 180F, 180F, false, arcBackgroundPaint)
-        canvas!!.drawArc(drawableArcRect, 180F, 120F, false, arcForegroundPaint)
+        canvas!!.drawArc(drawableArcRect, 180F, (uviValue * 180F) / 12F, false, arcForegroundPaint)
+    }
+
+    fun setCurrentUvi(value: Double) {
+        uviValue = value.toFloat()
+        invalidate()
     }
 }
