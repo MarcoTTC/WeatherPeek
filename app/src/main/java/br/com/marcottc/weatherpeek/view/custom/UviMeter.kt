@@ -10,16 +10,20 @@ import br.com.marcottc.weatherpeek.R
 import kotlin.math.max
 import kotlin.math.min
 
-
 class UviMeter : View {
 
-    private var currentValue: Float = 0F
-    private var maximumValue: Float = 11F
+    var currentValue: Float = 0F
+        private set
+    var maximumValue: Float = 11F
+        private set
 
     private lateinit var arcBackgroundPaint: Paint
     private lateinit var arcForegroundPaint: Paint
 
     private var densityAdjustedStrokeWidth: Float = 0F
+    private var backgroundArcRadius: Float = 0F
+    private var backgroundArcXCenterPos: Float = 0F
+    private var backgroundArcYCenterPos: Float = 0F
     private var drawableArcRect: RectF = RectF()
     private lateinit var gradientColorsArray: IntArray
     private var gradientPositionsArray: FloatArray = floatArrayOf(
@@ -52,7 +56,12 @@ class UviMeter : View {
 
     private fun setup(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
         if (attrs != null) {
-            val attrArray = context.theme.obtainStyledAttributes(attrs, R.styleable.UviMeter, defStyleAttr, defStyleRes)
+            val attrArray = context.theme.obtainStyledAttributes(
+                attrs,
+                R.styleable.UviMeter,
+                defStyleAttr,
+                defStyleRes
+            )
 
             if (attrArray.hasValue(R.styleable.UviMeter_currentValue)) {
                 currentValue = attrArray.getFloat(
@@ -96,6 +105,8 @@ class UviMeter : View {
         arcForegroundPaint.strokeWidth = densityAdjustedStrokeWidth
         arcForegroundPaint.strokeCap = Paint.Cap.ROUND
         arcForegroundPaint.isAntiAlias = true
+
+        buildViewLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -117,27 +128,7 @@ class UviMeter : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        val backgroundArcRadius = min(width / 2, height).toFloat()
-
-        val backgroundArcXCenterPos = (width / 2).toFloat()
-        val backgroundArcYCenterPos = height.toFloat()
-
-        drawableArcRect.set(
-            backgroundArcXCenterPos - backgroundArcRadius + densityAdjustedStrokeWidth / 2,
-            densityAdjustedStrokeWidth / 2,
-            backgroundArcXCenterPos + backgroundArcRadius - densityAdjustedStrokeWidth / 2,
-            (backgroundArcYCenterPos * 2) - (densityAdjustedStrokeWidth * 2)
-        )
-
-        arcForegroundPaint.shader = LinearGradient(
-            backgroundArcXCenterPos - backgroundArcRadius + densityAdjustedStrokeWidth / 2,
-            0F,
-            backgroundArcXCenterPos + backgroundArcRadius - densityAdjustedStrokeWidth / 2,
-            0F,
-            gradientColorsArray,
-            gradientPositionsArray,
-            Shader.TileMode.CLAMP
-        )
+        buildViewLayout()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -175,6 +166,35 @@ class UviMeter : View {
             11F / maximumValue
         )
 
+        buildGradientShader()
         invalidate()
+    }
+
+    private fun buildViewLayout() {
+        backgroundArcRadius = min(width / 2, height).toFloat()
+
+        backgroundArcXCenterPos = (width / 2).toFloat()
+        backgroundArcYCenterPos = height.toFloat()
+
+        drawableArcRect.set(
+            backgroundArcXCenterPos - backgroundArcRadius + densityAdjustedStrokeWidth / 2,
+            densityAdjustedStrokeWidth / 2,
+            backgroundArcXCenterPos + backgroundArcRadius - densityAdjustedStrokeWidth / 2,
+            (backgroundArcYCenterPos * 2) - (densityAdjustedStrokeWidth * 2)
+        )
+
+        buildGradientShader()
+    }
+
+    private fun buildGradientShader() {
+        arcForegroundPaint.shader = LinearGradient(
+            backgroundArcXCenterPos - backgroundArcRadius + densityAdjustedStrokeWidth / 2,
+            0F,
+            backgroundArcXCenterPos + backgroundArcRadius - densityAdjustedStrokeWidth / 2,
+            0F,
+            gradientColorsArray,
+            gradientPositionsArray,
+            Shader.TileMode.CLAMP
+        )
     }
 }
