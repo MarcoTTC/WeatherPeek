@@ -5,9 +5,9 @@ since there are so many already available? Well, the answer is quite simple: I d
 skills with software engineering techniques, and tools. This app was made in Kotlin, for Android,
 using Retrofit2 as a library for online data recovery, using screen transition with shared elements,
 using the MVVM architecture, the newest activity permission request method with
-registerForActivityResult, view binding for code cleanup and Glide for online image retrieval and
-local image caching. I also plan to add custom views to show up my view coding skills in Android,
-as well as implementing the repository pattern for the weather data retrieved.
+registerForActivityResult, view binding for code cleanup and Glide for online image retrieval,
+local image caching and custom android views. I also plan to implement the repository pattern for
+the weather data retrieved.
 
 If you downloaded this project, and for some reason it doesn't work by itself, it is because
 you need to add an openweathermap.org app id key to the project, in the val appId of the class
