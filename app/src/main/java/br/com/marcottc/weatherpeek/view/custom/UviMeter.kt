@@ -13,14 +13,22 @@ import kotlin.math.min
 
 class UviMeter : View {
 
-    private var uviValue: Float = 8.0F
+    private var currentValue: Float = 0F
+    private var maximumValue: Float = 11F
 
     private lateinit var arcBackgroundPaint: Paint
     private lateinit var arcForegroundPaint: Paint
 
-    private var mStrokeWidth: Float = 0F
+    private var densityAdjustedStrokeWidth: Float = 0F
     private var drawableArcRect: RectF = RectF()
     private lateinit var gradientColorsArray: IntArray
+    private var gradientPositionsArray: FloatArray = floatArrayOf(
+        0F/maximumValue,
+        3F/maximumValue,
+        6F/maximumValue,
+        8F/maximumValue,
+        11F/maximumValue
+    )
 
     constructor(context: Context) :
             super(context) {
@@ -54,18 +62,18 @@ class UviMeter : View {
             ContextCompat.getColor(context, R.color.violet)
         )
 
-        mStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, mDisplayMetrics)
+        densityAdjustedStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, mDisplayMetrics)
 
         arcBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         arcBackgroundPaint.style = Paint.Style.STROKE
-        arcBackgroundPaint.strokeWidth = mStrokeWidth
+        arcBackgroundPaint.strokeWidth = densityAdjustedStrokeWidth
         arcBackgroundPaint.color = ContextCompat.getColor(context, R.color.unused_grey)
         arcBackgroundPaint.strokeCap = Paint.Cap.ROUND
         arcBackgroundPaint.isAntiAlias = true
 
         arcForegroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         arcForegroundPaint.style = Paint.Style.STROKE
-        arcForegroundPaint.strokeWidth = mStrokeWidth
+        arcForegroundPaint.strokeWidth = densityAdjustedStrokeWidth
         arcForegroundPaint.strokeCap = Paint.Cap.ROUND
         arcForegroundPaint.isAntiAlias = true
     }
@@ -95,19 +103,19 @@ class UviMeter : View {
         val backgroundArcYCenterPos = height.toFloat()
 
         drawableArcRect.set(
-            backgroundArcXCenterPos - backgroundArcRadius + mStrokeWidth / 2,
-            mStrokeWidth / 2,
-            backgroundArcXCenterPos + backgroundArcRadius - mStrokeWidth / 2,
-            (backgroundArcYCenterPos * 2) - (mStrokeWidth * 2)
+            backgroundArcXCenterPos - backgroundArcRadius + densityAdjustedStrokeWidth / 2,
+            densityAdjustedStrokeWidth / 2,
+            backgroundArcXCenterPos + backgroundArcRadius - densityAdjustedStrokeWidth / 2,
+            (backgroundArcYCenterPos * 2) - (densityAdjustedStrokeWidth * 2)
         )
 
         arcForegroundPaint.shader = LinearGradient(
-            backgroundArcXCenterPos - backgroundArcRadius + mStrokeWidth / 2,
+            backgroundArcXCenterPos - backgroundArcRadius + densityAdjustedStrokeWidth / 2,
             0F,
-            backgroundArcXCenterPos + backgroundArcRadius - mStrokeWidth / 2,
+            backgroundArcXCenterPos + backgroundArcRadius - densityAdjustedStrokeWidth / 2,
             0F,
             gradientColorsArray,
-            null,
+            gradientPositionsArray,
             Shader.TileMode.CLAMP
         )
     }
@@ -116,11 +124,11 @@ class UviMeter : View {
         super.onDraw(canvas)
 
         canvas!!.drawArc(drawableArcRect, 180F, 180F, false, arcBackgroundPaint)
-        canvas!!.drawArc(drawableArcRect, 180F, (uviValue * 180F) / 12F, false, arcForegroundPaint)
+        canvas!!.drawArc(drawableArcRect, 180F, 180F * (currentValue / maximumValue), false, arcForegroundPaint)
     }
 
     fun setCurrentUvi(value: Double) {
-        uviValue = value.toFloat()
+        currentValue = value.toFloat()
         invalidate()
     }
 }
