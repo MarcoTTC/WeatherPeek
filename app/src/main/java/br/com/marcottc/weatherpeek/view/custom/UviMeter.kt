@@ -3,7 +3,6 @@ package br.com.marcottc.weatherpeek.view.custom
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -14,11 +13,11 @@ import kotlin.math.min
 
 class UviMeter : View {
 
-    private var backgroundArcRect: RectF = RectF()
-    private lateinit var gradientColorsArray: IntArray
+    private lateinit var mBackgroundPaint: Paint
 
     private var mStrokeWidth: Float = 0F
-    private lateinit var mBackgroundPaint: Paint
+    private var backgroundArcRect: RectF = RectF()
+    private lateinit var gradientColorsArray: IntArray
 
     constructor(context: Context) :
             super(context) {
@@ -62,12 +61,15 @@ class UviMeter : View {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val requestedWidth = paddingLeft + paddingRight + suggestedMinimumWidth
+        val requestedWidth = paddingLeft + paddingRight + max(
+            suggestedMinimumWidth,
+            MeasureSpec.getSize(widthMeasureSpec)
+        )
         val measuredWidth = resolveSizeAndState(requestedWidth, widthMeasureSpec, 0)
 
         val requestedHeight = paddingTop + paddingBottom + max(
             suggestedMinimumHeight,
-            measuredWidth
+            measuredWidth / 2
         )
         val measuredHeight = resolveSizeAndState(requestedHeight, heightMeasureSpec, 0)
 
@@ -83,16 +85,16 @@ class UviMeter : View {
         val backgroundArcYCenterPos = height.toFloat()
 
         backgroundArcRect.set(
-            backgroundArcXCenterPos - backgroundArcRadius,
+            backgroundArcXCenterPos - backgroundArcRadius + mStrokeWidth / 2,
             mStrokeWidth / 2,
-            backgroundArcXCenterPos + backgroundArcRadius,
+            backgroundArcXCenterPos + backgroundArcRadius - mStrokeWidth / 2,
             (backgroundArcYCenterPos * 2) - (mStrokeWidth * 2)
         )
 
         mBackgroundPaint.shader = LinearGradient(
-            backgroundArcXCenterPos - backgroundArcRadius,
+            backgroundArcXCenterPos - backgroundArcRadius + mStrokeWidth / 2,
             0F,
-            backgroundArcXCenterPos + backgroundArcRadius,
+            backgroundArcXCenterPos + backgroundArcRadius - mStrokeWidth / 2,
             0F,
             gradientColorsArray,
             null,
