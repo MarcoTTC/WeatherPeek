@@ -55,6 +55,8 @@ class UviMeter : View {
     }
 
     private fun setup(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
+        val mDisplayMetrics = context.resources.displayMetrics
+
         if (attrs != null) {
             val attrArray = context.theme.obtainStyledAttributes(
                 attrs,
@@ -77,10 +79,20 @@ class UviMeter : View {
                 )
             }
 
-            attrArray.recycle()
-        }
+            densityAdjustedStrokeWidth = if (attrArray.hasValue(R.styleable.UviMeter_strokeWidth)) {
+                attrArray.getDimension(
+                    R.styleable.UviMeter_strokeWidth,
+                    12F
+                )
+            } else {
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, mDisplayMetrics)
+            }
 
-        val mDisplayMetrics = context.resources.displayMetrics
+            attrArray.recycle()
+        } else {
+            densityAdjustedStrokeWidth =
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, mDisplayMetrics)
+        }
 
         gradientColorsArray = intArrayOf(
             ContextCompat.getColor(context, R.color.green),
@@ -89,9 +101,6 @@ class UviMeter : View {
             ContextCompat.getColor(context, R.color.red),
             ContextCompat.getColor(context, R.color.violet)
         )
-
-        densityAdjustedStrokeWidth =
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, mDisplayMetrics)
 
         arcBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         arcBackgroundPaint.style = Paint.Style.STROKE
