@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.model.OneCallWeatherData
@@ -20,10 +21,12 @@ import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.OneCallAppId
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.lang.Exception
 
 class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
@@ -56,8 +59,6 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
     private var retrofitInstance: Retrofit
     private var oneCallService: OneCallService
     private var locationManager: LocationManager
-
-    private lateinit var requestWeatherDataCall: Call<OneCallWeatherData>
 
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
@@ -144,12 +145,9 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
     private fun recoveringWeatherData(latitude: Double, longitude: Double) {
         locationManager.removeUpdates(mLocationListener)
 
-        requestWeatherDataCall = oneCallService.getWeatherData(lat = latitude, lon = longitude)
-        requestWeatherDataCall.enqueue(object : Callback<OneCallWeatherData> {
-            override fun onResponse(
-                call: Call<OneCallWeatherData>,
-                response: Response<OneCallWeatherData>
-            ) {
+        viewModelScope.launch {
+            try {
+                val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)
                 if (response.isSuccessful) {
                     _availableWeatherData.value = response.body()
                     _viewModelState.value = State.SUCCESS
@@ -164,19 +162,11 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                 }
 
                 _requestingWeatherData.value = false
-            }
-
-            override fun onFailure(call: Call<OneCallWeatherData>, t: Throwable) {
-                Log.e(WeatherDataViewModel::class.java.canonicalName, t.message, t)
+            } catch (e: Exception) {
+                Log.e(WeatherDataViewModel::class.java.canonicalName, e.message, e)
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
             }
-        })
-    }
-
-    override fun onCleared() {
-        if (::requestWeatherDataCall.isInitialized && requestWeatherDataCall.isExecuted) {
-            requestWeatherDataCall.cancel()
         }
     }
 }
