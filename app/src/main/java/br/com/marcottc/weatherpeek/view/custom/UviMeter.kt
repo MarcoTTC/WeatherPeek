@@ -193,11 +193,11 @@ class UviMeter : View {
     }
 
     fun setCurrentUvi(value: Double) {
-        currentValue = if (value < maximumValue) {
-            value.toFloat()
-        } else {
-            maximumValue
+        if (value > maximumValue) {
+            maximumValue = value.toFloat()
         }
+        currentValue = value.toFloat()
+
         buildTextStrings()
         invalidate()
     }
