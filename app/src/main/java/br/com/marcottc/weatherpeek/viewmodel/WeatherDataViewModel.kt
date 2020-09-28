@@ -19,14 +19,11 @@ import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.OneCallAppId
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.google.gson.JsonIOException
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
-import java.lang.Exception
 
 class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
@@ -157,15 +154,27 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                         response.errorBody()!!.charStream(),
                         ErrorResponse::class.java
                     )
-                    _showMessage.value = errorResponse.message
+                    if (errorResponse != null) {
+                        _showMessage.value = errorResponse.message
+                    }
                     _viewModelState.value = State.FAILED
                 }
 
                 _requestingWeatherData.value = false
-            } catch (e: Exception) {
-                Log.e(WeatherDataViewModel::class.java.canonicalName, e.message, e)
-                _requestingWeatherData.value = false
-                _viewModelState.value = State.FAILED
+            } catch (exception: Exception) {
+                when (exception) {
+                    is JsonSyntaxException,
+                    is JsonIOException -> {
+                        Log.e(
+                            WeatherDataViewModel::class.java.canonicalName,
+                            exception.message,
+                            exception
+                        )
+                        _requestingWeatherData.value = false
+                        _viewModelState.value = State.FAILED
+                    }
+                    else -> throw exception
+                }
             }
         }
     }
