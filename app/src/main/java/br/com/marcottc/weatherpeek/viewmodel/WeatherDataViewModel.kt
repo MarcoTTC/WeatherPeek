@@ -18,7 +18,7 @@ import br.com.marcottc.weatherpeek.model.OneCallWeatherData
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.util.NetworkUtil
-import br.com.marcottc.weatherpeek.util.OneCallAppId
+import br.com.marcottc.weatherpeek.util.oneCallAppId
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
@@ -90,7 +90,7 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
         if (_requestingWeatherData.value == true) {
             _showMessage.value = "Please wait a moment..."
         } else {
-            if (OneCallAppId.appId.isEmpty()) {
+            if (oneCallAppId.isEmpty()) {
                 _showMessage.value = "Please set up an app id before building the project!"
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED

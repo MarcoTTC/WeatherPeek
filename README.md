@@ -9,9 +9,9 @@ registerForActivityResult, view binding for code cleanup and Glide for online im
 local image caching and custom android views. I also plan to implement the repository pattern for
 the weather data retrieved.
 
-If you downloaded this project, and for some reason it doesn't work by itself, it is because
-you need to add an openweathermap.org app id key to the project, in the val appId of the class
-OneCallAppId. Otherwise, this app won't retrieve any data.
+If you downloaded this project, and it doesn't work by itself out of the box, it is because
+you need to add an openweathermap.org app id key to the project, in the val oneCallAppId of
+the file OneCallAppId.kt. Otherwise, this app won't retrieve any data.
 
 It is currently licensed under MIT license, so feel free to use it as you please.
 
