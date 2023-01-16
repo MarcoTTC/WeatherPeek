@@ -1,17 +1,24 @@
 <resources>
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="android:colorBackground">@color/backgroundColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
 
-        <item name="materialCardViewStyle">@style/AppTheme.MaterialComponents.MaterialCardView</item>
+        <item name="materialCardViewStyle">@style/AppTheme.Material3.MaterialCardView</item>
+        <item name="floatingActionButtonStyle">@style/AppTheme.Material3.FloatingActionButton</item>
+
 
         <item name="android:windowActivityTransitions">true</item>
     </style>
 
-    <style name="AppTheme.MaterialComponents.MaterialCardView" parent="Widget.MaterialComponents.CardView">
+    <style name="AppTheme.Material3.MaterialCardView" parent="Widget.Material3.CardView.Elevated">
         <item name="cardCornerRadius">16dp</item>
+        <item name="cardBackgroundColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.Material3.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:backgroundTint">@color/secondaryColor</item>
     </style>
 
 </resources>
