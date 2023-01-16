@@ -1,6 +1,6 @@
 package br.com.marcottc.weatherpeek.network.service
 
-import br.com.marcottc.weatherpeek.model.OneCallWeatherData
+import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.util.oneCallAppId
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,5 +16,5 @@ interface OneCallService {
         @Query("lang") lang: String = "pt_br",
         @Query("exclude") exclude: String = "minutely",
         @Query("appid") appid: String = oneCallAppId
-    ) : Response<OneCallWeatherData>
+    ) : Response<OneCallWeatherDTO>
 }

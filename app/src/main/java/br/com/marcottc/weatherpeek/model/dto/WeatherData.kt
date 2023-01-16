@@ -1,4 +1,4 @@
-package br.com.marcottc.weatherpeek.model
+package br.com.marcottc.weatherpeek.model.dto
 
 
 data class WeatherData(

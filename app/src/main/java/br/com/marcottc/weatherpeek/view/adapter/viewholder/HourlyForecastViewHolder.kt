@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ItemHourlyForecastBinding
-import br.com.marcottc.weatherpeek.model.HourlyWeatherData
+import br.com.marcottc.weatherpeek.model.dto.HourlyWeatherData
 
 class HourlyForecastViewHolder(private var binding: ItemHourlyForecastBinding) :
     RecyclerView.ViewHolder(binding.root) {

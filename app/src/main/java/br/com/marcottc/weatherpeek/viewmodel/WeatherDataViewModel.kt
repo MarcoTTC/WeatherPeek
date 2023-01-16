@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
-import br.com.marcottc.weatherpeek.model.OneCallWeatherData
+import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.util.NetworkUtil
@@ -45,8 +45,8 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
     val requestingWeatherData: LiveData<Boolean>
         get() = _requestingWeatherData
 
-    private val _availableWeatherData: MutableLiveData<OneCallWeatherData?> = MutableLiveData()
-    val availableWeatherData: LiveData<OneCallWeatherData?>
+    private val _availableWeatherData: MutableLiveData<OneCallWeatherDTO?> = MutableLiveData()
+    val availableWeatherData: LiveData<OneCallWeatherDTO?>
         get() = _availableWeatherData
 
     private val _showMessage: MutableLiveData<String> = MutableLiveData()

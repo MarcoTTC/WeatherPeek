@@ -7,22 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
-import br.com.marcottc.weatherpeek.model.OneCallWeatherData
+import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
-import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import java.text.SimpleDateFormat
-import java.util.*
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -190,9 +186,9 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatingWeatherData(oneCallWeatherData: OneCallWeatherData) {
-        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherData.hourlyDataList)
-        dailyForecastAdapter.setDailyForecastDataList(oneCallWeatherData.dailyDataList)
-        binding.uviMeter.setCurrentUvi(oneCallWeatherData.dailyDataList[0].uvi)
+    private fun updatingWeatherData(oneCallWeatherDTO: OneCallWeatherDTO) {
+        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherDTO.hourlyDataList)
+        dailyForecastAdapter.setDailyForecastDataList(oneCallWeatherDTO.dailyDataList)
+        binding.uviMeter.setCurrentUvi(oneCallWeatherDTO.dailyDataList[0].uvi)
     }
 }

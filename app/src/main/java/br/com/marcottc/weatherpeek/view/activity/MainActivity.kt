@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
-import br.com.marcottc.weatherpeek.model.OneCallWeatherData
+import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
@@ -228,12 +228,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatingWeatherData(oneCallWeatherData: OneCallWeatherData) {
-        binding.timezoneType.text = oneCallWeatherData.timezone
+    private fun updatingWeatherData(oneCallWeatherDTO: OneCallWeatherDTO) {
+        binding.timezoneType.text = oneCallWeatherDTO.timezone
 
         val timeFormatter = SimpleDateFormat("HH:mm")
 
-        val currentWeatherData = oneCallWeatherData.current
+        val currentWeatherData = oneCallWeatherDTO.current
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt*1000))
 
         if (currentWeatherData.dt >= currentWeatherData.sunrise && currentWeatherData.dt < currentWeatherData.sunset) {
@@ -259,6 +259,6 @@ class MainActivity : AppCompatActivity() {
         binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
         binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
 
-        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherData.hourlyDataList)
+        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherDTO.hourlyDataList)
     }
 }

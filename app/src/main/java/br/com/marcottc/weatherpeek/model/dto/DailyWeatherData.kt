@@ -1,7 +1,8 @@
-package br.com.marcottc.weatherpeek.model
+package br.com.marcottc.weatherpeek.model.dto
 
 import com.google.gson.annotations.SerializedName
 
+// Day based weather data
 data class DailyWeatherData(
     var dt: Long,
     var sunrise: Long,
@@ -20,7 +21,9 @@ data class DailyWeatherData(
     var rain: Double,
     var uvi: Double
 ) {
-    constructor(dt: Long, maxTemp: Double, minTemp: Double) : this(dt, 0, 0, TempData(0.0, minTemp, maxTemp, 0.0, 0.0, 0.0),
-        FeelsLikeData(0.0, 0.0, 0.0, 0.0),0, 0, 0.0, 0, 0.0,
-        0.0, emptyList(), 0, 0.0, 0.0, 0.0)
+    constructor(dt: Long, maxTemp: Double, minTemp: Double) : this(
+        dt, 0, 0, TempData(0.0, minTemp, maxTemp, 0.0, 0.0, 0.0),
+        FeelsLikeData(0.0, 0.0, 0.0, 0.0), 0, 0, 0.0, 0, 0.0,
+        0.0, emptyList(), 0, 0.0, 0.0, 0.0
+    )
 }

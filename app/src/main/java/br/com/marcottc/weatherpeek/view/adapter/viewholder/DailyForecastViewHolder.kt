@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marcottc.weatherpeek.databinding.ItemDailyForecastBinding
-import br.com.marcottc.weatherpeek.model.DailyWeatherData
+import br.com.marcottc.weatherpeek.model.dto.DailyWeatherData
 import com.bumptech.glide.Glide
 
 class DailyForecastViewHolder(private var binding: ItemDailyForecastBinding) : RecyclerView.ViewHolder(binding.root) {

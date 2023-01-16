@@ -1,7 +1,8 @@
-package br.com.marcottc.weatherpeek.model
+package br.com.marcottc.weatherpeek.model.dto
 
 import com.google.gson.annotations.SerializedName
 
+// Hour based weather data
 data class HourlyWeatherData(
     var dt: Long,
     var temp: Double,
@@ -17,7 +18,9 @@ data class HourlyWeatherData(
     var pop: Double,
     var rain: RainData
 ) {
-    constructor(dt: Long, temp: Double) : this(dt, temp, 0.0, 0, 0,
+    constructor(dt: Long, temp: Double) : this(
+        dt, temp, 0.0, 0, 0,
         0.0, 0, 0, 0.0, 0.0, emptyList(), 0.0,
-        RainData(0.0))
+        RainData(0.0)
+    )
 }

@@ -1,14 +1,14 @@
 package br.com.marcottc.weatherpeek.model.mock
 
-import br.com.marcottc.weatherpeek.model.CurrentWeatherData
-import br.com.marcottc.weatherpeek.model.DailyWeatherData
-import br.com.marcottc.weatherpeek.model.HourlyWeatherData
-import br.com.marcottc.weatherpeek.model.OneCallWeatherData
+import br.com.marcottc.weatherpeek.model.dto.CurrentWeatherData
+import br.com.marcottc.weatherpeek.model.dto.DailyWeatherData
+import br.com.marcottc.weatherpeek.model.dto.HourlyWeatherData
+import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 
 class MockGenerator {
     companion object {
-        fun generateOneCallWeatherData(): OneCallWeatherData {
-            return OneCallWeatherData(0.0, 0.0, "America/Chicago", "-18000",
+        fun generateOneCallWeatherData(): OneCallWeatherDTO {
+            return OneCallWeatherDTO(0.0, 0.0, "America/Chicago", "-18000",
                 generateCurrentWeatherData(),
                 generateHourlyWeatherData(),
                 generateDailyWeatherData()

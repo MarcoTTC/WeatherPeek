@@ -1,8 +1,8 @@
-package br.com.marcottc.weatherpeek.model
+package br.com.marcottc.weatherpeek.model.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class OneCallWeatherData(
+data class OneCallWeatherDTO(
     var lat: Double,
     var lon: Double,
     var timezone: String,

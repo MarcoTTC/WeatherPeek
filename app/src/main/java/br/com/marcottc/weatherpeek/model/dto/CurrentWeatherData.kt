@@ -1,7 +1,8 @@
-package br.com.marcottc.weatherpeek.model
+package br.com.marcottc.weatherpeek.model.dto
 
 import com.google.gson.annotations.SerializedName
 
+// Current weather data at the service call time and location
 data class CurrentWeatherData(
     var dt: Long,
     var sunrise: Long,
@@ -18,7 +19,17 @@ data class CurrentWeatherData(
     @SerializedName("weather") var weatherList: List<WeatherData>,
     var rain: RainData
 ) {
-    constructor(dt: Long, sunrise: Long, sunset: Long, temp: Double, pressure: Int, humidity: Int, clouds: Int) :
-        this(dt, sunrise, sunset, temp, 0.0, pressure, humidity, 0.0, clouds, 0, 0.0, 0.0,
-        listOf(WeatherData(304, "Sunny", "Clear sunny", "08n")), RainData(0.0))
+    constructor(
+        dt: Long,
+        sunrise: Long,
+        sunset: Long,
+        temp: Double,
+        pressure: Int,
+        humidity: Int,
+        clouds: Int
+    ) :
+            this(
+                dt, sunrise, sunset, temp, 0.0, pressure, humidity, 0.0, clouds, 0, 0.0, 0.0,
+                listOf(WeatherData(304, "Sunny", "Clear sunny", "08n")), RainData(0.0)
+            )
 }
