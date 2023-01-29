@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -15,6 +16,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
+import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
+import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
@@ -24,6 +27,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.stream.Collectors
 import android.util.Pair as AndroidPair
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var weatherDataViewModel: WeatherDataViewModel
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
+
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +69,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent, options.toBundle())
         }
 
-        val viewModelWithApplicationContextFactory = ViewModelWithApplicationContextFactory(applicationContext)
-        weatherDataViewModel = ViewModelProvider(this, viewModelWithApplicationContextFactory).get(WeatherDataViewModel::class.java)
+        val viewModelWithApplicationContextFactory =
+            ViewModelWithApplicationContextFactory(applicationContext)
+        weatherDataViewModel = ViewModelProvider(
+            this,
+            viewModelWithApplicationContextFactory
+        ).get(WeatherDataViewModel::class.java)
 
         weatherDataViewModel.viewModelState.observe(this, { currentState ->
             when (currentState) {
@@ -178,14 +188,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                weatherDataViewModel.getWeatherData()
+            }
+
         requestingLocationPermission()
     }
 
     private fun requestingLocationPermission() {
-        val requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                weatherDataViewModel.getWeatherData()
-            }
         val permissionArray = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -196,20 +207,20 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED-> {
+                    ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED -> {
                 weatherDataViewModel.getWeatherData()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) &&
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )-> {
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) -> {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.need_perm_location)
@@ -233,31 +244,46 @@ class MainActivity : AppCompatActivity() {
 
         val timeFormatter = SimpleDateFormat("HH:mm")
 
-        val currentWeatherData = oneCallWeatherDTO.current
-        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherData.dt*1000))
+        val currentWeatherCache = CurrentWeatherCache(oneCallWeatherDTO.current)
+        val weatherListCache = oneCallWeatherDTO.current.weatherList.stream().map { data ->
+            WeatherCache(data)
+        }.collect(Collectors.toList())
+        binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
 
-        if (currentWeatherData.dt >= currentWeatherData.sunrise && currentWeatherData.dt < currentWeatherData.sunset) {
-            binding.dayNightIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_sunny))
-            binding.dayNightIcon.contentDescription = resources.getString(R.string.icon_description_day)
+        if (currentWeatherCache.dt >= currentWeatherCache.sunrise && currentWeatherCache.dt < currentWeatherCache.sunset) {
+            binding.dayNightIcon.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_sunny
+                )
+            )
+            binding.dayNightIcon.contentDescription =
+                resources.getString(R.string.icon_description_day)
         } else {
-            binding.dayNightIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_starry_moon))
-            binding.dayNightIcon.contentDescription = resources.getString(R.string.icon_description_night)
+            binding.dayNightIcon.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_starry_moon
+                )
+            )
+            binding.dayNightIcon.contentDescription =
+                resources.getString(R.string.icon_description_night)
         }
 
-        binding.temperatureValue.text = String.format("%.0f°c", currentWeatherData.temp)
-        binding.weatherType.text = currentWeatherData.weatherList[0].main
+        binding.temperatureValue.text = String.format("%.0f°c", currentWeatherCache.temp)
+        binding.weatherType.text = weatherListCache[0].main
         val iconRatio = (resources.displayMetrics.density * 48).toInt()
         Glide.with(this)
-            .load(currentWeatherData.weatherList[0].getIconUrl())
+            .load(weatherListCache[0].getIconUrl())
             .override(iconRatio, iconRatio)
             .centerInside()
             .into(binding.weatherIcon)
-        binding.weatherIcon.contentDescription = currentWeatherData.weatherList[0].description
-        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherData.sunrise*1000))
-        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherData.sunset*1000))
-        binding.pressureValue.text = String.format("%d hPa", currentWeatherData.pressure)
-        binding.humidityValue.text = String.format("%d %%", currentWeatherData.humidity)
-        binding.cloudinessValue.text = String.format("%d %%", currentWeatherData.clouds)
+        binding.weatherIcon.contentDescription = weatherListCache[0].description
+        binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherCache.sunrise * 1000))
+        binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherCache.sunset * 1000))
+        binding.pressureValue.text = String.format("%d hPa", currentWeatherCache.pressure)
+        binding.humidityValue.text = String.format("%d %%", currentWeatherCache.humidity)
+        binding.cloudinessValue.text = String.format("%d %%", currentWeatherCache.clouds)
 
         hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherDTO.hourlyDataList)
     }
