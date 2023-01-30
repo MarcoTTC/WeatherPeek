@@ -14,7 +14,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
-import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
+import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
+import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
+import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
+import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.util.NetworkUtil
@@ -24,6 +27,7 @@ import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
+import java.util.stream.Collectors
 
 class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
@@ -45,9 +49,27 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
     val requestingWeatherData: LiveData<Boolean>
         get() = _requestingWeatherData
 
-    private val _availableWeatherData: MutableLiveData<OneCallWeatherDTO?> = MutableLiveData()
-    val availableWeatherData: LiveData<OneCallWeatherDTO?>
-        get() = _availableWeatherData
+    private val _currentTimezoneType: MutableLiveData<String?> = MutableLiveData()
+    val currentTimezoneType: LiveData<String?>
+        get() = _currentTimezoneType
+
+    private val _currentWeatherCache: MutableLiveData<CurrentWeatherCache?> = MutableLiveData()
+    val currentWeatherCache: LiveData<CurrentWeatherCache?>
+        get() = _currentWeatherCache
+
+    private val _weatherListCache: MutableLiveData<List<WeatherCache>?> = MutableLiveData()
+    val weatherListCache: LiveData<List<WeatherCache>?>
+        get() = _weatherListCache
+
+    private val _hourlyWeatherListCache: MutableLiveData<List<HourlyWeatherCache>?> =
+        MutableLiveData()
+    val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>?>
+        get() = _hourlyWeatherListCache
+
+    private val _dailyWeatherListCache: MutableLiveData<List<DailyWeatherCache>?> =
+        MutableLiveData()
+    val dailyWeatherListCache: LiveData<List<DailyWeatherCache>?>
+        get() = _dailyWeatherListCache
 
     private val _showMessage: MutableLiveData<String> = MutableLiveData()
     val showMessage: LiveData<String>
@@ -78,7 +100,10 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
         _viewModelState.value = State.LOADING
         _mustRequestPermissionFirst.value = false
         _requestingWeatherData.value = false
-        _availableWeatherData.value = null
+        _currentWeatherCache.value = null
+        _weatherListCache.value = null
+        _hourlyWeatherListCache.value = null
+        _dailyWeatherListCache.value = null
         _showMessage.value = ""
 
         retrofitInstance = RetrofitClientInstance.getRetrofitInstance()
@@ -146,8 +171,29 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
             try {
                 val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)
                 if (response.isSuccessful) {
-                    _availableWeatherData.value = response.body()
-                    _viewModelState.value = State.SUCCESS
+                    val availableWeatherData = response.body()
+                    availableWeatherData?.let {
+                        _currentTimezoneType.value = availableWeatherData.timezone
+                        _currentWeatherCache.value = CurrentWeatherCache(
+                            availableWeatherData.current,
+                            availableWeatherData.timezone
+                        )
+                        _weatherListCache.value =
+                            availableWeatherData.current.weatherList.stream().map { data ->
+                                WeatherCache(data)
+                            }.collect(Collectors.toList())
+                        _hourlyWeatherListCache.value =
+                            availableWeatherData.hourlyDataList.stream().map { data ->
+                                HourlyWeatherCache(data)
+                            }.collect(Collectors.toList())
+                        _dailyWeatherListCache.value =
+                            availableWeatherData.dailyDataList.stream().map { data ->
+                                DailyWeatherCache(data)
+                            }.collect(Collectors.toList())
+                        _viewModelState.value = State.SUCCESS
+                    } ?: run {
+                        _viewModelState.value = State.FAILED
+                    }
                 } else {
                     val gson = Gson()
                     val errorResponse = gson.fromJson(

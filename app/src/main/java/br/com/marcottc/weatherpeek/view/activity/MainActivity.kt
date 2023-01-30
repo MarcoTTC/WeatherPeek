@@ -19,7 +19,6 @@ import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
-import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
@@ -28,7 +27,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.stream.Collectors
 import android.util.Pair as AndroidPair
 
 class MainActivity : AppCompatActivity() {
@@ -169,9 +167,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.availableWeatherData.observe(this) { data ->
+        weatherDataViewModel.currentTimezoneType.observe(this) { timezone ->
+            if (timezone != null) {
+                binding.timezoneType.text = timezone
+            }
+        }
+
+        weatherDataViewModel.currentWeatherCache.observe(this) { data ->
             if (data != null) {
-                updatingWeatherData(data)
+                updatingCurrentWeather(data)
+            }
+        }
+
+        weatherDataViewModel.weatherListCache.observe(this) { data ->
+            if (data != null) {
+                updatingWeatherList(data)
+            }
+        }
+
+        weatherDataViewModel.hourlyWeatherListCache.observe(this) { data ->
+            if (data != null) {
+                updatingHourlyWeatherList(data)
             }
         }
 
@@ -240,19 +256,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatingWeatherData(oneCallWeatherDTO: OneCallWeatherDTO) {
-        binding.timezoneType.text = oneCallWeatherDTO.timezone
-
+    private fun updatingCurrentWeather(currentWeatherCache: CurrentWeatherCache) {
         val timeFormatter = SimpleDateFormat("HH:mm")
-
-        // Mapping DTO objects into cache objects
-        val currentWeatherCache = CurrentWeatherCache(oneCallWeatherDTO.current)
-        val weatherListCache = oneCallWeatherDTO.current.weatherList.stream().map { data ->
-            WeatherCache(data)
-        }.collect(Collectors.toList())
-        val hourlyWeatherCacheList = oneCallWeatherDTO.hourlyDataList.stream().map { data ->
-            HourlyWeatherCache(data)
-        }.collect(Collectors.toList())
 
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
 
@@ -277,20 +282,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.temperatureValue.text = String.format("%.0f°c", currentWeatherCache.temp)
-        binding.weatherType.text = weatherListCache[0].main
-        val iconRatio = (resources.displayMetrics.density * 48).toInt()
-        Glide.with(this)
-            .load(weatherListCache[0].getIconUrl())
-            .override(iconRatio, iconRatio)
-            .centerInside()
-            .into(binding.weatherIcon)
-        binding.weatherIcon.contentDescription = weatherListCache[0].description
+
         binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherCache.sunrise * 1000))
         binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherCache.sunset * 1000))
         binding.pressureValue.text = String.format("%d hPa", currentWeatherCache.pressure)
         binding.humidityValue.text = String.format("%d %%", currentWeatherCache.humidity)
         binding.cloudinessValue.text = String.format("%d %%", currentWeatherCache.clouds)
+    }
 
-        hourlyForecastAdapter.setHourlyForecastDataList(hourlyWeatherCacheList)
+    private fun updatingWeatherList(weatherList: List<WeatherCache>) {
+        binding.weatherType.text = weatherList[0].main
+
+        val iconRatio = (resources.displayMetrics.density * 48).toInt()
+        Glide.with(this)
+            .load(weatherList[0].getIconUrl())
+            .override(iconRatio, iconRatio)
+            .centerInside()
+            .into(binding.weatherIcon)
+
+        binding.weatherIcon.contentDescription = weatherList[0].description
+    }
+
+    private fun updatingHourlyWeatherList(hourlyWeatherList: List<HourlyWeatherCache>) {
+        hourlyForecastAdapter.setHourlyForecastDataList(hourlyWeatherList)
     }
 }

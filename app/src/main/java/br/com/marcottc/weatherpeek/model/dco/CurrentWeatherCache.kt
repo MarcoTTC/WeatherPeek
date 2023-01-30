@@ -10,9 +10,9 @@ data class CurrentWeatherCache(
     var temp: Double,
     var pressure: Int,
     var humidity: Int,
-    var clouds: Int,
+    var clouds: Int
 ) {
-    constructor(data: CurrentWeatherData) :
+    constructor(data: CurrentWeatherData, timezone: String) :
             this(
                 data.dt,
                 data.sunrise,

@@ -14,14 +14,12 @@ import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
-import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import java.util.stream.Collectors
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -119,9 +117,15 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.availableWeatherData.observe(this) { data ->
+        weatherDataViewModel.hourlyWeatherListCache.observe(this) { data ->
             if (data != null) {
-                updatingWeatherData(data)
+                updatingHourlyWeatherList(data)
+            }
+        }
+
+        weatherDataViewModel.dailyWeatherListCache.observe(this) { data ->
+            if (data != null) {
+                updatingDailyWeatherList(data)
             }
         }
 
@@ -157,20 +161,20 @@ class WeatherActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED-> {
+                    ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED -> {
                 weatherDataViewModel.getWeatherData()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) &&
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )-> {
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) -> {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.need_perm_location)
@@ -189,17 +193,12 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatingWeatherData(oneCallWeatherDTO: OneCallWeatherDTO) {
-        // Mapping DTO objects into cache objects
-        val hourlyWeatherCacheList = oneCallWeatherDTO.hourlyDataList.stream().map { data ->
-            HourlyWeatherCache(data)
-        }.collect(Collectors.toList())
-        val dailyWeatherCacheList = oneCallWeatherDTO.dailyDataList.stream().map { data ->
-            DailyWeatherCache(data)
-        }.collect(Collectors.toList())
+    private fun updatingHourlyWeatherList(hourlyWeatherList: List<HourlyWeatherCache>) {
+        hourlyForecastAdapter.setHourlyForecastDataList(hourlyWeatherList)
+    }
 
-        hourlyForecastAdapter.setHourlyForecastDataList(hourlyWeatherCacheList)
-        dailyForecastAdapter.setDailyForecastDataList(dailyWeatherCacheList)
-        binding.uviMeter.setCurrentUvi(dailyWeatherCacheList[0].uvi)
+    private fun updatingDailyWeatherList(dailyWeatherList: List<DailyWeatherCache>) {
+        dailyForecastAdapter.setDailyForecastDataList(dailyWeatherList)
+        binding.uviMeter.setCurrentUvi(dailyWeatherList[0].uvi)
     }
 }
