@@ -2,12 +2,13 @@ package br.com.marcottc.weatherpeek.view.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dto.HourlyWeatherData
 import br.com.marcottc.weatherpeek.view.adapter.viewholder.HourlyForecastViewHolder
 
 class HourlyForecastAdapter : RecyclerView.Adapter<HourlyForecastViewHolder>() {
 
-    private var hourlyForecastDataList: List<HourlyWeatherData>? = null
+    private var hourlyForecastDataList: List<HourlyWeatherCache>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
         return HourlyForecastViewHolder.inflate(parent)
@@ -25,7 +26,7 @@ class HourlyForecastAdapter : RecyclerView.Adapter<HourlyForecastViewHolder>() {
         }
     }
 
-    fun setHourlyForecastDataList(list: List<HourlyWeatherData>?) {
+    fun setHourlyForecastDataList(list: List<HourlyWeatherCache>?) {
         hourlyForecastDataList = list
         notifyDataSetChanged()
     }

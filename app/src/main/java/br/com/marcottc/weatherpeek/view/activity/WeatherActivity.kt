@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
+import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
+import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
@@ -19,6 +21,7 @@ import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import java.util.stream.Collectors
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -60,7 +63,7 @@ class WeatherActivity : AppCompatActivity() {
             WeatherDataViewModel::class.java
         )
 
-        weatherDataViewModel.viewModelState.observe(this, { currentState ->
+        weatherDataViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
                     binding.hourlyForecastLoadingSymbol.visibility = View.VISIBLE
@@ -105,36 +108,36 @@ class WeatherActivity : AppCompatActivity() {
                     binding.uviMeter.visibility = View.GONE
                 }
             }
-        })
+        }
 
-        weatherDataViewModel.mustRequestPermissionFirst.observe(this, { mustRequestPermission ->
+        weatherDataViewModel.mustRequestPermissionFirst.observe(this) { mustRequestPermission ->
             if (mustRequestPermission) {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.location_perm_denied)
                 builder.create().show()
             }
-        })
+        }
 
-        weatherDataViewModel.availableWeatherData.observe(this, { data ->
+        weatherDataViewModel.availableWeatherData.observe(this) { data ->
             if (data != null) {
                 updatingWeatherData(data)
             }
-        })
+        }
 
-        weatherDataViewModel.requestingWeatherData.observe(this, { isRequesting ->
+        weatherDataViewModel.requestingWeatherData.observe(this) { isRequesting ->
             if (!isRequesting) {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
-        })
+        }
 
-        weatherDataViewModel.showMessage.observe(this, { message ->
+        weatherDataViewModel.showMessage.observe(this) { message ->
             if (message.isNotEmpty()) {
                 Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
                     .setAnchorView(R.id.fab)
                     .show()
             }
-        })
+        }
 
         requestingLocationPermission()
     }
@@ -187,8 +190,16 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun updatingWeatherData(oneCallWeatherDTO: OneCallWeatherDTO) {
-        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherDTO.hourlyDataList)
-        dailyForecastAdapter.setDailyForecastDataList(oneCallWeatherDTO.dailyDataList)
-        binding.uviMeter.setCurrentUvi(oneCallWeatherDTO.dailyDataList[0].uvi)
+        // Mapping DTO objects into cache objects
+        val hourlyWeatherCacheList = oneCallWeatherDTO.hourlyDataList.stream().map { data ->
+            HourlyWeatherCache(data)
+        }.collect(Collectors.toList())
+        val dailyWeatherCacheList = oneCallWeatherDTO.dailyDataList.stream().map { data ->
+            DailyWeatherCache(data)
+        }.collect(Collectors.toList())
+
+        hourlyForecastAdapter.setHourlyForecastDataList(hourlyWeatherCacheList)
+        dailyForecastAdapter.setDailyForecastDataList(dailyWeatherCacheList)
+        binding.uviMeter.setCurrentUvi(dailyWeatherCacheList[0].uvi)
     }
 }

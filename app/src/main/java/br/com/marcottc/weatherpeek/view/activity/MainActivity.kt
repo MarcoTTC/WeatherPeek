@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
+import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
@@ -76,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             viewModelWithApplicationContextFactory
         ).get(WeatherDataViewModel::class.java)
 
-        weatherDataViewModel.viewModelState.observe(this, { currentState ->
+        weatherDataViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
                     binding.loadingSymbol.visibility = View.VISIBLE
@@ -157,36 +158,36 @@ class MainActivity : AppCompatActivity() {
                     binding.fab.visibility = View.VISIBLE
                 }
             }
-        })
+        }
 
-        weatherDataViewModel.mustRequestPermissionFirst.observe(this, { mustRequestPermission ->
+        weatherDataViewModel.mustRequestPermissionFirst.observe(this) { mustRequestPermission ->
             if (mustRequestPermission) {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.location_perm_denied)
                 builder.create().show()
             }
-        })
+        }
 
-        weatherDataViewModel.availableWeatherData.observe(this, { data ->
+        weatherDataViewModel.availableWeatherData.observe(this) { data ->
             if (data != null) {
                 updatingWeatherData(data)
             }
-        })
+        }
 
-        weatherDataViewModel.requestingWeatherData.observe(this, { isRequesting ->
+        weatherDataViewModel.requestingWeatherData.observe(this) { isRequesting ->
             if (!isRequesting) {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
-        })
+        }
 
-        weatherDataViewModel.showMessage.observe(this, { message ->
+        weatherDataViewModel.showMessage.observe(this) { message ->
             if (message.isNotEmpty()) {
                 Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
                     .setAnchorView(R.id.fab)
                     .show()
             }
-        })
+        }
 
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -244,10 +245,15 @@ class MainActivity : AppCompatActivity() {
 
         val timeFormatter = SimpleDateFormat("HH:mm")
 
+        // Mapping DTO objects into cache objects
         val currentWeatherCache = CurrentWeatherCache(oneCallWeatherDTO.current)
         val weatherListCache = oneCallWeatherDTO.current.weatherList.stream().map { data ->
             WeatherCache(data)
         }.collect(Collectors.toList())
+        val hourlyWeatherCacheList = oneCallWeatherDTO.hourlyDataList.stream().map { data ->
+            HourlyWeatherCache(data)
+        }.collect(Collectors.toList())
+
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
 
         if (currentWeatherCache.dt >= currentWeatherCache.sunrise && currentWeatherCache.dt < currentWeatherCache.sunset) {
@@ -285,6 +291,6 @@ class MainActivity : AppCompatActivity() {
         binding.humidityValue.text = String.format("%d %%", currentWeatherCache.humidity)
         binding.cloudinessValue.text = String.format("%d %%", currentWeatherCache.clouds)
 
-        hourlyForecastAdapter.setHourlyForecastDataList(oneCallWeatherDTO.hourlyDataList)
+        hourlyForecastAdapter.setHourlyForecastDataList(hourlyWeatherCacheList)
     }
 }

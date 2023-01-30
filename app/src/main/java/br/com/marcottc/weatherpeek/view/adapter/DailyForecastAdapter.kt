@@ -2,12 +2,12 @@ package br.com.marcottc.weatherpeek.view.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import br.com.marcottc.weatherpeek.model.dto.DailyWeatherData
+import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.view.adapter.viewholder.DailyForecastViewHolder
 
 class DailyForecastAdapter : RecyclerView.Adapter<DailyForecastViewHolder>() {
 
-    private var dailyForecastDataList: List<DailyWeatherData>? = null
+    private var dailyForecastDataList: List<DailyWeatherCache>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyForecastViewHolder {
         return DailyForecastViewHolder.inflate(parent)
@@ -25,7 +25,7 @@ class DailyForecastAdapter : RecyclerView.Adapter<DailyForecastViewHolder>() {
         }
     }
 
-    fun setDailyForecastDataList(list: List<DailyWeatherData>?) {
+    fun setDailyForecastDataList(list: List<DailyWeatherCache>?) {
         dailyForecastDataList = list
         notifyDataSetChanged()
     }
