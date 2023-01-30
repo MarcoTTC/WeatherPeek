@@ -1,6 +1,7 @@
 package br.com.marcottc.weatherpeek.viewmodel
 
 import android.Manifest
+import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -8,9 +9,9 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import java.util.stream.Collectors
 
-class WeatherDataViewModel(private val context: Context) : ViewModel() {
+class WeatherDataViewModel(private val weatherApplication: Application) : AndroidViewModel(weatherApplication) {
 
     enum class State {
         LOADING,
@@ -108,7 +109,7 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
         retrofitInstance = RetrofitClientInstance.getRetrofitInstance()
         oneCallService = retrofitInstance.create(OneCallService::class.java)
-        locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
     fun getWeatherData() {
@@ -121,8 +122,8 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
                 _viewModelState.value = State.FAILED
                 return
             }
-            if (!NetworkUtil.hasConnectivity(context)) {
-                _showMessage.value = context.resources.getString(R.string.no_internet_connectivity)
+            if (!NetworkUtil.hasConnectivity(weatherApplication)) {
+                _showMessage.value = weatherApplication.resources.getString(R.string.no_internet_connectivity)
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
                 return
@@ -130,11 +131,11 @@ class WeatherDataViewModel(private val context: Context) : ViewModel() {
 
             _mustRequestPermissionFirst.value = false
             if (ActivityCompat.checkSelfPermission(
-                    context,
+                    weatherApplication,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(
-                    context,
+                    weatherApplication,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {

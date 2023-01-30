@@ -9,11 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
@@ -21,7 +21,6 @@ import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
-import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -32,7 +31,7 @@ import android.util.Pair as AndroidPair
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainLayoutBinding
-    private lateinit var weatherDataViewModel: WeatherDataViewModel
+    private val weatherDataViewModel: WeatherDataViewModel by viewModels()
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 
@@ -67,13 +66,6 @@ class MainActivity : AppCompatActivity() {
             )
             startActivity(intent, options.toBundle())
         }
-
-        val viewModelWithApplicationContextFactory =
-            ViewModelWithApplicationContextFactory(applicationContext)
-        weatherDataViewModel = ViewModelProvider(
-            this,
-            viewModelWithApplicationContextFactory
-        ).get(WeatherDataViewModel::class.java)
 
         weatherDataViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {

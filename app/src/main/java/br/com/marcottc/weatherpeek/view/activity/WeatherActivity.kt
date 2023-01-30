@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
@@ -17,14 +17,13 @@ import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
-import br.com.marcottc.weatherpeek.viewmodel.factory.ViewModelWithApplicationContextFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWeatherLayoutBinding
-    private lateinit var weatherDataViewModel: WeatherDataViewModel
+    private val weatherDataViewModel: WeatherDataViewModel by viewModels()
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyForecastAdapter
@@ -54,12 +53,6 @@ class WeatherActivity : AppCompatActivity() {
         binding.closeIcon.setOnClickListener {
             onBackPressed()
         }
-
-        val viewModelWithApplicationContextFactory =
-            ViewModelWithApplicationContextFactory(applicationContext)
-        weatherDataViewModel = ViewModelProvider(this, viewModelWithApplicationContextFactory).get(
-            WeatherDataViewModel::class.java
-        )
 
         weatherDataViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {
