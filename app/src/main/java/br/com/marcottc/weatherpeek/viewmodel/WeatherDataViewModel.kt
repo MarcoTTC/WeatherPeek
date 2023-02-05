@@ -32,7 +32,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import java.util.stream.Collectors
 
-class WeatherDataViewModel(private val weatherApplication: Application) : AndroidViewModel(weatherApplication) {
+class WeatherDataViewModel(private val weatherApplication: Application) :
+    AndroidViewModel(weatherApplication) {
 
     enum class State {
         LOADING,
@@ -112,7 +113,8 @@ class WeatherDataViewModel(private val weatherApplication: Application) : Androi
 
         retrofitInstance = RetrofitClientInstance.getRetrofitInstance()
         oneCallService = retrofitInstance.create(OneCallService::class.java)
-        locationManager = weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         database = RoomDatabaseInstance.getRoomInstance(weatherApplication)
     }
 
@@ -127,7 +129,8 @@ class WeatherDataViewModel(private val weatherApplication: Application) : Androi
                 return
             }
             if (!NetworkUtil.hasConnectivity(weatherApplication)) {
-                _showMessage.value = weatherApplication.resources.getString(R.string.no_internet_connectivity)
+                _showMessage.value =
+                    weatherApplication.resources.getString(R.string.no_internet_connectivity)
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
                 return
@@ -178,23 +181,40 @@ class WeatherDataViewModel(private val weatherApplication: Application) : Androi
                 if (response.isSuccessful) {
                     val availableWeatherData = response.body()
                     availableWeatherData?.let {
+                        val weatherCacheDao = database.getWeatherCacheDao()
+                        val currentWeatherCacheDao = database.getCurrentWeatherDao()
+                        val hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
+                        val dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
+
                         _currentTimezoneType.value = availableWeatherData.timezone
-                        _currentWeatherCache.value = CurrentWeatherCache(
+                        val currentWeather = CurrentWeatherCache(
                             availableWeatherData.current,
                             availableWeatherData.timezone
                         )
-                        _weatherListCache.value =
+                        currentWeatherCacheDao.insert(currentWeather)
+                        _currentWeatherCache.value = currentWeather
+
+                        val weatherList =
                             availableWeatherData.current.weatherList.stream().map { data ->
                                 WeatherCache(data)
                             }.collect(Collectors.toList())
-                        _hourlyWeatherListCache.value =
+                        weatherCacheDao.insertAll(*weatherList.toTypedArray())
+                        _weatherListCache.value = weatherList
+
+                        val hourlyWeatherList =
                             availableWeatherData.hourlyDataList.stream().map { data ->
                                 HourlyWeatherCache(data)
                             }.collect(Collectors.toList())
-                        _dailyWeatherListCache.value =
+                        hourlyWeatherCacheDao.insertAll(*hourlyWeatherList.toTypedArray())
+                        _hourlyWeatherListCache.value = hourlyWeatherList
+
+                        val dailyWeatherList =
                             availableWeatherData.dailyDataList.stream().map { data ->
                                 DailyWeatherCache(data)
                             }.collect(Collectors.toList())
+                        dailyWeatherCacheDao.insertAll(*dailyWeatherList.toTypedArray())
+                        _dailyWeatherListCache.value = dailyWeatherList
+
                         _viewModelState.value = State.SUCCESS
                     } ?: run {
                         _viewModelState.value = State.FAILED
