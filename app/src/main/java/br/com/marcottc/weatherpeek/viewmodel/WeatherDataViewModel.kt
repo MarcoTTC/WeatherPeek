@@ -19,6 +19,7 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.model.room.*
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.oneCallAppId
 import com.google.gson.Gson
@@ -26,7 +27,6 @@ import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
-import java.util.stream.Collectors
 
 class WeatherDataViewModel(private val weatherApplication: Application) :
     AndroidViewModel(weatherApplication) {
@@ -50,23 +50,19 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         get() = _requestingWeatherData
 
     val currentWeatherCache: LiveData<CurrentWeatherCache?> = liveData {
-        val currentWeather = currentWeatherCacheDao.get()
-        emit(currentWeather)
+        emitSource(weatherPeekRepository.currentWeatherCache)
     }
 
     val weatherListCache: LiveData<List<WeatherCache>?> = liveData {
-        val weather = weatherCacheDao.getAll()
-        emit(weather)
+        emitSource(weatherPeekRepository.weatherListCache)
     }
 
     val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>?> = liveData {
-        val hourlyWeatherCache = hourlyWeatherCacheDao.getAll()
-        emit(hourlyWeatherCache)
+        emitSource(weatherPeekRepository.hourlyWeatherListCache)
     }
 
     val dailyWeatherListCache: LiveData<List<DailyWeatherCache>?> = liveData {
-        val dailyWeatherCache = dailyWeatherCacheDao.getAll()
-        emit(dailyWeatherCache)
+        emitSource(weatherPeekRepository.dailyWeatherListCache)
     }
 
     private val _showMessage: MutableLiveData<String> = MutableLiveData()
@@ -81,6 +77,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     private var currentWeatherCacheDao: CurrentWeatherDao
     private var hourlyWeatherCacheDao: HourlyWeatherCacheDao
     private var dailyWeatherCacheDao: DailyWeatherCacheDao
+    private var weatherPeekRepository: WeatherPeekRepository
 
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
@@ -114,6 +111,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         currentWeatherCacheDao = database.getCurrentWeatherDao()
         hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
         dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
+        weatherPeekRepository = WeatherPeekRepository(weatherApplication)
     }
 
     fun getWeatherData() {
@@ -126,46 +124,54 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
                 _viewModelState.value = State.FAILED
                 return
             }
-            if (!NetworkUtil.hasConnectivity(weatherApplication)) {
-                _showMessage.value =
-                    weatherApplication.resources.getString(R.string.no_internet_connectivity)
-                _requestingWeatherData.value = false
-                _viewModelState.value = State.FAILED
-                return
-            }
 
-            _mustRequestPermissionFirst.value = false
-            if (ActivityCompat.checkSelfPermission(
-                    weatherApplication,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(
-                    weatherApplication,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                _requestingWeatherData.value = true
-                _viewModelState.value = State.LOADING
+            if (weatherPeekRepository.databaseRefreshRequired()) {
+                if (!NetworkUtil.hasConnectivity(weatherApplication)) {
+                    _showMessage.value =
+                        weatherApplication.resources.getString(R.string.no_internet_connectivity)
+                    _requestingWeatherData.value = false
+                    _viewModelState.value = State.FAILED
+                    return
+                }
 
-                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        1000,
-                        0.0F,
-                        mLocationListener
-                    )
+                _mustRequestPermissionFirst.value = false
+                if (ActivityCompat.checkSelfPermission(
+                        weatherApplication,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(
+                        weatherApplication,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    _requestingWeatherData.value = true
+                    _viewModelState.value = State.LOADING
+
+                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            1000,
+                            0.0F,
+                            mLocationListener
+                        )
+                    } else {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            1000,
+                            0.0F,
+                            mLocationListener
+                        )
+                    }
                 } else {
-                    locationManager.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER,
-                        1000,
-                        0.0F,
-                        mLocationListener
-                    )
+                    _mustRequestPermissionFirst.value = true
+                    _requestingWeatherData.value = false
+                    _viewModelState.value = State.FAILED
                 }
             } else {
-                _mustRequestPermissionFirst.value = true
+                weatherPeekRepository.retrieveLocalCache()
+                _showMessage.value = "Retrieved local cached data"
                 _requestingWeatherData.value = false
-                _viewModelState.value = State.FAILED
+                _viewModelState.value = State.SUCCESS
             }
         }
     }
@@ -179,32 +185,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
                 if (response.isSuccessful) {
                     val availableWeatherData = response.body()
                     availableWeatherData?.let {
-                        val currentWeather = CurrentWeatherCache(
-                            availableWeatherData
-                        )
-                        currentWeatherCacheDao.clear()
-                        currentWeatherCacheDao.insert(currentWeather)
-
-                        val weatherList =
-                            availableWeatherData.current.weatherList.stream().map { data ->
-                                WeatherCache(data)
-                            }.collect(Collectors.toList())
-                        weatherCacheDao.clear()
-                        weatherCacheDao.insertAll(*weatherList.toTypedArray())
-
-                        val hourlyWeatherList =
-                            availableWeatherData.hourlyDataList.stream().map { data ->
-                                HourlyWeatherCache(data)
-                            }.collect(Collectors.toList())
-                        hourlyWeatherCacheDao.clear()
-                        hourlyWeatherCacheDao.insertAll(*hourlyWeatherList.toTypedArray())
-
-                        val dailyWeatherList =
-                            availableWeatherData.dailyDataList.stream().map { data ->
-                                DailyWeatherCache(data)
-                            }.collect(Collectors.toList())
-                        dailyWeatherCacheDao.clear()
-                        dailyWeatherCacheDao.insertAll(*dailyWeatherList.toTypedArray())
+                        weatherPeekRepository.updateRepository(availableWeatherData)
 
                         _viewModelState.value = State.SUCCESS
                     } ?: run {
