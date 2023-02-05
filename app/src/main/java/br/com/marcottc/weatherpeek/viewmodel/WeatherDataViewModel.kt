@@ -168,7 +168,6 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
                     _viewModelState.value = State.FAILED
                 }
             } else {
-                weatherPeekRepository.retrieveLocalCache()
                 _showMessage.value = "Retrieved local cached data"
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.SUCCESS

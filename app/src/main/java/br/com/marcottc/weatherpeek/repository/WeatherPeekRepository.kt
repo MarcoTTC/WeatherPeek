@@ -80,30 +80,14 @@ class WeatherPeekRepository(applicationContext: Context) {
         dailyWeatherCacheDao.insertAll(*dailyWeatherList.toTypedArray())
     }
 
-    fun retrieveLocalCache() {
-        currentWeatherCache = liveData {
-            val currentWeather = currentWeatherCacheDao.get()
-            emit(currentWeather)
-        }
-
-        weatherListCache = liveData {
-            val weather = weatherCacheDao.getAll()
-            emit(weather)
-        }
-
-        hourlyWeatherListCache = liveData {
-            val hourlyWeatherCache = hourlyWeatherCacheDao.getAll()
-            emit(hourlyWeatherCache)
-        }
-
-        dailyWeatherListCache = liveData {
-            val dailyWeatherCache = dailyWeatherCacheDao.getAll()
-            emit(dailyWeatherCache)
-        }
-    }
-
     fun databaseRefreshRequired(): Boolean {
-        // For now, it will be hardcoded as always update
-        return true
+        val hourlyWeatherList = hourlyWeatherListCache.value
+        return if (hourlyWeatherList == null || hourlyWeatherList.isEmpty()) {
+            true
+        } else {
+            val currentTimeMillis = System.currentTimeMillis()
+            val firstHourlyForecastTimeMillis = hourlyWeatherList[0].dt * 1000
+            currentTimeMillis - firstHourlyForecastTimeMillis >= 3600000
+        }
     }
 }
