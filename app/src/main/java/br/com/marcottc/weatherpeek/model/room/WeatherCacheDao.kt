@@ -6,7 +6,7 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 @Dao
 interface WeatherCacheDao {
 
-    @Query("SELECT * FROM WeatherCache")
+    @Query("SELECT * FROM WeatherCache ORDER BY id ASC")
     suspend fun getAll(): List<WeatherCache>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

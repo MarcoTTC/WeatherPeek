@@ -1,9 +1,13 @@
 package br.com.marcottc.weatherpeek.model.dco
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import br.com.marcottc.weatherpeek.model.dto.CurrentWeatherData
 
 // Cache object for CurrentWeatherData
+@Entity
 data class CurrentWeatherCache(
+    @PrimaryKey
     var dt: Long,
     var sunrise: Long,
     var sunset: Long,

@@ -1,9 +1,13 @@
 package br.com.marcottc.weatherpeek.model.dco
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import br.com.marcottc.weatherpeek.model.dto.DailyWeatherData
 import java.util.stream.Collectors
 
+@Entity
 data class DailyWeatherCache(
+    @PrimaryKey
     var dt: Long,
     var minTemp: Double,
     var maxTemp: Double,
