@@ -19,6 +19,8 @@ import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
+import br.com.marcottc.weatherpeek.model.room.RoomDatabaseInstance
+import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.util.NetworkUtil
@@ -79,6 +81,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) : Androi
     private var retrofitInstance: Retrofit
     private var oneCallService: OneCallService
     private var locationManager: LocationManager
+    private var database: WeatherPeekDatabase
 
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
@@ -110,6 +113,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) : Androi
         retrofitInstance = RetrofitClientInstance.getRetrofitInstance()
         oneCallService = retrofitInstance.create(OneCallService::class.java)
         locationManager = weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        database = RoomDatabaseInstance.getRoomInstance(weatherApplication)
     }
 
     fun getWeatherData() {

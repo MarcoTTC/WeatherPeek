@@ -52,6 +52,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}"
 
+    // Room
+    implementation "androidx.room:room-runtime:${versions.room}"
+    kapt "androidx.room:room-compiler:${versions.room}"
+    implementation "androidx.room:room-ktx:${versions.room}"
+
     // Material
     implementation "com.google.android.material:material:${versions.material}"
 
