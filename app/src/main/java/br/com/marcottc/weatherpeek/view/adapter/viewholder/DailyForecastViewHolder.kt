@@ -14,7 +14,7 @@ class DailyForecastViewHolder(private var binding: ItemDailyForecastBinding) : R
         val resources = binding.root.context.resources
         val iconRatio = (resources.displayMetrics.density * 48).toInt()
         Glide.with(binding.root)
-            .load(dailyCache.weatherList[0].getIconUrl())
+            .load(dailyCache.iconUrl)
             .override(iconRatio, iconRatio)
             .centerInside()
             .into(binding.weatherIcon)
