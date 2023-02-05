@@ -15,4 +15,5 @@ abstract class WeatherPeekDatabase : RoomDatabase() {
     abstract fun getCurrentWeatherDao(): CurrentWeatherDao
     abstract fun getWeatherCacheDao(): WeatherCacheDao
     abstract fun getHourlyWeatherCacheDao(): HourlyWeatherCacheDao
+    abstract fun getDailyWeatherCacheDao(): DailyWeatherCacheDao
 }
