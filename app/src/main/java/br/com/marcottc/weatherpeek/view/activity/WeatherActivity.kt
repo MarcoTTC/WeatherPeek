@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,8 @@ class WeatherActivity : AppCompatActivity() {
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyForecastAdapter
+
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,14 +139,15 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
 
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                weatherDataViewModel.getWeatherData()
+            }
+
         requestingLocationPermission()
     }
 
     private fun requestingLocationPermission() {
-        val requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                weatherDataViewModel.getWeatherData()
-            }
         val permissionArray = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
