@@ -11,6 +11,6 @@ interface CurrentWeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(cache: CurrentWeatherCache)
 
-    @Delete
-    suspend fun delete(cache: CurrentWeatherCache)
+    @Query("DELETE FROM CurrentWeatherCache")
+    suspend fun clear()
 }

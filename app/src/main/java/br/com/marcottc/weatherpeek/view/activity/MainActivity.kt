@@ -172,13 +172,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         weatherDataViewModel.weatherListCache.observe(this) { data ->
-            if (data != null) {
+            if (data != null && data.isNotEmpty()) {
                 updatingWeatherList(data)
             }
         }
 
         weatherDataViewModel.hourlyWeatherListCache.observe(this) { data ->
-            if (data != null) {
+            if (data != null && data.isNotEmpty()) {
                 updatingHourlyWeatherList(data)
             }
         }

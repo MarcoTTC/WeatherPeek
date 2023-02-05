@@ -9,18 +9,14 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
-import br.com.marcottc.weatherpeek.model.room.RoomDatabaseInstance
-import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
+import br.com.marcottc.weatherpeek.model.room.*
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.util.NetworkUtil
@@ -57,23 +53,25 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     val currentTimezoneType: LiveData<String?>
         get() = _currentTimezoneType
 
-    private val _currentWeatherCache: MutableLiveData<CurrentWeatherCache?> = MutableLiveData()
-    val currentWeatherCache: LiveData<CurrentWeatherCache?>
-        get() = _currentWeatherCache
+    val currentWeatherCache: LiveData<CurrentWeatherCache?> = liveData {
+        val currentWeather = currentWeatherCacheDao.get()
+        emit(currentWeather)
+    }
 
-    private val _weatherListCache: MutableLiveData<List<WeatherCache>?> = MutableLiveData()
-    val weatherListCache: LiveData<List<WeatherCache>?>
-        get() = _weatherListCache
+    val weatherListCache: LiveData<List<WeatherCache>?> = liveData {
+        val weather = weatherCacheDao.getAll()
+        emit(weather)
+    }
 
-    private val _hourlyWeatherListCache: MutableLiveData<List<HourlyWeatherCache>?> =
-        MutableLiveData()
-    val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>?>
-        get() = _hourlyWeatherListCache
+    val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>?> = liveData {
+        val hourlyWeatherCache = hourlyWeatherCacheDao.getAll()
+        emit(hourlyWeatherCache)
+    }
 
-    private val _dailyWeatherListCache: MutableLiveData<List<DailyWeatherCache>?> =
-        MutableLiveData()
-    val dailyWeatherListCache: LiveData<List<DailyWeatherCache>?>
-        get() = _dailyWeatherListCache
+    val dailyWeatherListCache: LiveData<List<DailyWeatherCache>?> = liveData {
+        val dailyWeatherCache = dailyWeatherCacheDao.getAll()
+        emit(dailyWeatherCache)
+    }
 
     private val _showMessage: MutableLiveData<String> = MutableLiveData()
     val showMessage: LiveData<String>
@@ -83,6 +81,10 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     private var oneCallService: OneCallService
     private var locationManager: LocationManager
     private var database: WeatherPeekDatabase
+    private var weatherCacheDao: WeatherCacheDao
+    private var currentWeatherCacheDao: CurrentWeatherDao
+    private var hourlyWeatherCacheDao: HourlyWeatherCacheDao
+    private var dailyWeatherCacheDao: DailyWeatherCacheDao
 
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
@@ -105,10 +107,6 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         _viewModelState.value = State.LOADING
         _mustRequestPermissionFirst.value = false
         _requestingWeatherData.value = false
-        _currentWeatherCache.value = null
-        _weatherListCache.value = null
-        _hourlyWeatherListCache.value = null
-        _dailyWeatherListCache.value = null
         _showMessage.value = ""
 
         retrofitInstance = RetrofitClientInstance.getRetrofitInstance()
@@ -116,6 +114,10 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         locationManager =
             weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         database = RoomDatabaseInstance.getRoomInstance(weatherApplication)
+        weatherCacheDao = database.getWeatherCacheDao()
+        currentWeatherCacheDao = database.getCurrentWeatherDao()
+        hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
+        dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
     }
 
     fun getWeatherData() {
@@ -181,39 +183,34 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
                 if (response.isSuccessful) {
                     val availableWeatherData = response.body()
                     availableWeatherData?.let {
-                        val weatherCacheDao = database.getWeatherCacheDao()
-                        val currentWeatherCacheDao = database.getCurrentWeatherDao()
-                        val hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
-                        val dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
-
                         _currentTimezoneType.value = availableWeatherData.timezone
                         val currentWeather = CurrentWeatherCache(
                             availableWeatherData.current,
                             availableWeatherData.timezone
                         )
+                        currentWeatherCacheDao.clear()
                         currentWeatherCacheDao.insert(currentWeather)
-                        _currentWeatherCache.value = currentWeather
 
                         val weatherList =
                             availableWeatherData.current.weatherList.stream().map { data ->
                                 WeatherCache(data)
                             }.collect(Collectors.toList())
+                        weatherCacheDao.clear()
                         weatherCacheDao.insertAll(*weatherList.toTypedArray())
-                        _weatherListCache.value = weatherList
 
                         val hourlyWeatherList =
                             availableWeatherData.hourlyDataList.stream().map { data ->
                                 HourlyWeatherCache(data)
                             }.collect(Collectors.toList())
+                        hourlyWeatherCacheDao.clear()
                         hourlyWeatherCacheDao.insertAll(*hourlyWeatherList.toTypedArray())
-                        _hourlyWeatherListCache.value = hourlyWeatherList
 
                         val dailyWeatherList =
                             availableWeatherData.dailyDataList.stream().map { data ->
                                 DailyWeatherCache(data)
                             }.collect(Collectors.toList())
+                        dailyWeatherCacheDao.clear()
                         dailyWeatherCacheDao.insertAll(*dailyWeatherList.toTypedArray())
-                        _dailyWeatherListCache.value = dailyWeatherList
 
                         _viewModelState.value = State.SUCCESS
                     } ?: run {
