@@ -159,12 +159,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.currentTimezoneType.observe(this) { timezone ->
-            if (timezone != null) {
-                binding.timezoneType.text = timezone
-            }
-        }
-
         weatherDataViewModel.currentWeatherCache.observe(this) { data ->
             if (data != null) {
                 updatingCurrentWeather(data)
@@ -249,8 +243,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatingCurrentWeather(currentWeatherCache: CurrentWeatherCache) {
-        val timeFormatter = SimpleDateFormat("HH:mm")
+        binding.timezoneType.text = currentWeatherCache.timezone
 
+        val timeFormatter = SimpleDateFormat("HH:mm")
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
 
         if (currentWeatherCache.dt >= currentWeatherCache.sunrise && currentWeatherCache.dt < currentWeatherCache.sunset) {

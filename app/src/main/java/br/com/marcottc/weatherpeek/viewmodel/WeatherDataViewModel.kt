@@ -49,10 +49,6 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     val requestingWeatherData: LiveData<Boolean>
         get() = _requestingWeatherData
 
-    private val _currentTimezoneType: MutableLiveData<String?> = MutableLiveData()
-    val currentTimezoneType: LiveData<String?>
-        get() = _currentTimezoneType
-
     val currentWeatherCache: LiveData<CurrentWeatherCache?> = liveData {
         val currentWeather = currentWeatherCacheDao.get()
         emit(currentWeather)
@@ -183,10 +179,8 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
                 if (response.isSuccessful) {
                     val availableWeatherData = response.body()
                     availableWeatherData?.let {
-                        _currentTimezoneType.value = availableWeatherData.timezone
                         val currentWeather = CurrentWeatherCache(
-                            availableWeatherData.current,
-                            availableWeatherData.timezone
+                            availableWeatherData
                         )
                         currentWeatherCacheDao.clear()
                         currentWeatherCacheDao.insert(currentWeather)
