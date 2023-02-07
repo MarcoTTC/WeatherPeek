@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import br.com.marcottc.weatherpeek.model.dto.WeatherData
 
-@Entity()
+@Entity
 data class WeatherCache(
     @PrimaryKey
     var id: Int,

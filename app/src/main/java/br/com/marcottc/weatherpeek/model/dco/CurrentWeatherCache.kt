@@ -2,7 +2,6 @@ package br.com.marcottc.weatherpeek.model.dco
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import br.com.marcottc.weatherpeek.model.dto.CurrentWeatherData
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 
 // Cache object for CurrentWeatherData

@@ -245,7 +245,8 @@ class MainActivity : AppCompatActivity() {
     private fun updatingCurrentWeather(currentWeatherCache: CurrentWeatherCache) {
         binding.timezoneType.text = currentWeatherCache.timezone
 
-        val timeFormatter = SimpleDateFormat("HH:mm")
+        val currentLocale = resources.configuration.locales[0]
+        val timeFormatter = SimpleDateFormat("HH:mm", currentLocale)
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
 
         if (currentWeatherCache.dt >= currentWeatherCache.sunrise && currentWeatherCache.dt < currentWeatherCache.sunset) {

@@ -3,7 +3,6 @@ package br.com.marcottc.weatherpeek.view.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
-import br.com.marcottc.weatherpeek.model.dto.HourlyWeatherData
 import br.com.marcottc.weatherpeek.view.adapter.viewholder.HourlyForecastViewHolder
 
 class HourlyForecastAdapter : RecyclerView.Adapter<HourlyForecastViewHolder>() {
