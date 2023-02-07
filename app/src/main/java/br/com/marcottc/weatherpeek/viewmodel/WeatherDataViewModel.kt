@@ -49,19 +49,19 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     val requestingWeatherData: LiveData<Boolean>
         get() = _requestingWeatherData
 
-    val currentWeatherCache: LiveData<CurrentWeatherCache?> = liveData {
+    val currentWeatherCache: LiveData<CurrentWeatherCache> = liveData {
         emitSource(weatherPeekRepository.currentWeatherCache)
     }
 
-    val weatherListCache: LiveData<List<WeatherCache>?> = liveData {
+    val weatherListCache: LiveData<List<WeatherCache>> = liveData {
         emitSource(weatherPeekRepository.weatherListCache)
     }
 
-    val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>?> = liveData {
+    val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>> = liveData {
         emitSource(weatherPeekRepository.hourlyWeatherListCache)
     }
 
-    val dailyWeatherListCache: LiveData<List<DailyWeatherCache>?> = liveData {
+    val dailyWeatherListCache: LiveData<List<DailyWeatherCache>> = liveData {
         emitSource(weatherPeekRepository.dailyWeatherListCache)
     }
 
@@ -125,52 +125,46 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
                 return
             }
 
-            if (weatherPeekRepository.databaseRefreshRequired()) {
-                if (!NetworkUtil.hasConnectivity(weatherApplication)) {
-                    _showMessage.value =
-                        weatherApplication.resources.getString(R.string.no_internet_connectivity)
-                    _requestingWeatherData.value = false
-                    _viewModelState.value = State.FAILED
-                    return
-                }
+            if (!NetworkUtil.hasConnectivity(weatherApplication)) {
+                _showMessage.value =
+                    weatherApplication.resources.getString(R.string.no_internet_connectivity)
+                _requestingWeatherData.value = false
+                _viewModelState.value = State.FAILED
+                return
+            }
 
-                _mustRequestPermissionFirst.value = false
-                if (ActivityCompat.checkSelfPermission(
-                        weatherApplication,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(
-                        weatherApplication,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    _requestingWeatherData.value = true
-                    _viewModelState.value = State.LOADING
+            _mustRequestPermissionFirst.value = false
+            if (ActivityCompat.checkSelfPermission(
+                    weatherApplication,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(
+                    weatherApplication,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                _requestingWeatherData.value = true
+                _viewModelState.value = State.LOADING
 
-                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                        locationManager.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER,
-                            1000,
-                            0.0F,
-                            mLocationListener
-                        )
-                    } else {
-                        locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            1000,
-                            0.0F,
-                            mLocationListener
-                        )
-                    }
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        1000,
+                        0.0F,
+                        mLocationListener
+                    )
                 } else {
-                    _mustRequestPermissionFirst.value = true
-                    _requestingWeatherData.value = false
-                    _viewModelState.value = State.FAILED
+                    locationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        1000,
+                        0.0F,
+                        mLocationListener
+                    )
                 }
             } else {
-                _showMessage.value = "Retrieved local cached data"
+                _mustRequestPermissionFirst.value = true
                 _requestingWeatherData.value = false
-                _viewModelState.value = State.SUCCESS
+                _viewModelState.value = State.FAILED
             }
         }
     }
@@ -178,46 +172,52 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     private fun recoveringWeatherData(latitude: Double, longitude: Double) {
         locationManager.removeUpdates(mLocationListener)
 
-        viewModelScope.launch {
-            try {
-                val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)
-                if (response.isSuccessful) {
-                    val availableWeatherData = response.body()
-                    availableWeatherData?.let {
-                        weatherPeekRepository.updateRepository(availableWeatherData)
+        if (weatherPeekRepository.databaseRefreshRequired(latitude, longitude)) {
+            viewModelScope.launch {
+                try {
+                    val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)
+                    if (response.isSuccessful) {
+                        val availableWeatherData = response.body()
+                        availableWeatherData?.let {
+                            weatherPeekRepository.updateRepository(availableWeatherData)
 
-                        _viewModelState.value = State.SUCCESS
-                    } ?: run {
-                        _viewModelState.value = State.FAILED
-                    }
-                } else {
-                    val gson = Gson()
-                    val errorResponse = gson.fromJson(
-                        response.errorBody()!!.charStream(),
-                        ErrorResponse::class.java
-                    )
-                    if (errorResponse != null) {
-                        _showMessage.value = errorResponse.message
-                    }
-                    _viewModelState.value = State.FAILED
-                }
-
-                _requestingWeatherData.value = false
-            } catch (exception: Exception) {
-                when (exception) {
-                    is JsonSyntaxException,
-                    is JsonIOException -> {
-                        Log.e(
-                            WeatherDataViewModel::class.java.canonicalName,
-                            exception.message,
-                            exception
+                            _viewModelState.value = State.SUCCESS
+                        } ?: run {
+                            _viewModelState.value = State.FAILED
+                        }
+                    } else {
+                        val gson = Gson()
+                        val errorResponse = gson.fromJson(
+                            response.errorBody()!!.charStream(),
+                            ErrorResponse::class.java
                         )
-                        _requestingWeatherData.value = false
+                        if (errorResponse != null) {
+                            _showMessage.value = errorResponse.message
+                        }
                         _viewModelState.value = State.FAILED
                     }
-                    else -> throw exception
+
+                    _requestingWeatherData.value = false
+                } catch (exception: Exception) {
+                    when (exception) {
+                        is JsonSyntaxException,
+                        is JsonIOException -> {
+                            Log.e(
+                                WeatherDataViewModel::class.java.canonicalName,
+                                exception.message,
+                                exception
+                            )
+                            _requestingWeatherData.value = false
+                            _viewModelState.value = State.FAILED
+                        }
+                        else -> throw exception
+                    }
                 }
             }
+        } else {
+            _showMessage.value = "Retrieved local cached data"
+            _requestingWeatherData.value = false
+            _viewModelState.value = State.SUCCESS
         }
     }
 }

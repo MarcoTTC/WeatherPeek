@@ -1,5 +1,6 @@
 package br.com.marcottc.weatherpeek.model.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,7 +10,7 @@ import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 @Dao
 interface DailyWeatherCacheDao {
     @Query("SELECT * FROM DailyWeatherCache ORDER BY dt ASC")
-    suspend fun getAll(): List<DailyWeatherCache>
+    fun getAll(): LiveData<List<DailyWeatherCache>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg weather: DailyWeatherCache)

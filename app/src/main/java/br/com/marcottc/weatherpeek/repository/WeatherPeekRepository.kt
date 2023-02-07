@@ -10,32 +10,25 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
 import br.com.marcottc.weatherpeek.model.room.*
 import java.util.stream.Collectors
+import kotlin.math.abs
 
 class WeatherPeekRepository(applicationContext: Context) {
 
-    var currentWeatherCache: LiveData<CurrentWeatherCache?> = liveData {
-        val currentWeather = currentWeatherCacheDao.get()
-        emit(currentWeather)
+    val currentWeatherCache: LiveData<CurrentWeatherCache> = liveData {
+        emitSource(currentWeatherCacheDao.get())
     }
-        private set
 
-    var weatherListCache: LiveData<List<WeatherCache>?> = liveData {
-        val weather = weatherCacheDao.getAll()
-        emit(weather)
+    val weatherListCache: LiveData<List<WeatherCache>> = liveData {
+        emitSource(weatherCacheDao.getAll())
     }
-        private set
 
-    var hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>?> = liveData {
-        val hourlyWeatherCache = hourlyWeatherCacheDao.getAll()
-        emit(hourlyWeatherCache)
+    val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>> = liveData {
+        emitSource(hourlyWeatherCacheDao.getAll())
     }
-        private set
 
-    var dailyWeatherListCache: LiveData<List<DailyWeatherCache>?> = liveData {
-        val dailyWeatherCache = dailyWeatherCacheDao.getAll()
-        emit(dailyWeatherCache)
+    val dailyWeatherListCache: LiveData<List<DailyWeatherCache>> = liveData {
+        emitSource(dailyWeatherCacheDao.getAll())
     }
-        private set
 
     private var database: WeatherPeekDatabase
     private var weatherCacheDao: WeatherCacheDao
@@ -80,14 +73,24 @@ class WeatherPeekRepository(applicationContext: Context) {
         dailyWeatherCacheDao.insertAll(*dailyWeatherList.toTypedArray())
     }
 
-    fun databaseRefreshRequired(): Boolean {
+    fun databaseRefreshRequired(currentLat: Double, currentLon: Double): Boolean {
+        val currentWeather = currentWeatherCache.value
         val hourlyWeatherList = hourlyWeatherListCache.value
-        return if (hourlyWeatherList == null || hourlyWeatherList.isEmpty()) {
-            true
+        if (
+            currentWeather == null ||
+            hourlyWeatherList == null ||
+            hourlyWeatherList.isEmpty()
+        ) {
+            return true
         } else {
-            val currentTimeMillis = System.currentTimeMillis()
-            val firstHourlyForecastTimeMillis = hourlyWeatherList[0].dt * 1000
-            currentTimeMillis - firstHourlyForecastTimeMillis >= 3600000
+            return if (abs(currentWeather.latitude - currentLat) >= 1 ||
+                abs(currentWeather.longitude - currentLon) >= 1) {
+                true
+            } else {
+                val currentTimeMillis = System.currentTimeMillis()
+                val firstHourlyForecastTimeMillis = hourlyWeatherList[0].dt * 1000
+                currentTimeMillis - firstHourlyForecastTimeMillis >= 3600000
+            }
         }
     }
 }

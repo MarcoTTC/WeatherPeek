@@ -1,5 +1,6 @@
 package br.com.marcottc.weatherpeek.model.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 
@@ -7,7 +8,7 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 interface WeatherCacheDao {
 
     @Query("SELECT * FROM WeatherCache ORDER BY id ASC")
-    suspend fun getAll(): List<WeatherCache>
+    fun getAll(): LiveData<List<WeatherCache>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg weather: WeatherCache)
