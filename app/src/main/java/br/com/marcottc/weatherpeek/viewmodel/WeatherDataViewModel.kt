@@ -3,10 +3,13 @@ package br.com.marcottc.weatherpeek.viewmodel
 import android.Manifest
 import android.app.Application
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.provider.SyncStateContract.Constants
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
@@ -21,7 +24,9 @@ import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.NetworkUtil
+import br.com.marcottc.weatherpeek.util.forceRefreshSettings
 import br.com.marcottc.weatherpeek.util.oneCallAppId
+import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
@@ -69,8 +74,6 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     val showMessage: LiveData<String>
         get() = _showMessage
 
-    private var isForceRefresh: Boolean = false
-
     private var retrofitInstance: Retrofit
     private var oneCallService: OneCallService
     private var locationManager: LocationManager
@@ -80,6 +83,8 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     private var hourlyWeatherCacheDao: HourlyWeatherCacheDao
     private var dailyWeatherCacheDao: DailyWeatherCacheDao
     private var weatherPeekRepository: WeatherPeekRepository
+    private var sharedPreferences: SharedPreferences
+    private var isForceRefresh: Boolean
 
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
@@ -114,10 +119,16 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
         dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
         weatherPeekRepository = WeatherPeekRepository(weatherApplication)
+
+        sharedPreferences = weatherApplication.getSharedPreferences(sharedPreferencesDb, MODE_PRIVATE)
+        isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
     }
 
     fun setForceRefreshOption(value: Boolean) {
         isForceRefresh = value
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(forceRefreshSettings, value)
+        editor.apply()
     }
 
     fun getWeatherData() {

@@ -3,6 +3,7 @@ package br.com.marcottc.weatherpeek.view.activity
 import android.Manifest
 import android.app.ActivityOptions
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,8 @@ import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
+import br.com.marcottc.weatherpeek.util.forceRefreshSettings
+import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import com.bumptech.glide.Glide
@@ -42,6 +45,10 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
+        val sharedPreferences = getSharedPreferences(sharedPreferencesDb, MODE_PRIVATE)
+        val isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
+        binding.forceRefreshSwitch.isChecked = isForceRefresh
 
         binding.forceRefreshSwitch.setOnCheckedChangeListener { _, isChecked ->
             weatherDataViewModel.setForceRefreshOption(isChecked)
