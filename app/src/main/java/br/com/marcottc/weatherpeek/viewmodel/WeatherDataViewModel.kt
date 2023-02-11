@@ -69,6 +69,8 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     val showMessage: LiveData<String>
         get() = _showMessage
 
+    private var isForceRefresh: Boolean = false
+
     private var retrofitInstance: Retrofit
     private var oneCallService: OneCallService
     private var locationManager: LocationManager
@@ -112,6 +114,10 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
         dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
         weatherPeekRepository = WeatherPeekRepository(weatherApplication)
+    }
+
+    fun setForceRefreshOption(value: Boolean) {
+        isForceRefresh = value
     }
 
     fun getWeatherData() {
@@ -172,7 +178,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     private fun recoveringWeatherData(latitude: Double, longitude: Double) {
         locationManager.removeUpdates(mLocationListener)
 
-        if (weatherPeekRepository.databaseRefreshRequired(latitude, longitude)) {
+        if (weatherPeekRepository.databaseRefreshRequired(latitude, longitude) || isForceRefresh) {
             viewModelScope.launch {
                 try {
                     val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)

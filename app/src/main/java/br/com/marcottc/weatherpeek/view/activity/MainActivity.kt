@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
+        binding.forceRefreshSwitch.setOnCheckedChangeListener { _, isChecked ->
+            weatherDataViewModel.setForceRefreshOption(isChecked)
+        }
+
         binding.swipeRefreshLayout.setColorSchemeColors(
             ContextCompat.getColor(
                 this,

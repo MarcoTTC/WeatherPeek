@@ -8,7 +8,6 @@
         <item name="materialCardViewStyle">@style/AppTheme.Material3.MaterialCardView</item>
         <item name="floatingActionButtonStyle">@style/AppTheme.Material3.FloatingActionButton</item>
 
-
         <item name="android:windowActivityTransitions">true</item>
     </style>
 
