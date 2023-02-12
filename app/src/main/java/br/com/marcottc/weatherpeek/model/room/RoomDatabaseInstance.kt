@@ -15,7 +15,6 @@ class RoomDatabaseInstance {
                     WeatherPeekDatabase::class.java,
                     "WeatherPeek-Database"
                 )
-                .fallbackToDestructiveMigration() // Using while Database implementation is not yet finished
                 .build()
             }
             return database as WeatherPeekDatabase

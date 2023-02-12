@@ -2,12 +2,11 @@
 This is the repository of the app WeatherPeek. It is an app about weather data prediction created
 by me, Marco Túlio Todeschini Coelho. You may ask, why make another weather data app prediction,
 since there are so many already available? Well, the answer is quite simple: I did it to show up my
-skills with software engineering techniques, and tools. This app was made in Kotlin, for Android,
-using Retrofit2 as a library for online data recovery, using screen transition with shared elements,
-using the MVVM architecture, the newest activity permission request method with
-registerForActivityResult, view binding for code cleanup and Glide for online image retrieval,
-local image caching and custom android views. I also plan to implement the repository pattern for
-the weather data retrieved.
+skills with modern software engineering techniques, tools and procedures. This app was made in
+Kotlin for Android, using coroutines, Retrofit2 as a library for online data recovery, screen
+transition with shared elements, the MVVM architecture, Room database, Work Manager, view binding,
+Glide for online image retrieval, and local image caching, plus custom android views created by
+myself.
 
 If you downloaded this project, and it doesn't work by itself out of the box, it is because
 you need to add an openweathermap.org app id key to the project, in the val oneCallAppId of
