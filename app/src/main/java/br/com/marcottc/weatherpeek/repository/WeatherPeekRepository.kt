@@ -15,7 +15,7 @@ import kotlin.math.abs
 class WeatherPeekRepository(applicationContext: Context) {
 
     val currentWeatherCache: LiveData<CurrentWeatherCache> = liveData {
-        emitSource(currentWeatherCacheDao.get())
+        emitSource(currentWeatherCacheDao.getLiveData())
     }
 
     val weatherListCache: LiveData<List<WeatherCache>> = liveData {
