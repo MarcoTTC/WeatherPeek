@@ -3,7 +3,6 @@ package br.com.marcottc.weatherpeek.view.activity
 import android.Manifest
 import android.app.ActivityOptions
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater

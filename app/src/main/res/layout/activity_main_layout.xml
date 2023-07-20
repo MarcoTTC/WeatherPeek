@@ -16,7 +16,7 @@
             android:id="@+id/force_refresh_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Force refresh"
+            android:text="@string/force_refresh"
             android:paddingHorizontal="8dp"
             android:textSize="18sp"
             android:textColor="@android:color/white"

@@ -78,8 +78,7 @@ class WeatherPeekRepository(applicationContext: Context) {
         val hourlyWeatherList = hourlyWeatherListCache.value
         if (
             currentWeather == null ||
-            hourlyWeatherList == null ||
-            hourlyWeatherList.isEmpty()
+            hourlyWeatherList.isNullOrEmpty()
         ) {
             return true
         } else {
