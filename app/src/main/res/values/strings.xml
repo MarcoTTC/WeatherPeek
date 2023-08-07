@@ -14,8 +14,11 @@
     <string name="this_week_label">THIS WEEK</string>
     <string name="uvi_title">MIDDAY ULTRAVIOLET INDEX</string>
 
-    <!-- Common text messages -->
+    <!-- Card titles -->
+    <string name="current_weather_label">CURRENT WEATHER</string>
     <string name="forecast_label">FORECAST</string>
+
+    <!-- Common text messages -->
     <string name="no_internet_connectivity">No internet connectivity!</string>
     <string name="permission_needed_title">Permission needed</string>
     <string name="need_perm_location">This app needs access to your GPS location or network location to provide accurate weather information! It gathers latitude and longitude data for weather prediction purposes.</string>

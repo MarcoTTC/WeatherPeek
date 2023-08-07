@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClimaRápido</string>
+
+    <!-- MainActivity -->
+    <string name="icon_description_day">Dia</string>
+    <string name="icon_description_night">Noite</string>
+    <string name="pressure_icon_description">Pressão</string>
+    <string name="btn_navigate_to_weather_activity_description">Clique para mais informações</string>
+    <string name="reload_text">Deslize para recarregar</string>
+    <string name="force_refresh">Forçar atualização</string>
+
+    <!-- WeatherActivity -->
+    <string name="btn_close_description">Clique para fechar</string>
+    <string name="this_week_label">ESTA SEMANA</string>
+    <string name="uvi_title">ÍNDICE ULTRAVIOLETA DO MEIO-DIA</string>
+
+    <!-- Card titles -->
+    <string name="current_weather_label">CLIMA ATUAL</string>
+    <string name="forecast_label">PREVISÃO</string>
+
+    <!-- Common text messages -->
+    <string name="no_internet_connectivity">Sem conectividade à internet!</string>
+    <string name="permission_needed_title">Permissão necessária</string>
+    <string name="need_perm_location">Este aplicativo precisa acessar a sua localização GPS ou localização de rede para fornecer informações meteorológicas precisas! Ele coleta dados de latitude e longitude para fins de previsão do tempo.</string>
+    <string name="location_perm_denied">Este aplicativo não pode funcionar sem a permissão de acesso à localização!</string>
+    <string name="now_label">AGORA</string>
+
+    <!-- Common button labels -->
+    <string name="btn_label_i_accept">EU ACEITO</string>
+
+    <!-- Uvi meter risk labels -->
+    <string name="uvi_risk_low">BAIXO</string>
+    <string name="uvi_risk_moderate">MODERADO</string>
+    <string name="uvi_risk_high">ALTO</string>
+    <string name="uvi_risk_very_high">MUITO ALTO</string>
+    <string name="uvi_risk_extreme">EXTREMO</string>
+</resources>
