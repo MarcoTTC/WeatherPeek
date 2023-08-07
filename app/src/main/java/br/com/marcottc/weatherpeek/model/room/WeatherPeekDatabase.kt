@@ -1,5 +1,6 @@
 package br.com.marcottc.weatherpeek.model.room
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
@@ -9,7 +10,10 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 
 @Database(
     entities = [CurrentWeatherCache::class, WeatherCache::class, HourlyWeatherCache::class, DailyWeatherCache::class],
-    version = 1
+    version = 2,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 abstract class WeatherPeekDatabase : RoomDatabase() {
     abstract fun getCurrentWeatherDao(): CurrentWeatherDao

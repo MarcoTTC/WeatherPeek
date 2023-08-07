@@ -1,5 +1,6 @@
 package br.com.marcottc.weatherpeek.model.dco
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
@@ -17,7 +18,11 @@ data class CurrentWeatherCache(
     var temp: Double,
     var pressure: Int,
     var humidity: Int,
-    var clouds: Int
+    var clouds: Int,
+    @ColumnInfo(defaultValue = "0")
+    var windSpeed: Double,
+    @ColumnInfo(defaultValue = "0")
+    var windDeg: Double
 ) {
     constructor(data: OneCallWeatherDTO) :
             this(
@@ -30,6 +35,8 @@ data class CurrentWeatherCache(
                 data.current.temp,
                 data.current.pressure,
                 data.current.humidity,
-                data.current.clouds
+                data.current.clouds,
+                data.current.windSpeed,
+                data.current.windDeg
             )
 }

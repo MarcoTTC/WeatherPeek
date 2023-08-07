@@ -81,9 +81,8 @@ class MainActivity : AppCompatActivity() {
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
                     binding.loadingSymbol.visibility = View.VISIBLE
-                    binding.timezoneType.visibility = View.GONE
+                    binding.currentCardLoadingSymbol.visibility = View.VISIBLE
                     binding.currentTimeValue.visibility = View.GONE
-                    binding.dayNightIcon.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
                     binding.weatherIcon.visibility = View.GONE
@@ -91,8 +90,9 @@ class MainActivity : AppCompatActivity() {
                     binding.sunriseTime.visibility = View.GONE
                     binding.sunsetIcon.visibility = View.GONE
                     binding.sunsetTime.visibility = View.GONE
-                    binding.pressureIcon.visibility = View.GONE
-                    binding.pressureValue.visibility = View.GONE
+                    binding.windIcon.visibility = View.GONE
+                    binding.windSpeed.visibility = View.GONE
+                    binding.windDeg.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
@@ -107,9 +107,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
                     binding.loadingSymbol.visibility = View.GONE
-                    binding.timezoneType.visibility = View.VISIBLE
+                    binding.currentCardLoadingSymbol.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.VISIBLE
-                    binding.dayNightIcon.visibility = View.VISIBLE
                     binding.temperatureValue.visibility = View.VISIBLE
                     binding.weatherType.visibility = View.VISIBLE
                     binding.weatherIcon.visibility = View.VISIBLE
@@ -117,8 +116,9 @@ class MainActivity : AppCompatActivity() {
                     binding.sunriseTime.visibility = View.VISIBLE
                     binding.sunsetIcon.visibility = View.VISIBLE
                     binding.sunsetTime.visibility = View.VISIBLE
-                    binding.pressureIcon.visibility = View.VISIBLE
-                    binding.pressureValue.visibility = View.VISIBLE
+                    binding.windIcon.visibility = View.VISIBLE
+                    binding.windSpeed.visibility = View.VISIBLE
+                    binding.windDeg.visibility = View.VISIBLE
                     binding.humidityIcon.visibility = View.VISIBLE
                     binding.humidityValue.visibility = View.VISIBLE
                     binding.cloudinessIcon.visibility = View.VISIBLE
@@ -133,9 +133,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     binding.loadingSymbol.visibility = View.GONE
-                    binding.timezoneType.visibility = View.GONE
+                    binding.currentCardLoadingSymbol.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.GONE
-                    binding.dayNightIcon.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
                     binding.weatherIcon.visibility = View.GONE
@@ -143,8 +142,9 @@ class MainActivity : AppCompatActivity() {
                     binding.sunriseTime.visibility = View.GONE
                     binding.sunsetIcon.visibility = View.GONE
                     binding.sunsetTime.visibility = View.GONE
-                    binding.pressureIcon.visibility = View.GONE
-                    binding.pressureValue.visibility = View.GONE
+                    binding.windIcon.visibility = View.GONE
+                    binding.windSpeed.visibility = View.GONE
+                    binding.windDeg.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
@@ -253,39 +253,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatingCurrentWeather(currentWeatherCache: CurrentWeatherCache) {
-        binding.timezoneType.text = currentWeatherCache.timezone
-
         val currentLocale = resources.configuration.locales[0]
         val timeFormatter = SimpleDateFormat("HH:mm", currentLocale)
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
-
-        if (currentWeatherCache.dt >= currentWeatherCache.sunrise && currentWeatherCache.dt < currentWeatherCache.sunset) {
-            binding.dayNightIcon.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    this,
-                    R.drawable.ic_sunny
-                )
-            )
-            binding.dayNightIcon.contentDescription =
-                resources.getString(R.string.icon_description_day)
-        } else {
-            binding.dayNightIcon.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    this,
-                    R.drawable.ic_starry_moon
-                )
-            )
-            binding.dayNightIcon.contentDescription =
-                resources.getString(R.string.icon_description_night)
-        }
 
         binding.temperatureValue.text = String.format("%.0f°c", currentWeatherCache.temp)
 
         binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherCache.sunrise * 1000))
         binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherCache.sunset * 1000))
-        binding.pressureValue.text = String.format("%d hPa", currentWeatherCache.pressure)
         binding.humidityValue.text = String.format("%d %%", currentWeatherCache.humidity)
         binding.cloudinessValue.text = String.format("%d %%", currentWeatherCache.clouds)
+        binding.windSpeed.text = currentWeatherCache.windSpeed.toString()
+        binding.windDeg.text = String.format("%.1fº", currentWeatherCache.windDeg)
     }
 
     private fun updatingWeatherList(weatherList: List<WeatherCache>) {
