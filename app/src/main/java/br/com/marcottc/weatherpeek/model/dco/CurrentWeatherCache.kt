@@ -17,12 +17,16 @@ data class CurrentWeatherCache(
     var sunset: Long,
     var temp: Double,
     var pressure: Int,
-    var humidity: Int,
-    var clouds: Int,
     @ColumnInfo(defaultValue = "0")
     var windSpeed: Double,
     @ColumnInfo(defaultValue = "0")
-    var windDeg: Double
+    var windDeg: Double,
+    @ColumnInfo(defaultValue = "0")
+    var rainAmount: Double,
+    @ColumnInfo(defaultValue = "0")
+    var snowAmount: Double,
+    var humidity: Int,
+    var clouds: Int,
 ) {
     constructor(data: OneCallWeatherDTO) :
             this(
@@ -34,9 +38,11 @@ data class CurrentWeatherCache(
                 data.current.sunset,
                 data.current.temp,
                 data.current.pressure,
-                data.current.humidity,
-                data.current.clouds,
                 data.current.windSpeed,
-                data.current.windDeg
+                data.current.windDeg,
+                data.current.rain?.oneHour ?: 0.0,
+                data.current.snow?.oneHour ?: 0.0,
+                data.current.humidity,
+                data.current.clouds
             )
 }

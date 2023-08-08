@@ -8,6 +8,7 @@
     <string name="btn_navigate_to_weather_activity_description">Click for more information</string>
     <string name="reload_text">Swipe to reload</string>
     <string name="force_refresh">Force refresh</string>
+    <string name="no_precipitation">No drops</string>
 
     <!-- WeatherActivity -->
     <string name="btn_close_description">Click to close</string>

@@ -9,6 +9,7 @@
     <string name="btn_navigate_to_weather_activity_description">Clique para mais informações</string>
     <string name="reload_text">Deslize para recarregar</string>
     <string name="force_refresh">Forçar atualização</string>
+    <string name="no_precipitation">Sem gotas</string>
 
     <!-- WeatherActivity -->
     <string name="btn_close_description">Clique para fechar</string>

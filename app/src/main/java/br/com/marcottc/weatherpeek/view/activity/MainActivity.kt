@@ -28,6 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToLong
 import android.util.Pair as AndroidPair
 
 class MainActivity : AppCompatActivity() {
@@ -81,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
                     binding.loadingSymbol.visibility = View.VISIBLE
-                    binding.currentCardLoadingSymbol.visibility = View.VISIBLE
+                    binding.currentWeatherCardLoadingSymbol.visibility = View.VISIBLE
                     binding.currentTimeValue.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
@@ -93,6 +94,9 @@ class MainActivity : AppCompatActivity() {
                     binding.windIcon.visibility = View.GONE
                     binding.windSpeed.visibility = View.GONE
                     binding.windDeg.visibility = View.GONE
+                    binding.precipitationCardLoadingSymbol.visibility = View.VISIBLE
+                    binding.precipitationTypeIcon.visibility = View.GONE
+                    binding.precipitationAmount.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
@@ -107,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
                     binding.loadingSymbol.visibility = View.GONE
-                    binding.currentCardLoadingSymbol.visibility = View.GONE
+                    binding.currentWeatherCardLoadingSymbol.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.VISIBLE
                     binding.temperatureValue.visibility = View.VISIBLE
                     binding.weatherType.visibility = View.VISIBLE
@@ -119,6 +123,9 @@ class MainActivity : AppCompatActivity() {
                     binding.windIcon.visibility = View.VISIBLE
                     binding.windSpeed.visibility = View.VISIBLE
                     binding.windDeg.visibility = View.VISIBLE
+                    binding.precipitationCardLoadingSymbol.visibility = View.GONE
+                    binding.precipitationTypeIcon.visibility = View.VISIBLE
+                    binding.precipitationAmount.visibility = View.VISIBLE
                     binding.humidityIcon.visibility = View.VISIBLE
                     binding.humidityValue.visibility = View.VISIBLE
                     binding.cloudinessIcon.visibility = View.VISIBLE
@@ -133,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     binding.loadingSymbol.visibility = View.GONE
-                    binding.currentCardLoadingSymbol.visibility = View.GONE
+                    binding.currentWeatherCardLoadingSymbol.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
@@ -145,6 +152,9 @@ class MainActivity : AppCompatActivity() {
                     binding.windIcon.visibility = View.GONE
                     binding.windSpeed.visibility = View.GONE
                     binding.windDeg.visibility = View.GONE
+                    binding.precipitationCardLoadingSymbol.visibility = View.GONE
+                    binding.precipitationTypeIcon.visibility = View.GONE
+                    binding.precipitationAmount.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
@@ -171,7 +181,7 @@ class MainActivity : AppCompatActivity() {
 
         weatherDataViewModel.currentWeatherCache.observe(this) { data ->
             if (data != null) {
-                updatingCurrentWeather(data)
+                updatingWeatherCards(data)
             }
         }
 
@@ -252,7 +262,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatingCurrentWeather(currentWeatherCache: CurrentWeatherCache) {
+    private fun updatingWeatherCards(currentWeatherCache: CurrentWeatherCache) {
         val currentLocale = resources.configuration.locales[0]
         val timeFormatter = SimpleDateFormat("HH:mm", currentLocale)
         binding.currentTimeValue.text = timeFormatter.format(Date(currentWeatherCache.dt * 1000))
@@ -261,10 +271,30 @@ class MainActivity : AppCompatActivity() {
 
         binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherCache.sunrise * 1000))
         binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherCache.sunset * 1000))
-        binding.humidityValue.text = String.format("%d %%", currentWeatherCache.humidity)
-        binding.cloudinessValue.text = String.format("%d %%", currentWeatherCache.clouds)
         binding.windSpeed.text = currentWeatherCache.windSpeed.toString()
         binding.windDeg.text = String.format("%.1fº", currentWeatherCache.windDeg)
+
+        val rainValue = currentWeatherCache.rainAmount
+        val snowValue = currentWeatherCache.snowAmount
+        if (rainValue == 0.0 && snowValue == 0.0) {
+            binding.precipitationAmount.text = getString(R.string.no_precipitation)
+            binding.precipitationTypeIcon.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_storm
+                )
+            )
+        } else {
+            if (rainValue >= snowValue) {
+                binding.precipitationAmount.text = String.format("%d mm/h", rainValue.roundToLong())
+                binding.precipitationTypeIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_storm))
+            } else {
+                binding.precipitationAmount.text = String.format("%d mm/h", snowValue.roundToLong())
+                binding.precipitationTypeIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_snowflake))
+            }
+        }
+        binding.humidityValue.text = String.format("%d %%", currentWeatherCache.humidity)
+        binding.cloudinessValue.text = String.format("%d %%", currentWeatherCache.clouds)
     }
 
     private fun updatingWeatherList(weatherList: List<WeatherCache>) {
