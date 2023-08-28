@@ -20,6 +20,7 @@
     <!-- Card titles -->
     <string name="current_weather_label">CLIMA ATUAL</string>
     <string name="precipitation_card_title">PRECIPITAÇÃO</string>
+    <string name="wind_card_title">CONDIÇÕES DO VENTO</string>
     <string name="forecast_label">PREVISÃO</string>
 
     <!-- Common text messages -->

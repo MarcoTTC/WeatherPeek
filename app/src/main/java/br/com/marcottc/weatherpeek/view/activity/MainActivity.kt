@@ -81,8 +81,9 @@ class MainActivity : AppCompatActivity() {
         weatherDataViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {
                 WeatherDataViewModel.State.LOADING -> {
-                    binding.loadingSymbol.visibility = View.VISIBLE
                     binding.currentWeatherCardLoadingSymbol.visibility = View.VISIBLE
+                    binding.currentWeatherReloadIcon.visibility = View.GONE
+                    binding.currentWeatherReloadText.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
@@ -91,18 +92,22 @@ class MainActivity : AppCompatActivity() {
                     binding.sunriseTime.visibility = View.GONE
                     binding.sunsetIcon.visibility = View.GONE
                     binding.sunsetTime.visibility = View.GONE
-                    binding.windIcon.visibility = View.GONE
-                    binding.windSpeed.visibility = View.GONE
-                    binding.windDeg.visibility = View.GONE
+                    binding.windCardLoadingSymbol.visibility = View.VISIBLE
+                    binding.windCardReloadIcon.visibility = View.GONE
+                    binding.windSpeedTypeIcon.visibility = View.GONE
+                    binding.windSpeedAmount.visibility = View.GONE
+                    binding.windDirectionTypeIcon.visibility = View.GONE
+                    binding.windDirectionAmount.visibility = View.GONE
+                    binding.windGustTypeIcon.visibility = View.GONE
+                    binding.windGustAmount.visibility = View.GONE
                     binding.precipitationCardLoadingSymbol.visibility = View.VISIBLE
+                    binding.precipitationCardReloadIcon.visibility = View.GONE
                     binding.precipitationTypeIcon.visibility = View.GONE
                     binding.precipitationAmount.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
                     binding.cloudinessValue.visibility = View.GONE
-                    binding.reloadIcon.visibility = View.GONE
-                    binding.reloadText.visibility = View.GONE
                     binding.forecastLoadingSymbol.visibility = View.VISIBLE
                     binding.forecastReloadIcon.visibility = View.GONE
                     binding.forecastReloadText.visibility = View.GONE
@@ -110,8 +115,9 @@ class MainActivity : AppCompatActivity() {
                     binding.fab.visibility = View.GONE
                 }
                 WeatherDataViewModel.State.SUCCESS -> {
-                    binding.loadingSymbol.visibility = View.GONE
                     binding.currentWeatherCardLoadingSymbol.visibility = View.GONE
+                    binding.currentWeatherReloadIcon.visibility = View.GONE
+                    binding.currentWeatherReloadText.visibility = View.GONE
                     binding.currentTimeValue.visibility = View.VISIBLE
                     binding.temperatureValue.visibility = View.VISIBLE
                     binding.weatherType.visibility = View.VISIBLE
@@ -120,18 +126,22 @@ class MainActivity : AppCompatActivity() {
                     binding.sunriseTime.visibility = View.VISIBLE
                     binding.sunsetIcon.visibility = View.VISIBLE
                     binding.sunsetTime.visibility = View.VISIBLE
-                    binding.windIcon.visibility = View.VISIBLE
-                    binding.windSpeed.visibility = View.VISIBLE
-                    binding.windDeg.visibility = View.VISIBLE
+                    binding.windCardLoadingSymbol.visibility = View.GONE
+                    binding.windCardReloadIcon.visibility = View.GONE
+                    binding.windSpeedTypeIcon.visibility = View.VISIBLE
+                    binding.windSpeedAmount.visibility = View.VISIBLE
+                    binding.windDirectionTypeIcon.visibility = View.VISIBLE
+                    binding.windDirectionAmount.visibility = View.VISIBLE
+                    binding.windGustTypeIcon.visibility = View.VISIBLE
+                    binding.windGustAmount.visibility = View.VISIBLE
                     binding.precipitationCardLoadingSymbol.visibility = View.GONE
+                    binding.precipitationCardReloadIcon.visibility = View.GONE
                     binding.precipitationTypeIcon.visibility = View.VISIBLE
                     binding.precipitationAmount.visibility = View.VISIBLE
                     binding.humidityIcon.visibility = View.VISIBLE
                     binding.humidityValue.visibility = View.VISIBLE
                     binding.cloudinessIcon.visibility = View.VISIBLE
                     binding.cloudinessValue.visibility = View.VISIBLE
-                    binding.reloadIcon.visibility = View.GONE
-                    binding.reloadText.visibility = View.GONE
                     binding.forecastLoadingSymbol.visibility = View.GONE
                     binding.forecastReloadIcon.visibility = View.GONE
                     binding.forecastReloadText.visibility = View.GONE
@@ -139,8 +149,9 @@ class MainActivity : AppCompatActivity() {
                     binding.fab.visibility = View.VISIBLE
                 }
                 else -> {
-                    binding.loadingSymbol.visibility = View.GONE
                     binding.currentWeatherCardLoadingSymbol.visibility = View.GONE
+                    binding.currentWeatherReloadIcon.visibility = View.VISIBLE
+                    binding.currentWeatherReloadText.visibility = View.VISIBLE
                     binding.currentTimeValue.visibility = View.GONE
                     binding.temperatureValue.visibility = View.GONE
                     binding.weatherType.visibility = View.GONE
@@ -149,18 +160,22 @@ class MainActivity : AppCompatActivity() {
                     binding.sunriseTime.visibility = View.GONE
                     binding.sunsetIcon.visibility = View.GONE
                     binding.sunsetTime.visibility = View.GONE
-                    binding.windIcon.visibility = View.GONE
-                    binding.windSpeed.visibility = View.GONE
-                    binding.windDeg.visibility = View.GONE
+                    binding.windCardLoadingSymbol.visibility = View.GONE
+                    binding.windCardReloadIcon.visibility = View.VISIBLE
+                    binding.windSpeedTypeIcon.visibility = View.GONE
+                    binding.windSpeedAmount.visibility = View.GONE
+                    binding.windDirectionTypeIcon.visibility = View.GONE
+                    binding.windDirectionAmount.visibility = View.GONE
+                    binding.windGustTypeIcon.visibility = View.GONE
+                    binding.windGustAmount.visibility = View.GONE
                     binding.precipitationCardLoadingSymbol.visibility = View.GONE
+                    binding.precipitationCardReloadIcon.visibility = View.VISIBLE
                     binding.precipitationTypeIcon.visibility = View.GONE
                     binding.precipitationAmount.visibility = View.GONE
                     binding.humidityIcon.visibility = View.GONE
                     binding.humidityValue.visibility = View.GONE
                     binding.cloudinessIcon.visibility = View.GONE
                     binding.cloudinessValue.visibility = View.GONE
-                    binding.reloadIcon.visibility = View.VISIBLE
-                    binding.reloadText.visibility = View.VISIBLE
                     binding.forecastLoadingSymbol.visibility = View.GONE
                     binding.forecastReloadIcon.visibility = View.VISIBLE
                     binding.forecastReloadText.visibility = View.VISIBLE
@@ -271,8 +286,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.sunriseTime.text = timeFormatter.format(Date(currentWeatherCache.sunrise * 1000))
         binding.sunsetTime.text = timeFormatter.format(Date(currentWeatherCache.sunset * 1000))
-        binding.windSpeed.text = currentWeatherCache.windSpeed.toString()
-        binding.windDeg.text = String.format("%.1fº", currentWeatherCache.windDeg)
+        binding.windSpeedAmount.text = String.format("%.2f mph", currentWeatherCache.windSpeed)
+        binding.windDirectionAmount.text = String.format("%.0fº", currentWeatherCache.windDeg)
+        binding.windGustAmount.text = String.format("%.2f mph", currentWeatherCache.windGust)
 
         val rainValue = currentWeatherCache.rainAmount
         val snowValue = currentWeatherCache.snowAmount

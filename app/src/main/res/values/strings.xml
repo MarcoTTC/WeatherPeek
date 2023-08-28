@@ -19,6 +19,7 @@
     <!-- Card titles -->
     <string name="current_weather_label">CURRENT WEATHER</string>
     <string name="precipitation_card_title">PRECIPITATION</string>
+    <string name="wind_card_title">WIND CONDITIONS</string>
     <string name="forecast_label">FORECAST</string>
 
     <!-- Common text messages -->

@@ -16,6 +16,7 @@ data class CurrentWeatherData(
     var visibility: Int,
     @SerializedName("wind_speed") var windSpeed: Double,
     @SerializedName("wind_deg") var windDeg: Double,
+    @SerializedName("wind_gust") var windGust: Double,
     @SerializedName("weather") var weatherList: List<WeatherData>,
     var rain: RainData?,
     var snow: SnowData?
@@ -30,7 +31,9 @@ data class CurrentWeatherData(
         clouds: Int
     ) :
             this(
-                dt, sunrise, sunset, temp, 0.0, pressure, humidity, 0.0, clouds, 0, 0.0, 0.0,
-                listOf(WeatherData(304, "Sunny", "Clear sunny", "08n")), RainData(0.0), SnowData(0.0)
+                dt, sunrise, sunset, temp, 0.0,
+                pressure, humidity, 0.0, clouds, 0,
+                0.0, 0.0, 0.0, listOf(WeatherData(304, "Sunny", "Clear sunny", "08n")),
+                RainData(0.0), SnowData(0.0)
             )
 }

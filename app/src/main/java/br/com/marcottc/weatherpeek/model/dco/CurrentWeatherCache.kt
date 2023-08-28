@@ -22,6 +22,8 @@ data class CurrentWeatherCache(
     @ColumnInfo(defaultValue = "0")
     var windDeg: Double,
     @ColumnInfo(defaultValue = "0")
+    var windGust: Double,
+    @ColumnInfo(defaultValue = "0")
     var rainAmount: Double,
     @ColumnInfo(defaultValue = "0")
     var snowAmount: Double,
@@ -40,6 +42,7 @@ data class CurrentWeatherCache(
                 data.current.pressure,
                 data.current.windSpeed,
                 data.current.windDeg,
+                data.current.windGust,
                 data.current.rain?.oneHour ?: 0.0,
                 data.current.snow?.oneHour ?: 0.0,
                 data.current.humidity,
