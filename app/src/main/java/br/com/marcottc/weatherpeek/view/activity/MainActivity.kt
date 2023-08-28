@@ -277,7 +277,12 @@ class MainActivity : AppCompatActivity() {
         val rainValue = currentWeatherCache.rainAmount
         val snowValue = currentWeatherCache.snowAmount
         if (rainValue == 0.0 && snowValue == 0.0) {
-            binding.precipitationAmount.text = getString(R.string.no_precipitation)
+            val noPrecipitationMessage: String = if (currentWeatherCache.temp > 0) {
+                getString(R.string.no_rain)
+            } else {
+                getString(R.string.no_snow)
+            }
+            binding.precipitationAmount.text = noPrecipitationMessage
             binding.precipitationTypeIcon.setImageDrawable(
                 AppCompatResources.getDrawable(
                     this,

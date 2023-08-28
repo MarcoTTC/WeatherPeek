@@ -8,7 +8,8 @@
     <string name="btn_navigate_to_weather_activity_description">Click for more information</string>
     <string name="reload_text">Swipe to reload</string>
     <string name="force_refresh">Force refresh</string>
-    <string name="no_precipitation">No drops</string>
+    <string name="no_rain">No rain</string>
+    <string name="no_snow">No snow</string>
 
     <!-- WeatherActivity -->
     <string name="btn_close_description">Click to close</string>
@@ -17,6 +18,7 @@
 
     <!-- Card titles -->
     <string name="current_weather_label">CURRENT WEATHER</string>
+    <string name="precipitation_card_title">PRECIPITATION</string>
     <string name="forecast_label">FORECAST</string>
 
     <!-- Common text messages -->

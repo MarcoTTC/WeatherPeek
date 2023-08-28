@@ -312,7 +312,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="8dp"
-                        android:text="PRECIPITATION"
+                        android:text="@string/precipitation_card_title"
                         android:textAppearance="?attr/textAppearanceBody1"
                         app:layout_constraintBottom_toBottomOf="@id/precipitation_card_icon"
                         app:layout_constraintEnd_toEndOf="parent"

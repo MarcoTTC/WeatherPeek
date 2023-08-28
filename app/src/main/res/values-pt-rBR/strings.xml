@@ -9,7 +9,8 @@
     <string name="btn_navigate_to_weather_activity_description">Clique para mais informações</string>
     <string name="reload_text">Deslize para recarregar</string>
     <string name="force_refresh">Forçar atualização</string>
-    <string name="no_precipitation">Sem gotas</string>
+    <string name="no_rain">Sem chuva</string>
+    <string name="no_snow">Sem neve</string>
 
     <!-- WeatherActivity -->
     <string name="btn_close_description">Clique para fechar</string>
@@ -18,6 +19,7 @@
 
     <!-- Card titles -->
     <string name="current_weather_label">CLIMA ATUAL</string>
+    <string name="precipitation_card_title">PRECIPITAÇÃO</string>
     <string name="forecast_label">PREVISÃO</string>
 
     <!-- Common text messages -->
