@@ -21,6 +21,9 @@ out/
 #  Uncomment the following line in case you need and you don't have the release build type files in your app
 # release/
 
+# Kotlin 2.0 files
+.kotlin/
+
 # Gradle files
 .gradle/
 build/
@@ -164,9 +167,6 @@ obj/
 # IntelliJ IDEA
 *.iws
 /out/
-
-# User-specific configurations
-.idea/
 
 # OS-specific files
 .DS_Store

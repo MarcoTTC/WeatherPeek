@@ -1,12 +1,21 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
 
 android {
     compileSdkVersion versions.compileSdk
 
     defaultConfig {
         applicationId "br.com.marcottc.weatherpeek"
+        namespace 'br.com.marcottc.weatherpeek'
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
         versionCode versions.versionCode
@@ -14,10 +23,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
     }
 
@@ -35,10 +42,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-    namespace 'br.com.marcottc.weatherpeek'
 }
 
 dependencies {
@@ -61,7 +64,7 @@ dependencies {
 
     // Room
     implementation "androidx.room:room-runtime:${versions.room}"
-    kapt "androidx.room:room-compiler:${versions.room}"
+    ksp "androidx.room:room-compiler:${versions.room}"
     implementation "androidx.room:room-ktx:${versions.room}"
 
     // Kotlin + coroutines
@@ -76,7 +79,7 @@ dependencies {
 
     // Glide
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
-    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    ksp "com.github.bumptech.glide:compiler:${versions.glide}"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
