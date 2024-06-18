@@ -134,7 +134,6 @@ class WeatherActivity : AppCompatActivity() {
         weatherDataViewModel.showMessage.observe(this) { message ->
             if (message.isNotEmpty()) {
                 Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
-                    .setAnchorView(R.id.fab)
                     .show()
             }
         }
