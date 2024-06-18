@@ -4,9 +4,11 @@ import android.Manifest
 import android.app.Application
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
@@ -31,8 +33,10 @@ class WeatherDataViewModel(
     private val weatherPeekRepository: WeatherPeekRepository,
     private val oneCallService: OneCallService,
     private val locationManager: LocationManager,
-    private val sharedPreferences: SharedPreferences
-) : AndroidViewModel(weatherApplication) {
+    private val connectivityManager: ConnectivityManager,
+    private val sharedPreferences: SharedPreferences,
+    private val resources: Resources
+) : ViewModel() {
 
     enum class State {
         LOADING,
@@ -118,9 +122,9 @@ class WeatherDataViewModel(
                 return
             }
 
-            if (!NetworkUtil.hasConnectivity(weatherApplication)) {
+            if (!NetworkUtil.hasConnectivity(connectivityManager)) {
                 _showMessage.value =
-                    weatherApplication.resources.getString(R.string.no_internet_connectivity)
+                    resources.getString(R.string.no_internet_connectivity)
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
                 return

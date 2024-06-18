@@ -2,6 +2,7 @@ package br.com.marcottc.weatherpeek.koin
 
 import android.content.Context
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import br.com.marcottc.weatherpeek.model.room.RoomDatabaseInstance
 import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
@@ -56,10 +57,18 @@ val contextModule = module {
     }
 
     single {
+        androidApplication().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    single {
         androidApplication().getSharedPreferences(
             sharedPreferencesDb,
             Context.MODE_PRIVATE
         )
+    }
+
+    factory {
+        androidApplication().resources
     }
 }
 
@@ -71,6 +80,8 @@ val viewModelModule = module {
     viewModel {
         WeatherDataViewModel(
             androidApplication(),
+            get(),
+            get(),
             get(),
             get(),
             get(),

@@ -1,15 +1,12 @@
 package br.com.marcottc.weatherpeek.util
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 
 class NetworkUtil {
 
     companion object {
-        fun hasConnectivity(context: Context): Boolean {
-            val connectivityManager =
-                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        fun hasConnectivity(connectivityManager: ConnectivityManager): Boolean {
             val network = connectivityManager.activeNetwork ?: return false
             val activeNetwork =
                 connectivityManager.getNetworkCapabilities(network) ?: return false
