@@ -2,8 +2,6 @@ package br.com.marcottc.weatherpeek.viewmodel
 
 import android.Manifest
 import android.app.Application
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
@@ -18,24 +16,23 @@ import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
-import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.forceRefreshSettings
 import br.com.marcottc.weatherpeek.util.oneCallAppId
-import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 class WeatherDataViewModel(
     private val weatherApplication: Application,
-    private val weatherPeekRepository: WeatherPeekRepository
-) :
-    AndroidViewModel(weatherApplication) {
+    private val weatherPeekRepository: WeatherPeekRepository,
+    private val oneCallService: OneCallService,
+    private val locationManager: LocationManager,
+    private val sharedPreferences: SharedPreferences
+) : AndroidViewModel(weatherApplication) {
 
     enum class State {
         LOADING,
@@ -75,11 +72,6 @@ class WeatherDataViewModel(
     val showMessage: LiveData<String>
         get() = _showMessage
 
-    private var retrofitInstance: Retrofit
-    private var oneCallService: OneCallService
-    private var locationManager: LocationManager
-//    private var weatherPeekRepository: WeatherPeekRepository
-    private var sharedPreferences: SharedPreferences
     private var isForceRefresh: Boolean
 
     private val mLocationListener = object : LocationListener {
@@ -105,13 +97,6 @@ class WeatherDataViewModel(
         _requestingWeatherData.value = false
         _showMessage.value = ""
 
-        retrofitInstance = RetrofitClientInstance.getRetrofitInstance()
-        oneCallService = retrofitInstance.create(OneCallService::class.java)
-        locationManager =
-            weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        weatherPeekRepository = WeatherPeekRepository(weatherApplication)
-
-        sharedPreferences = weatherApplication.getSharedPreferences(sharedPreferencesDb, MODE_PRIVATE)
         isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
     }
 

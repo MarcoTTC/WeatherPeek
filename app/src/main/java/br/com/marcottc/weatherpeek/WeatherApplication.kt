@@ -2,6 +2,8 @@ package br.com.marcottc.weatherpeek
 
 import android.app.Application
 import androidx.work.*
+import br.com.marcottc.weatherpeek.koin.contextModule
+import br.com.marcottc.weatherpeek.koin.networkModule
 import br.com.marcottc.weatherpeek.koin.repositoryModule
 import br.com.marcottc.weatherpeek.koin.viewModelModule
 import br.com.marcottc.weatherpeek.worker.UpdateWeatherCache
@@ -18,6 +20,8 @@ class WeatherApplication : Application() {
         startKoin {
             androidContext(this@WeatherApplication)
             modules(repositoryModule)
+            modules(networkModule)
+            modules(contextModule)
             modules(viewModelModule)
         }
 
