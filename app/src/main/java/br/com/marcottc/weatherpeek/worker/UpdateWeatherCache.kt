@@ -12,9 +12,12 @@ import br.com.marcottc.weatherpeek.util.oneCallAppId
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
+import org.koin.java.KoinJavaComponent.inject
 
 class UpdateWeatherCache(private val appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
+
+    private val weatherPeekRepository: WeatherPeekRepository by inject(WeatherPeekRepository::class.java)
 
     override suspend fun doWork(): Result {
         if (oneCallAppId.isEmpty()) {
@@ -32,7 +35,6 @@ class UpdateWeatherCache(private val appContext: Context, params: WorkerParamete
                 return if (response.isSuccessful) {
                     val availableWeatherData = response.body()
                     if (availableWeatherData != null) {
-                        val weatherPeekRepository = WeatherPeekRepository(appContext)
                         weatherPeekRepository.updateRepository(availableWeatherData)
 
                         Result.success()

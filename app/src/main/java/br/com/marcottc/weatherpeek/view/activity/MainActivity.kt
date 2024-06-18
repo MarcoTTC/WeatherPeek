@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
@@ -26,6 +25,7 @@ import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToLong
@@ -34,7 +34,7 @@ import android.util.Pair as AndroidPair
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainLayoutBinding
-    private val weatherDataViewModel: WeatherDataViewModel by viewModels()
+    private val weatherDataViewModel: WeatherDataViewModel by viewModel()
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 

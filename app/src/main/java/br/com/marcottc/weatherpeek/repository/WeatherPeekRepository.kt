@@ -1,6 +1,5 @@
 package br.com.marcottc.weatherpeek.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
@@ -12,7 +11,12 @@ import br.com.marcottc.weatherpeek.model.room.*
 import java.util.stream.Collectors
 import kotlin.math.abs
 
-class WeatherPeekRepository(applicationContext: Context) {
+class WeatherPeekRepository(
+    private val weatherCacheDao: WeatherCacheDao,
+    private val currentWeatherCacheDao: CurrentWeatherDao,
+    private val hourlyWeatherCacheDao: HourlyWeatherCacheDao,
+    private val dailyWeatherCacheDao: DailyWeatherCacheDao
+) {
 
     val currentWeatherCache: LiveData<CurrentWeatherCache> = liveData {
         emitSource(currentWeatherCacheDao.getLiveData())
@@ -28,20 +32,6 @@ class WeatherPeekRepository(applicationContext: Context) {
 
     val dailyWeatherListCache: LiveData<List<DailyWeatherCache>> = liveData {
         emitSource(dailyWeatherCacheDao.getAll())
-    }
-
-    private var database: WeatherPeekDatabase
-    private var weatherCacheDao: WeatherCacheDao
-    private var currentWeatherCacheDao: CurrentWeatherDao
-    private var hourlyWeatherCacheDao: HourlyWeatherCacheDao
-    private var dailyWeatherCacheDao: DailyWeatherCacheDao
-
-    init {
-        database = RoomDatabaseInstance.getRoomInstance(applicationContext)
-        weatherCacheDao = database.getWeatherCacheDao()
-        currentWeatherCacheDao = database.getCurrentWeatherDao()
-        hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
-        dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
     }
 
     suspend fun updateRepository(oneCallWeatherDTO: OneCallWeatherDTO) {

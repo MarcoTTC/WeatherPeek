@@ -18,7 +18,6 @@ import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
-import br.com.marcottc.weatherpeek.model.room.*
 import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
@@ -32,7 +31,10 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 
-class WeatherDataViewModel(private val weatherApplication: Application) :
+class WeatherDataViewModel(
+    private val weatherApplication: Application,
+    private val weatherPeekRepository: WeatherPeekRepository
+) :
     AndroidViewModel(weatherApplication) {
 
     enum class State {
@@ -76,12 +78,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
     private var retrofitInstance: Retrofit
     private var oneCallService: OneCallService
     private var locationManager: LocationManager
-    private var database: WeatherPeekDatabase
-    private var weatherCacheDao: WeatherCacheDao
-    private var currentWeatherCacheDao: CurrentWeatherDao
-    private var hourlyWeatherCacheDao: HourlyWeatherCacheDao
-    private var dailyWeatherCacheDao: DailyWeatherCacheDao
-    private var weatherPeekRepository: WeatherPeekRepository
+//    private var weatherPeekRepository: WeatherPeekRepository
     private var sharedPreferences: SharedPreferences
     private var isForceRefresh: Boolean
 
@@ -112,12 +109,7 @@ class WeatherDataViewModel(private val weatherApplication: Application) :
         oneCallService = retrofitInstance.create(OneCallService::class.java)
         locationManager =
             weatherApplication.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        database = RoomDatabaseInstance.getRoomInstance(weatherApplication)
-        weatherCacheDao = database.getWeatherCacheDao()
-        currentWeatherCacheDao = database.getCurrentWeatherDao()
-        hourlyWeatherCacheDao = database.getHourlyWeatherCacheDao()
-        dailyWeatherCacheDao = database.getDailyWeatherCacheDao()
-        weatherPeekRepository = WeatherPeekRepository(weatherApplication)
+//        weatherPeekRepository = WeatherPeekRepository(weatherApplication)
 
         sharedPreferences = weatherApplication.getSharedPreferences(sharedPreferencesDb, MODE_PRIVATE)
         isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
