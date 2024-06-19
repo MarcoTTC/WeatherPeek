@@ -175,11 +175,11 @@ class WeatherDataViewModel(
                     val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)
                     if (response.isSuccessful) {
                         val availableWeatherData = response.body()
-                        availableWeatherData?.let {
+                        if (availableWeatherData != null) {
                             weatherPeekRepository.updateRepository(availableWeatherData)
 
                             _viewModelState.value = State.SUCCESS
-                        } ?: run {
+                        } else {
                             _viewModelState.value = State.FAILED
                         }
                     } else {

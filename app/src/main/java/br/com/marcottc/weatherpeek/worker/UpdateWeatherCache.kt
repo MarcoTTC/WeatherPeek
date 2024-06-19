@@ -4,8 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import br.com.marcottc.weatherpeek.model.room.RoomDatabaseInstance
-import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
+import br.com.marcottc.weatherpeek.model.room.CurrentWeatherDao
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.oneCallAppId
@@ -17,17 +16,18 @@ import org.koin.java.KoinJavaComponent.inject
 class UpdateWeatherCache(private val appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
 
+    private val currentWeatherCacheDao: CurrentWeatherDao by inject(CurrentWeatherDao::class.java)
+
+    private val oneCallService: OneCallService by inject(OneCallService::class.java)
+
     private val weatherPeekRepository: WeatherPeekRepository by inject(WeatherPeekRepository::class.java)
+
 
     override suspend fun doWork(): Result {
         if (oneCallAppId.isEmpty()) {
             try {
-                val database = RoomDatabaseInstance.getRoomInstance(appContext)
-                val currentWeatherCacheDao = database.getCurrentWeatherDao()
                 val currentWeather = currentWeatherCacheDao.getValues()
 
-                val oneCallService = RetrofitClientInstance.getRetrofitInstance()
-                    .create(OneCallService::class.java)
                 val response = oneCallService.getWeatherData(
                     lat = currentWeather.latitude,
                     lon = currentWeather.longitude

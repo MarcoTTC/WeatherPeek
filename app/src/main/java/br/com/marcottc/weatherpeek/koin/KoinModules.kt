@@ -3,21 +3,28 @@ package br.com.marcottc.weatherpeek.koin
 import android.content.Context
 import android.location.LocationManager
 import android.net.ConnectivityManager
-import br.com.marcottc.weatherpeek.model.room.RoomDatabaseInstance
+import androidx.room.Room
 import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
-import br.com.marcottc.weatherpeek.network.RetrofitClientInstance
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
+import br.com.marcottc.weatherpeek.util.BASE_URL
+import br.com.marcottc.weatherpeek.util.ROOM_DB_NAME
 import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 val repositoryModule = module {
     single {
-        RoomDatabaseInstance.getRoomInstance(androidApplication())
+        Room.databaseBuilder(
+            androidApplication(),
+            WeatherPeekDatabase::class.java,
+            ROOM_DB_NAME
+        ).build()
     }
     single {
         get<WeatherPeekDatabase>().getWeatherCacheDao()
@@ -44,7 +51,10 @@ val repositoryModule = module {
 
 val networkModule = module {
     single {
-        RetrofitClientInstance.getRetrofitInstance()
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
     single {
         get<Retrofit>().create(OneCallService::class.java)
@@ -52,23 +62,23 @@ val networkModule = module {
 }
 
 val contextModule = module {
-    single {
-        androidApplication().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    factory {
+        androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
-    single {
-        androidApplication().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    factory {
+        androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
-    single {
-        androidApplication().getSharedPreferences(
+    factory {
+        androidContext().getSharedPreferences(
             sharedPreferencesDb,
             Context.MODE_PRIVATE
         )
     }
 
     factory {
-        androidApplication().resources
+        androidContext().resources
     }
 }
 
