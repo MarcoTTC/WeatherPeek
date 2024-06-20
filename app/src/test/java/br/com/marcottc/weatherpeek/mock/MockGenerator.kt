@@ -1,4 +1,4 @@
-package br.com.marcottc.weatherpeek.model.mock
+package br.com.marcottc.weatherpeek.mock
 
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache

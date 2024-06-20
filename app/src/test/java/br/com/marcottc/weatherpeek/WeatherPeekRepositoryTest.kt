@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
-import br.com.marcottc.weatherpeek.model.mock.MockGenerator
+import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.room.CurrentWeatherDao
 import br.com.marcottc.weatherpeek.model.room.DailyWeatherCacheDao
 import br.com.marcottc.weatherpeek.model.room.HourlyWeatherCacheDao
@@ -12,9 +12,7 @@ import br.com.marcottc.weatherpeek.model.room.WeatherCacheDao
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
