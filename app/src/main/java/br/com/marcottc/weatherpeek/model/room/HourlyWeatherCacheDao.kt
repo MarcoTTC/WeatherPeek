@@ -11,7 +11,10 @@ import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 interface HourlyWeatherCacheDao {
 
     @Query("SELECT * FROM HourlyWeatherCache ORDER BY dt ASC")
-    fun getAll(): LiveData<List<HourlyWeatherCache>>
+    fun getAllLiveData(): LiveData<List<HourlyWeatherCache>>
+
+    @Query("SELECT * FROM HourlyWeatherCache ORDER BY dt ASC")
+    suspend fun getAll(): List<HourlyWeatherCache>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg weather: HourlyWeatherCache)

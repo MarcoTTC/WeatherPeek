@@ -10,7 +10,7 @@ interface CurrentWeatherDao {
     fun getLiveData(): LiveData<CurrentWeatherCache>
 
     @Query("SELECT * FROM CurrentWeatherCache ORDER BY dt ASC")
-    fun getValues(): CurrentWeatherCache
+    suspend fun getValues(): CurrentWeatherCache?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(cache: CurrentWeatherCache)

@@ -27,10 +27,15 @@ class UpdateWeatherCache(private val appContext: Context, params: WorkerParamete
         if (oneCallAppId.isEmpty()) {
             try {
                 val currentWeather = currentWeatherCacheDao.getValues()
+                val latitude = currentWeather?.latitude
+                val longitude = currentWeather?.longitude
 
+                if (latitude == null || longitude == null) {
+                    return Result.failure()
+                }
                 val response = oneCallService.getWeatherData(
-                    lat = currentWeather.latitude,
-                    lon = currentWeather.longitude
+                    lat = latitude,
+                    lon = longitude
                 )
                 return if (response.isSuccessful) {
                     val availableWeatherData = response.body()

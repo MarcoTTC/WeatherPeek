@@ -27,7 +27,7 @@ class WeatherPeekRepository(
     }
 
     val hourlyWeatherListCache: LiveData<List<HourlyWeatherCache>> = liveData {
-        emitSource(hourlyWeatherCacheDao.getAll())
+        emitSource(hourlyWeatherCacheDao.getAllLiveData())
     }
 
     val dailyWeatherListCache: LiveData<List<DailyWeatherCache>> = liveData {
@@ -63,16 +63,16 @@ class WeatherPeekRepository(
         dailyWeatherCacheDao.insertAll(*dailyWeatherList.toTypedArray())
     }
 
-    fun databaseRefreshRequired(currentLat: Double, currentLon: Double): Boolean {
-        val currentWeather = currentWeatherCache.value
-        val hourlyWeatherList = hourlyWeatherListCache.value
-        if (
+    suspend fun databaseRefreshRequired(currentLat: Double, currentLon: Double): Boolean {
+        val currentWeather = currentWeatherCacheDao.getValues()
+        val hourlyWeatherList = hourlyWeatherCacheDao.getAll()
+        return if (
             currentWeather == null ||
             hourlyWeatherList.isNullOrEmpty()
         ) {
-            return true
+            true
         } else {
-            return if (abs(currentWeather.latitude - currentLat) >= 1 ||
+            if (abs(currentWeather.latitude - currentLat) >= 1 ||
                 abs(currentWeather.longitude - currentLon) >= 1) {
                 true
             } else {

@@ -26,7 +26,9 @@ import br.com.marcottc.weatherpeek.util.oneCallAppId
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class WeatherDataViewModel(
     private val weatherApplication: Application,
@@ -169,18 +171,25 @@ class WeatherDataViewModel(
     private fun recoveringWeatherData(latitude: Double, longitude: Double) {
         locationManager.removeUpdates(mLocationListener)
 
-        if (weatherPeekRepository.databaseRefreshRequired(latitude, longitude) || isForceRefresh) {
-            viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (weatherPeekRepository.databaseRefreshRequired(
+                    latitude,
+                    longitude) ||
+                isForceRefresh
+            ) {
                 try {
-                    val response = oneCallService.getWeatherData(lat = latitude, lon = longitude)
+                    val response =
+                        oneCallService.getWeatherData(lat = latitude, lon = longitude)
+                    var newState: State
+                    var errorMessage: String? = null
                     if (response.isSuccessful) {
                         val availableWeatherData = response.body()
                         if (availableWeatherData != null) {
                             weatherPeekRepository.updateRepository(availableWeatherData)
 
-                            _viewModelState.value = State.SUCCESS
+                            newState = State.SUCCESS
                         } else {
-                            _viewModelState.value = State.FAILED
+                            newState = State.FAILED
                         }
                     } else {
                         val gson = Gson()
@@ -189,12 +198,18 @@ class WeatherDataViewModel(
                             ErrorResponse::class.java
                         )
                         if (errorResponse != null) {
-                            _showMessage.value = errorResponse.message
+                            errorMessage = errorResponse.message
                         }
-                        _viewModelState.value = State.FAILED
+                        newState = State.FAILED
                     }
 
-                    _requestingWeatherData.value = false
+                    withContext(Dispatchers.Main) {
+                        _viewModelState.value = newState
+                        _requestingWeatherData.value = false
+                        if (errorMessage != null) {
+                            _showMessage.value = errorMessage!!
+                        }
+                    }
                 } catch (exception: Exception) {
                     when (exception) {
                         is JsonSyntaxException,
@@ -204,17 +219,22 @@ class WeatherDataViewModel(
                                 exception.message,
                                 exception
                             )
-                            _requestingWeatherData.value = false
-                            _viewModelState.value = State.FAILED
+                            withContext(Dispatchers.Main) {
+                                _requestingWeatherData.value = false
+                                _viewModelState.value = State.FAILED
+                            }
                         }
+
                         else -> throw exception
                     }
                 }
+            } else {
+                withContext(Dispatchers.Main) {
+                    _showMessage.value = "Retrieved local cached data"
+                    _requestingWeatherData.value = false
+                    _viewModelState.value = State.SUCCESS
+                }
             }
-        } else {
-            _showMessage.value = "Retrieved local cached data"
-            _requestingWeatherData.value = false
-            _viewModelState.value = State.SUCCESS
         }
     }
 }
