@@ -10,7 +10,10 @@ import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 @Dao
 interface DailyWeatherCacheDao {
     @Query("SELECT * FROM DailyWeatherCache ORDER BY dt ASC")
-    fun getAll(): LiveData<List<DailyWeatherCache>>
+    fun getAllLiveData(): LiveData<List<DailyWeatherCache>>
+
+    @Query("SELECT * FROM DailyWeatherCache ORDER BY dt ASC")
+    suspend fun getAll(): List<DailyWeatherCache>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg weather: DailyWeatherCache)

@@ -10,8 +10,10 @@ import br.com.marcottc.weatherpeek.model.room.DailyWeatherCacheDao
 import br.com.marcottc.weatherpeek.model.room.HourlyWeatherCacheDao
 import br.com.marcottc.weatherpeek.model.room.WeatherCacheDao
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -39,6 +41,31 @@ class WeatherPeekRepositoryTest {
             hourlyWeatherCacheDao,
             dailyWeatherCacheDao
         )
+    }
+
+    @Test
+    fun updateRepository_insertsDataCorrectly() {
+        runBlocking {
+            coEvery { currentWeatherDao.clear() } returns Unit
+            coEvery { currentWeatherDao.insert(any()) } returns Unit
+            coEvery { weatherCacheDao.clear() } returns Unit
+            coEvery { weatherCacheDao.insertAll(*anyVararg()) } just Runs
+            coEvery { hourlyWeatherCacheDao.clear() } returns Unit
+            coEvery { hourlyWeatherCacheDao.insertAll(*anyVararg()) } just Runs
+            coEvery { dailyWeatherCacheDao.clear() } returns Unit
+            coEvery { dailyWeatherCacheDao.insertAll(*anyVararg()) } just Runs
+
+            repository.updateRepository(MockGenerator.generateOneCallWeatherData())
+        }
+
+        coVerify { currentWeatherDao.clear() }
+        coVerify { currentWeatherDao.insert(any()) }
+        coVerify { weatherCacheDao.clear() }
+        coVerify { weatherCacheDao.insertAll(*anyVararg())}
+        coVerify { hourlyWeatherCacheDao.clear() }
+        coVerify { hourlyWeatherCacheDao.insertAll(*anyVararg())}
+        coVerify { dailyWeatherCacheDao.clear() }
+        coVerify { dailyWeatherCacheDao.insertAll(*anyVararg())}
     }
 
     @Test

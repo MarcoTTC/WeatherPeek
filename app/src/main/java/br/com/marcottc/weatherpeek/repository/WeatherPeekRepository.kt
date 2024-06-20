@@ -31,7 +31,7 @@ class WeatherPeekRepository(
     }
 
     val dailyWeatherListCache: LiveData<List<DailyWeatherCache>> = liveData {
-        emitSource(dailyWeatherCacheDao.getAll())
+        emitSource(dailyWeatherCacheDao.getAllLiveData())
     }
 
     suspend fun updateRepository(oneCallWeatherDTO: OneCallWeatherDTO) {
