@@ -7,6 +7,7 @@ import androidx.room.Room
 import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
+import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.BASE_URL
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
@@ -58,6 +59,11 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    single {
+        AppKeyUtil()
+    }
+
     single {
         get<Retrofit>().create(OneCallService::class.java)
     }
@@ -99,6 +105,7 @@ val viewModelModule = module {
 
     viewModel {
         WeatherPeekViewModel(
+            get(),
             get(),
             get(),
             get(),

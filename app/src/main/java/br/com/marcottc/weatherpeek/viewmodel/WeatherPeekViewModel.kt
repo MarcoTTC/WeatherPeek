@@ -16,10 +16,10 @@ import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
+import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.forceRefreshSettings
-import br.com.marcottc.weatherpeek.util.oneCallAppId
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
@@ -33,6 +33,7 @@ class WeatherPeekViewModel(
     private val locationManager: LocationManager,
     private val networkUtil: NetworkUtil,
     private val permissionUtil: PermissionUtil,
+    private val appKeyUtil: AppKeyUtil,
     private val sharedPreferences: SharedPreferences,
     private val resources: Resources
 ) : ViewModel() {
@@ -110,7 +111,7 @@ class WeatherPeekViewModel(
         if (_requestingWeatherData.value == true) {
             _showMessage.value = "Please wait a moment..."
         } else {
-            if (oneCallAppId.isEmpty()) {
+            if (appKeyUtil.isEmpty()) {
                 _showMessage.value = "Please set up an app id before building the project!"
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
@@ -164,7 +165,11 @@ class WeatherPeekViewModel(
             ) {
                 try {
                     val response =
-                        oneCallService.getWeatherData(lat = latitude, lon = longitude)
+                        oneCallService.getWeatherData(
+                            lat = latitude,
+                            lon = longitude,
+                            appid = appKeyUtil.getAppKey()
+                        )
                     var newState: State
                     var errorMessage: String? = null
                     if (response.isSuccessful) {

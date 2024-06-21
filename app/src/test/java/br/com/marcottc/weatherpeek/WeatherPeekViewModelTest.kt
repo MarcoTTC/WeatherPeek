@@ -6,6 +6,7 @@ import android.location.LocationManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
+import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
@@ -22,6 +23,7 @@ class WeatherPeekViewModelTest {
     private val locationManager: LocationManager = mockk<LocationManager>()
     private val networkUtil: NetworkUtil = mockk<NetworkUtil>()
     private val permissionUtil: PermissionUtil = mockk<PermissionUtil>()
+    private val appKeyUtil: AppKeyUtil = mockk<AppKeyUtil>()
     private val sharedPreferences: SharedPreferences = mockk<SharedPreferences>()
     private val resources: Resources = mockk<Resources>()
 
@@ -38,6 +40,7 @@ class WeatherPeekViewModelTest {
             locationManager,
             networkUtil,
             permissionUtil,
+            appKeyUtil,
             sharedPreferences,
             resources
         )
