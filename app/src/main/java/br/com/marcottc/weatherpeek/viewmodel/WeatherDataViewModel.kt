@@ -75,8 +75,6 @@ class WeatherDataViewModel(
     val showMessage: LiveData<String>
         get() = _showMessage
 
-    private var isForceRefresh: Boolean
-
     private val mLocationListener = object : LocationListener {
         private var previousAccuracy: Float = 1000000.0F
         private var countdown: Int = 3
@@ -99,12 +97,9 @@ class WeatherDataViewModel(
         _mustRequestPermissionFirst.value = false
         _requestingWeatherData.value = false
         _showMessage.value = ""
-
-        isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
     }
 
     fun setForceRefreshOption(value: Boolean) {
-        isForceRefresh = value
         val editor = sharedPreferences.edit()
         editor.putBoolean(forceRefreshSettings, value)
         editor.apply()
@@ -162,10 +157,10 @@ class WeatherDataViewModel(
         locationManager.removeUpdates(mLocationListener)
 
         viewModelScope.launch(Dispatchers.IO) {
-            if (weatherPeekRepository.databaseRefreshRequired(
-                    latitude,
-                    longitude) ||
-                isForceRefresh
+            val isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
+
+            if (isForceRefresh ||
+                weatherPeekRepository.databaseRefreshRequired(latitude, longitude)
             ) {
                 try {
                     val response =

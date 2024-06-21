@@ -24,36 +24,23 @@ class WeatherPeekViewModelTest {
     private val locationManager: LocationManager = mockk<LocationManager>()
     private val networkUtil: NetworkUtil = mockk<NetworkUtil>()
     private val permissionUtil: PermissionUtil = mockk<PermissionUtil>()
-    private val sharedPreferencesNoRefresh: SharedPreferences = mockk<SharedPreferences>()
-    private val sharedPreferencesForceRefresh: SharedPreferences = mockk<SharedPreferences>()
+    private val sharedPreferences: SharedPreferences = mockk<SharedPreferences>()
     private val resources: Resources = mockk<Resources>()
 
-    private lateinit var viewModelNoRefresh: WeatherDataViewModel
-    private lateinit var viewModelForceRefresh: WeatherDataViewModel
+    private lateinit var viewModel: WeatherDataViewModel
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {
-        every { sharedPreferencesNoRefresh.getBoolean(forceRefreshSettings, any()) } returns false
-        every { sharedPreferencesForceRefresh.getBoolean(forceRefreshSettings, any()) } returns true
-        viewModelNoRefresh = WeatherDataViewModel(
+        viewModel = WeatherDataViewModel(
             repository,
             oneCallService,
             locationManager,
             networkUtil,
             permissionUtil,
-            sharedPreferencesNoRefresh,
-            resources
-        )
-        viewModelForceRefresh = WeatherDataViewModel(
-            repository,
-            oneCallService,
-            locationManager,
-            networkUtil,
-            permissionUtil,
-            sharedPreferencesForceRefresh,
+            sharedPreferences,
             resources
         )
     }
