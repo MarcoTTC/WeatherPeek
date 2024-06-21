@@ -16,7 +16,7 @@ import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
-import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
+import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,7 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWeatherLayoutBinding
-    private val weatherDataViewModel: WeatherDataViewModel by viewModel()
+    private val weatherPeekViewModel: WeatherPeekViewModel by viewModel()
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyForecastAdapter
@@ -57,9 +57,9 @@ class WeatherActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        weatherDataViewModel.viewModelState.observe(this) { currentState ->
+        weatherPeekViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {
-                WeatherDataViewModel.State.LOADING -> {
+                WeatherPeekViewModel.State.LOADING -> {
                     binding.hourlyForecastLoadingSymbol.visibility = View.VISIBLE
                     binding.hourlyForecastReloadIcon.visibility = View.GONE
                     binding.hourlyForecastReloadText.visibility = View.GONE
@@ -73,7 +73,7 @@ class WeatherActivity : AppCompatActivity() {
                     binding.uviForecastReloadText.visibility = View.GONE
                     binding.uviMeter.visibility = View.GONE
                 }
-                WeatherDataViewModel.State.SUCCESS -> {
+                WeatherPeekViewModel.State.SUCCESS -> {
                     binding.hourlyForecastLoadingSymbol.visibility = View.GONE
                     binding.hourlyForecastReloadIcon.visibility = View.GONE
                     binding.hourlyForecastReloadText.visibility = View.GONE
@@ -104,7 +104,7 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.mustRequestPermissionFirst.observe(this) { mustRequestPermission ->
+        weatherPeekViewModel.mustRequestPermissionFirst.observe(this) { mustRequestPermission ->
             if (mustRequestPermission) {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
@@ -113,25 +113,25 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.hourlyWeatherListCache.observe(this) { data ->
+        weatherPeekViewModel.hourlyWeatherListCache.observe(this) { data ->
             if (data != null && data.isNotEmpty()) {
                 updatingHourlyWeatherList(data)
             }
         }
 
-        weatherDataViewModel.dailyWeatherListCache.observe(this) { data ->
+        weatherPeekViewModel.dailyWeatherListCache.observe(this) { data ->
             if (data != null && data.isNotEmpty()) {
                 updatingDailyWeatherList(data)
             }
         }
 
-        weatherDataViewModel.requestingWeatherData.observe(this) { isRequesting ->
+        weatherPeekViewModel.requestingWeatherData.observe(this) { isRequesting ->
             if (!isRequesting) {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
         }
 
-        weatherDataViewModel.showMessage.observe(this) { message ->
+        weatherPeekViewModel.showMessage.observe(this) { message ->
             if (message.isNotEmpty()) {
                 Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
                     .show()
@@ -140,7 +140,7 @@ class WeatherActivity : AppCompatActivity() {
 
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                weatherDataViewModel.getWeatherData()
+                weatherPeekViewModel.getWeatherData()
             }
 
         requestingLocationPermission()
@@ -161,7 +161,7 @@ class WeatherActivity : AppCompatActivity() {
                         this,
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED -> {
-                weatherDataViewModel.getWeatherData()
+                weatherPeekViewModel.getWeatherData()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -179,7 +179,7 @@ class WeatherActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
                 builder.setOnCancelListener {
-                    weatherDataViewModel.getWeatherData()
+                    weatherPeekViewModel.getWeatherData()
                 }
                 builder.create().show()
             }

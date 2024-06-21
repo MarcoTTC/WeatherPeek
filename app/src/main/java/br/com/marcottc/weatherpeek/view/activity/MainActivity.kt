@@ -21,7 +21,7 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.util.forceRefreshSettings
 import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
-import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
+import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -34,7 +34,7 @@ import android.util.Pair as AndroidPair
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainLayoutBinding
-    private val weatherDataViewModel: WeatherDataViewModel by viewModel()
+    private val weatherPeekViewModel: WeatherPeekViewModel by viewModel()
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         binding.forceRefreshSwitch.isChecked = isForceRefresh
 
         binding.forceRefreshSwitch.setOnCheckedChangeListener { _, isChecked ->
-            weatherDataViewModel.setForceRefreshOption(isChecked)
+            weatherPeekViewModel.setForceRefreshOption(isChecked)
         }
 
         binding.swipeRefreshLayout.setColorSchemeColors(
@@ -78,9 +78,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent, options.toBundle())
         }
 
-        weatherDataViewModel.viewModelState.observe(this) { currentState ->
+        weatherPeekViewModel.viewModelState.observe(this) { currentState ->
             when (currentState) {
-                WeatherDataViewModel.State.LOADING -> {
+                WeatherPeekViewModel.State.LOADING -> {
                     binding.currentWeatherCardLoadingSymbol.visibility = View.VISIBLE
                     binding.currentWeatherReloadIcon.visibility = View.GONE
                     binding.currentWeatherReloadText.visibility = View.GONE
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                     binding.forecastRecyclerView.visibility = View.GONE
                     binding.fab.visibility = View.GONE
                 }
-                WeatherDataViewModel.State.SUCCESS -> {
+                WeatherPeekViewModel.State.SUCCESS -> {
                     binding.currentWeatherCardLoadingSymbol.visibility = View.GONE
                     binding.currentWeatherReloadIcon.visibility = View.GONE
                     binding.currentWeatherReloadText.visibility = View.GONE
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.mustRequestPermissionFirst.observe(this) { mustRequestPermission ->
+        weatherPeekViewModel.mustRequestPermissionFirst.observe(this) { mustRequestPermission ->
             if (mustRequestPermission) {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
@@ -194,31 +194,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        weatherDataViewModel.currentWeatherCache.observe(this) { data ->
+        weatherPeekViewModel.currentWeatherCache.observe(this) { data ->
             if (data != null) {
                 updatingWeatherCards(data)
             }
         }
 
-        weatherDataViewModel.weatherListCache.observe(this) { data ->
+        weatherPeekViewModel.weatherListCache.observe(this) { data ->
             if (data != null && data.isNotEmpty()) {
                 updatingWeatherList(data)
             }
         }
 
-        weatherDataViewModel.hourlyWeatherListCache.observe(this) { data ->
+        weatherPeekViewModel.hourlyWeatherListCache.observe(this) { data ->
             if (data != null && data.isNotEmpty()) {
                 updatingHourlyWeatherList(data)
             }
         }
 
-        weatherDataViewModel.requestingWeatherData.observe(this) { isRequesting ->
+        weatherPeekViewModel.requestingWeatherData.observe(this) { isRequesting ->
             if (!isRequesting) {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
         }
 
-        weatherDataViewModel.showMessage.observe(this) { message ->
+        weatherPeekViewModel.showMessage.observe(this) { message ->
             if (message.isNotEmpty()) {
                 Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_LONG)
                     .setAnchorView(R.id.fab)
@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
 
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                weatherDataViewModel.getWeatherData()
+                weatherPeekViewModel.getWeatherData()
             }
 
         requestingLocationPermission()
@@ -249,7 +249,7 @@ class MainActivity : AppCompatActivity() {
                         this,
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED -> {
-                weatherDataViewModel.getWeatherData()
+                weatherPeekViewModel.getWeatherData()
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -267,7 +267,7 @@ class MainActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
                 builder.setOnCancelListener {
-                    weatherDataViewModel.getWeatherData()
+                    weatherPeekViewModel.getWeatherData()
                 }
                 builder.create().show()
             }

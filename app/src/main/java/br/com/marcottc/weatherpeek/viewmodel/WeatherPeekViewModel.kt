@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class WeatherDataViewModel(
+class WeatherPeekViewModel(
     private val weatherPeekRepository: WeatherPeekRepository,
     private val oneCallService: OneCallService,
     private val locationManager: LocationManager,
@@ -200,7 +200,7 @@ class WeatherDataViewModel(
                         is JsonSyntaxException,
                         is JsonIOException -> {
                             Log.e(
-                                WeatherDataViewModel::class.java.canonicalName,
+                                WeatherPeekViewModel::class.java.canonicalName,
                                 exception.message,
                                 exception
                             )

@@ -8,7 +8,7 @@ import br.com.marcottc.weatherpeek.model.room.CurrentWeatherDao
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.oneCallAppId
-import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
+import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import org.koin.java.KoinJavaComponent.inject
@@ -54,7 +54,7 @@ class UpdateWeatherCache(private val appContext: Context, params: WorkerParamete
                     is JsonSyntaxException,
                     is JsonIOException -> {
                         Log.e(
-                            WeatherDataViewModel::class.java.canonicalName,
+                            WeatherPeekViewModel::class.java.canonicalName,
                             exception.message,
                             exception
                         )

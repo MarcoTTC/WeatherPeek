@@ -8,9 +8,7 @@ import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
-import br.com.marcottc.weatherpeek.util.forceRefreshSettings
-import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
-import io.mockk.every
+import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import io.mockk.mockk
 import org.junit.Assert.*
 import org.junit.Before
@@ -27,14 +25,14 @@ class WeatherPeekViewModelTest {
     private val sharedPreferences: SharedPreferences = mockk<SharedPreferences>()
     private val resources: Resources = mockk<Resources>()
 
-    private lateinit var viewModel: WeatherDataViewModel
+    private lateinit var viewModel: WeatherPeekViewModel
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {
-        viewModel = WeatherDataViewModel(
+        viewModel = WeatherPeekViewModel(
             repository,
             oneCallService,
             locationManager,

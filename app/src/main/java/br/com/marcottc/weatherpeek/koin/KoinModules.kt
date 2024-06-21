@@ -12,7 +12,7 @@ import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.ROOM_DB_NAME
 import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
-import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
+import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -98,7 +98,7 @@ val viewModelModule = module {
     includes(contextModule)
 
     viewModel {
-        WeatherDataViewModel(
+        WeatherPeekViewModel(
             get(),
             get(),
             get(),
