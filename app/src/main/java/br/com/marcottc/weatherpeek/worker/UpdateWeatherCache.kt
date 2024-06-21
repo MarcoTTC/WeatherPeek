@@ -25,7 +25,7 @@ class UpdateWeatherCache(appContext: Context, params: WorkerParameters) :
     private val logger: LoggerUtil = LoggerUtil(UpdateWeatherCache::class.java.simpleName)
 
     override suspend fun doWork(): Result {
-        if (appKeyUtil.isEmpty()) {
+        if (!appKeyUtil.isEmpty()) {
             try {
                 val currentWeather = currentWeatherCacheDao.getValues()
                 val latitude = currentWeather?.latitude
