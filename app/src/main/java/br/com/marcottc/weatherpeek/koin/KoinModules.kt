@@ -8,6 +8,8 @@ import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.BASE_URL
+import br.com.marcottc.weatherpeek.util.NetworkUtil
+import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.ROOM_DB_NAME
 import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import br.com.marcottc.weatherpeek.viewmodel.WeatherDataViewModel
@@ -80,6 +82,14 @@ val contextModule = module {
     factory {
         androidContext().resources
     }
+
+    factory {
+        PermissionUtil(androidContext())
+    }
+
+    factory {
+        NetworkUtil(get())
+    }
 }
 
 val viewModelModule = module {
@@ -89,7 +99,7 @@ val viewModelModule = module {
 
     viewModel {
         WeatherDataViewModel(
-            androidApplication(),
+            get(),
             get(),
             get(),
             get(),

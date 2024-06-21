@@ -1,16 +1,12 @@
 package br.com.marcottc.weatherpeek.viewmodel
 
-import android.Manifest
-import android.app.Application
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.net.ConnectivityManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
@@ -21,6 +17,7 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.NetworkUtil
+import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.forceRefreshSettings
 import br.com.marcottc.weatherpeek.util.oneCallAppId
 import com.google.gson.Gson
@@ -31,11 +28,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class WeatherDataViewModel(
-    private val weatherApplication: Application,
     private val weatherPeekRepository: WeatherPeekRepository,
     private val oneCallService: OneCallService,
     private val locationManager: LocationManager,
-    private val connectivityManager: ConnectivityManager,
+    private val networkUtil: NetworkUtil,
+    private val permissionUtil: PermissionUtil,
     private val sharedPreferences: SharedPreferences,
     private val resources: Resources
 ) : ViewModel() {
@@ -113,6 +110,7 @@ class WeatherDataViewModel(
         editor.apply()
     }
 
+    @SuppressLint("MissingPermission")
     fun getWeatherData() {
         if (_requestingWeatherData.value == true) {
             _showMessage.value = "Please wait a moment..."
@@ -124,7 +122,7 @@ class WeatherDataViewModel(
                 return
             }
 
-            if (!NetworkUtil.hasConnectivity(connectivityManager)) {
+            if (!networkUtil.hasConnectivity()) {
                 _showMessage.value =
                     resources.getString(R.string.no_internet_connectivity)
                 _requestingWeatherData.value = false
@@ -133,15 +131,7 @@ class WeatherDataViewModel(
             }
 
             _mustRequestPermissionFirst.value = false
-            if (ActivityCompat.checkSelfPermission(
-                    weatherApplication,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(
-                    weatherApplication,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (permissionUtil.hasLocationPermission()) {
                 _requestingWeatherData.value = true
                 _viewModelState.value = State.LOADING
 
