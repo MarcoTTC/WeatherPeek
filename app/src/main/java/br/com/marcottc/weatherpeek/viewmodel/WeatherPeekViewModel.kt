@@ -23,7 +23,9 @@ import br.com.marcottc.weatherpeek.util.forceRefreshSettings
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -35,7 +37,8 @@ class WeatherPeekViewModel(
     private val permissionUtil: PermissionUtil,
     private val appKeyUtil: AppKeyUtil,
     private val sharedPreferences: SharedPreferences,
-    private val resources: Resources
+    private val resources: Resources,
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
     enum class State {
@@ -92,6 +95,8 @@ class WeatherPeekViewModel(
             }
         }
     }
+
+    private var retrievingWeatherDataJob: Job? = null
 
     init {
         _viewModelState.value = State.LOADING
@@ -157,7 +162,7 @@ class WeatherPeekViewModel(
     private fun recoveringWeatherData(latitude: Double, longitude: Double) {
         locationManager.removeUpdates(mLocationListener)
 
-        viewModelScope.launch(Dispatchers.IO) {
+        retrievingWeatherDataJob = viewModelScope.launch(Dispatchers.IO) {
             val isForceRefresh = sharedPreferences.getBoolean(forceRefreshSettings, false)
 
             if (isForceRefresh ||
@@ -193,7 +198,7 @@ class WeatherPeekViewModel(
                         newState = State.FAILED
                     }
 
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _viewModelState.value = newState
                         _requestingWeatherData.value = false
                         if (errorMessage != null) {
@@ -209,7 +214,7 @@ class WeatherPeekViewModel(
                                 exception.message,
                                 exception
                             )
-                            withContext(Dispatchers.Main) {
+                            withContext(mainDispatcher) {
                                 _requestingWeatherData.value = false
                                 _viewModelState.value = State.FAILED
                             }
@@ -219,12 +224,16 @@ class WeatherPeekViewModel(
                     }
                 }
             } else {
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     _showMessage.value = "Retrieved local cached data"
                     _requestingWeatherData.value = false
                     _viewModelState.value = State.SUCCESS
                 }
             }
         }
+    }
+
+    suspend fun suspendUntilWeatherDataIsRetrieved() {
+        retrievingWeatherDataJob?.join()
     }
 }
