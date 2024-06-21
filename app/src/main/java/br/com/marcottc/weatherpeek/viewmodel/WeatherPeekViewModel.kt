@@ -6,7 +6,6 @@ import android.content.res.Resources
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.util.Log
 import androidx.lifecycle.*
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.model.ErrorResponse
@@ -238,5 +237,12 @@ class WeatherPeekViewModel(
     @TestOnly
     suspend fun suspendUntilWeatherDataIsRetrieved() {
         retrievingWeatherDataJob?.join()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        retrievingWeatherDataJob?.cancel()
+        locationManager.removeUpdates(mLocationListener)
     }
 }
