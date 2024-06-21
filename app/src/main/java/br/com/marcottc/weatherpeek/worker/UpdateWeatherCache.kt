@@ -1,19 +1,18 @@
 package br.com.marcottc.weatherpeek.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import br.com.marcottc.weatherpeek.model.room.CurrentWeatherDao
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
-import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
+import br.com.marcottc.weatherpeek.util.LoggerUtil
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import org.koin.java.KoinJavaComponent.inject
 
-class UpdateWeatherCache(private val appContext: Context, params: WorkerParameters) :
+class UpdateWeatherCache(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
 
     private val currentWeatherCacheDao: CurrentWeatherDao by inject(CurrentWeatherDao::class.java)
@@ -23,6 +22,7 @@ class UpdateWeatherCache(private val appContext: Context, params: WorkerParamete
 
     private val weatherPeekRepository: WeatherPeekRepository by inject(WeatherPeekRepository::class.java)
 
+    private val logger: LoggerUtil = LoggerUtil(UpdateWeatherCache::class.java.simpleName)
 
     override suspend fun doWork(): Result {
         if (appKeyUtil.isEmpty()) {
@@ -54,9 +54,8 @@ class UpdateWeatherCache(private val appContext: Context, params: WorkerParamete
                 when (exception) {
                     is JsonSyntaxException,
                     is JsonIOException -> {
-                        Log.e(
-                            WeatherPeekViewModel::class.java.canonicalName,
-                            exception.message,
+                        logger.e(
+                            exception.message ?: "",
                             exception
                         )
                         return Result.failure()

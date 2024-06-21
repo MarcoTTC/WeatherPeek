@@ -17,6 +17,7 @@ import br.com.marcottc.weatherpeek.model.dco.WeatherCache
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
+import br.com.marcottc.weatherpeek.util.LoggerUtil
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.forceRefreshSettings
@@ -39,7 +40,8 @@ class WeatherPeekViewModel(
     private val appKeyUtil: AppKeyUtil,
     private val sharedPreferences: SharedPreferences,
     private val resources: Resources,
-    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+    private val logger: LoggerUtil = LoggerUtil(WeatherPeekViewModel::class.java.simpleName),
 ) : ViewModel() {
 
     enum class State {
@@ -210,9 +212,8 @@ class WeatherPeekViewModel(
                     when (exception) {
                         is JsonSyntaxException,
                         is JsonIOException -> {
-                            Log.e(
-                                WeatherPeekViewModel::class.java.canonicalName,
-                                exception.message,
+                            logger.e(
+                                exception.message ?: "",
                                 exception
                             )
                             withContext(mainDispatcher) {
