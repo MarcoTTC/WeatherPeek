@@ -15,7 +15,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -44,19 +44,17 @@ class WeatherPeekRepositoryTest {
     }
 
     @Test
-    fun updateRepository_insertsDataCorrectly() {
-        runBlocking {
-            coEvery { currentWeatherDao.clear() } returns Unit
-            coEvery { currentWeatherDao.insert(any()) } returns Unit
-            coEvery { weatherCacheDao.clear() } returns Unit
-            coEvery { weatherCacheDao.insertAll(*anyVararg()) } just Runs
-            coEvery { hourlyWeatherCacheDao.clear() } returns Unit
-            coEvery { hourlyWeatherCacheDao.insertAll(*anyVararg()) } just Runs
-            coEvery { dailyWeatherCacheDao.clear() } returns Unit
-            coEvery { dailyWeatherCacheDao.insertAll(*anyVararg()) } just Runs
+    fun updateRepository_insertsDataCorrectly() = runTest {
+        coEvery { currentWeatherDao.clear() } returns Unit
+        coEvery { currentWeatherDao.insert(any()) } returns Unit
+        coEvery { weatherCacheDao.clear() } returns Unit
+        coEvery { weatherCacheDao.insertAll(*anyVararg()) } just Runs
+        coEvery { hourlyWeatherCacheDao.clear() } returns Unit
+        coEvery { hourlyWeatherCacheDao.insertAll(*anyVararg()) } just Runs
+        coEvery { dailyWeatherCacheDao.clear() } returns Unit
+        coEvery { dailyWeatherCacheDao.insertAll(*anyVararg()) } just Runs
 
-            repository.updateRepository(MockGenerator.generateOneCallWeatherData())
-        }
+        repository.updateRepository(MockGenerator.generateOneCallWeatherData())
 
         coVerify { currentWeatherDao.clear() }
         coVerify { currentWeatherDao.insert(any()) }
@@ -69,17 +67,15 @@ class WeatherPeekRepositoryTest {
     }
 
     @Test
-    fun databaseRefreshRequired_noCachedData() {
-        var isDatabaseRefreshRequired = false
-        runBlocking {
-            val currentWeather: CurrentWeatherCache? = null
-            val hourlyWeatherList: List<HourlyWeatherCache> = emptyList()
-            coEvery { currentWeatherDao.getValues() } returns currentWeather
-            coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherList
+    fun databaseRefreshRequired_noCachedData() = runTest {
+        val currentWeather: CurrentWeatherCache? = null
+        val hourlyWeatherList: List<HourlyWeatherCache> = emptyList()
 
-            isDatabaseRefreshRequired = repository
-                .databaseRefreshRequired(37.422, -122.084)
-        }
+        coEvery { currentWeatherDao.getValues() } returns currentWeather
+        coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherList
+
+        val isDatabaseRefreshRequired: Boolean = repository
+            .databaseRefreshRequired(37.422, -122.084)
 
         assertTrue(isDatabaseRefreshRequired)
         coVerify { currentWeatherDao.getValues() }
@@ -87,17 +83,15 @@ class WeatherPeekRepositoryTest {
     }
 
     @Test
-    fun databaseRefreshRequired_cachedDataLocationChanged() {
-        var isDatabaseRefreshRequired = false
-        runBlocking {
-            val currentWeather = br.com.marcottc.weatherpeek.mock.MockGenerator.generateCurrentWeatherCache()
-            val hourlyWeatherList = br.com.marcottc.weatherpeek.mock.MockGenerator.generateHourlyWeatherCacheList()
-            coEvery { currentWeatherDao.getValues() } returns currentWeather
-            coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherList
+    fun databaseRefreshRequired_cachedDataLocationChanged() = runTest {
+        val currentWeather = MockGenerator.generateCurrentWeatherCache()
+        val hourlyWeatherList = MockGenerator.generateHourlyWeatherCacheList()
 
-            isDatabaseRefreshRequired = repository
-                .databaseRefreshRequired(66.581, -94.154)
-        }
+        coEvery { currentWeatherDao.getValues() } returns currentWeather
+        coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherList
+
+        val isDatabaseRefreshRequired: Boolean = repository
+            .databaseRefreshRequired(66.581, -94.154)
 
         assertTrue(isDatabaseRefreshRequired)
         coVerify { currentWeatherDao.getValues() }
@@ -105,18 +99,16 @@ class WeatherPeekRepositoryTest {
     }
 
     @Test
-    fun databaseRefreshRequired_cachedDataLocationUnchangedForecastNotExpired() {
-        var isDatabaseRefreshRequired = true
-        val hourlyWeatherCacheList = br.com.marcottc.weatherpeek.mock.MockGenerator.generateHourlyWeatherCacheList()
+    fun databaseRefreshRequired_cachedDataLocationUnchangedForecastNotExpired() = runTest {
+        val hourlyWeatherCacheList = MockGenerator.generateHourlyWeatherCacheList()
         hourlyWeatherCacheList[0].dt = System.currentTimeMillis() / 1000
-        runBlocking {
-            val currentWeather = br.com.marcottc.weatherpeek.mock.MockGenerator.generateCurrentWeatherCache()
-            coEvery { currentWeatherDao.getValues() } returns currentWeather
-            coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherCacheList
+        val currentWeather = MockGenerator.generateCurrentWeatherCache()
 
-            isDatabaseRefreshRequired = repository
-                .databaseRefreshRequired(37.422, -122.084)
-        }
+        coEvery { currentWeatherDao.getValues() } returns currentWeather
+        coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherCacheList
+
+        val isDatabaseRefreshRequired: Boolean = repository
+            .databaseRefreshRequired(37.422, -122.084)
 
         assertFalse(isDatabaseRefreshRequired)
         coVerify { currentWeatherDao.getValues() }
@@ -124,26 +116,46 @@ class WeatherPeekRepositoryTest {
     }
 
     @Test
-    fun databaseRefreshRequired_cachedDataLocationUnchangedForecastExpired() {
-        var isDatabaseRefreshRequired = false
-        val hourlyWeatherCacheList = br.com.marcottc.weatherpeek.mock.MockGenerator.generateHourlyWeatherCacheList()
+    fun databaseRefreshRequired_cachedDataLocationUnchangedForecastExpired() = runTest {
+        val hourlyWeatherCacheList = MockGenerator.generateHourlyWeatherCacheList()
         hourlyWeatherCacheList[0].dt = (System.currentTimeMillis() / 1000) - 3601
-        runBlocking {
-            val currentWeather = br.com.marcottc.weatherpeek.mock.MockGenerator.generateCurrentWeatherCache()
-            val hourlyWeatherListLiveData = MutableLiveData(hourlyWeatherCacheList)
-            coEvery { currentWeatherDao.getValues() } returns currentWeather
-            coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherCacheList
+        val currentWeather = MockGenerator.generateCurrentWeatherCache()
+        val hourlyWeatherListLiveData = MutableLiveData(hourlyWeatherCacheList)
 
-            hourlyWeatherListLiveData.observeForever {  }
+        coEvery { currentWeatherDao.getValues() } returns currentWeather
+        coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherCacheList
 
-            isDatabaseRefreshRequired = repository
-                .databaseRefreshRequired(37.422, -122.084)
+        hourlyWeatherListLiveData.observeForever {  }
 
-            hourlyWeatherListLiveData.removeObserver {  }
-        }
+        val isDatabaseRefreshRequired: Boolean = repository
+            .databaseRefreshRequired(37.422, -122.084)
 
         assertTrue(isDatabaseRefreshRequired)
         coVerify { currentWeatherDao.getValues() }
         coVerify { hourlyWeatherCacheDao.getAll() }
+
+        hourlyWeatherListLiveData.removeObserver {  }
+    }
+
+    @Test
+    fun getLastLatitudeAndLongitude_noCachedData() = runTest {
+        coEvery { currentWeatherDao.getValues() } returns null
+
+        val locationValue: Pair<Double, Double>? = repository.getLastLatitudeAndLongitude()
+
+        assertNull(locationValue)
+        coVerify { currentWeatherDao.getValues() }
+    }
+
+    @Test
+    fun getLastLatitudeAndLongitude_locationCachedData() = runTest {
+        val currentWeather = MockGenerator.generateCurrentWeatherCache()
+        coEvery { currentWeatherDao.getValues() } returns currentWeather
+
+        val locationValue: Pair<Double, Double>? = repository.getLastLatitudeAndLongitude()
+
+        assertEquals(37.422, locationValue?.first)
+        assertEquals(-122.084, locationValue?.second)
+        coVerify { currentWeatherDao.getValues() }
     }
 }
