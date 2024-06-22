@@ -3,40 +3,31 @@ package br.com.marcottc.weatherpeek.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import br.com.marcottc.weatherpeek.model.room.CurrentWeatherDao
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
-import org.koin.java.KoinJavaComponent.inject
 
-class UpdateWeatherCache(appContext: Context, params: WorkerParameters) :
-    CoroutineWorker(appContext, params) {
-
-    private val currentWeatherCacheDao: CurrentWeatherDao by inject(CurrentWeatherDao::class.java)
-
-    private val appKeyUtil: AppKeyUtil by inject(AppKeyUtil::class.java)
-    private val oneCallService: OneCallService by inject(OneCallService::class.java)
-
-    private val weatherPeekRepository: WeatherPeekRepository by inject(WeatherPeekRepository::class.java)
-
+class UpdateWeatherCache(
+    appContext: Context,
+    params: WorkerParameters,
+    private val appKeyUtil: AppKeyUtil,
+    private val oneCallService: OneCallService,
+    private val weatherPeekRepository: WeatherPeekRepository,
     private val logger: LoggerUtil = LoggerUtil(UpdateWeatherCache::class.java.simpleName)
+) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
         if (!appKeyUtil.isEmpty()) {
             try {
-                val currentWeather = currentWeatherCacheDao.getValues()
-                val latitude = currentWeather?.latitude
-                val longitude = currentWeather?.longitude
-
-                if (latitude == null || longitude == null) {
+                val locationValue = weatherPeekRepository.getLastLatitudeAndLongitude() ?:
                     return Result.failure()
-                }
+
                 val response = oneCallService.getWeatherData(
-                    lat = latitude,
-                    lon = longitude
+                    lat = locationValue.first,
+                    lon = locationValue.second
                 )
                 return if (response.isSuccessful) {
                     val availableWeatherData = response.body()

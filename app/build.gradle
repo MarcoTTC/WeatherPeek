@@ -38,9 +38,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // This configurations is necessary to run the instrumented tests
+    // on an emulated x86_64 device
+    testOptions {
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging true
+            }
+        }
+    }
+
+    // This configurations is necessary to use Mockk in instrumentation tests
+    packagingOptions {
+        resources.excludes.add("META-INF/LICENSE.md")
+        resources.excludes.add("META-INF/LICENSE-notice.md")
     }
 }
 
@@ -85,20 +102,25 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     ksp "com.github.bumptech.glide:compiler:${versions.glide}"
 
-    // Test libraries
+    // Unit Test libraries
 
     // Mockk
     testImplementation "io.mockk:mockk:${versions.mockk}"
+    androidTestImplementation "io.mockk:mockk-android:${versions.mockk}"
 
     // KotlinX Coroutines Test
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
-
-    // Arch
-    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
 
     // JUnit
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+
+    // Jetpack
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    androidTestImplementation "androidx.work:work-testing:${versions.work}"
+
+    // Instrumented Test libraries
 
     // Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

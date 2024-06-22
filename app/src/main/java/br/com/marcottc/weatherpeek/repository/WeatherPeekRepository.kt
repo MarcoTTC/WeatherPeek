@@ -82,4 +82,13 @@ class WeatherPeekRepository(
             }
         }
     }
+
+    suspend fun getLastLatitudeAndLongitude(): Pair<Double, Double>? {
+        val currentWeather = currentWeatherCacheDao.getValues()
+        return if (currentWeather == null) {
+            null
+        } else {
+            Pair(currentWeather.latitude, currentWeather.longitude)
+        }
+    }
 }
