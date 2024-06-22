@@ -1,4 +1,4 @@
-package br.com.marcottc.weatherpeek.factory
+package br.com.marcottc.weatherpeek.worker.factory
 
 import android.content.Context
 import androidx.work.ListenableWorker
@@ -10,11 +10,11 @@ import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
 import br.com.marcottc.weatherpeek.worker.UpdateWeatherCache
 
-class TestInjectionWorkerFactory(
+class WeatherPeekWorkerFactory(
     private val appKeyUtil: AppKeyUtil,
     private val oneCallService: OneCallService,
     private val weatherPeekRepository: WeatherPeekRepository,
-    private val logger: LoggerUtil = LoggerUtil(UpdateWeatherCache::class.java.simpleName)
+    private val logger: LoggerUtil
 ): WorkerFactory() {
 
     override fun createWorker(

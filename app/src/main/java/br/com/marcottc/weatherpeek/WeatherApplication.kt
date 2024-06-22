@@ -5,10 +5,13 @@ import androidx.work.*
 import br.com.marcottc.weatherpeek.koin.contextModule
 import br.com.marcottc.weatherpeek.koin.networkModule
 import br.com.marcottc.weatherpeek.koin.repositoryModule
+import br.com.marcottc.weatherpeek.koin.utilModule
 import br.com.marcottc.weatherpeek.koin.viewModelModule
+import br.com.marcottc.weatherpeek.koin.workerFactoryModule
 import br.com.marcottc.weatherpeek.worker.UpdateWeatherCache
+import br.com.marcottc.weatherpeek.worker.factory.WeatherPeekWorkerFactory
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.workmanager.factory.KoinWorkerFactory
 import org.koin.core.context.startKoin
 import java.util.concurrent.TimeUnit
 
@@ -22,13 +25,15 @@ class WeatherApplication : Application() {
             modules(repositoryModule)
             modules(networkModule)
             modules(contextModule)
+            modules(utilModule)
             modules(viewModelModule)
+            modules(workerFactoryModule)
         }
 
         WorkManager.initialize(
             this,
             Configuration.Builder()
-                .setWorkerFactory(KoinWorkerFactory())
+                .setWorkerFactory(getKoin().get<WeatherPeekWorkerFactory>())
                 .build()
         )
 

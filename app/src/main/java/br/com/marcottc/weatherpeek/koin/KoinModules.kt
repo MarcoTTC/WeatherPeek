@@ -9,11 +9,13 @@ import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.BASE_URL
+import br.com.marcottc.weatherpeek.util.LoggerUtil
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.ROOM_DB_NAME
 import br.com.marcottc.weatherpeek.util.sharedPreferencesDb
 import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
+import br.com.marcottc.weatherpeek.worker.factory.WeatherPeekWorkerFactory
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -98,10 +100,17 @@ val contextModule = module {
     }
 }
 
+val utilModule = module {
+    single {
+        LoggerUtil()
+    }
+}
+
 val viewModelModule = module {
     includes(repositoryModule)
     includes(networkModule)
     includes(contextModule)
+    includes(utilModule)
 
     viewModel {
         WeatherPeekViewModel(
@@ -109,6 +118,22 @@ val viewModelModule = module {
             get(),
             get(),
             get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            logger = get()
+        )
+    }
+}
+
+val workerFactoryModule = module {
+    includes(repositoryModule)
+    includes(networkModule)
+    includes(utilModule)
+
+    single {
+        WeatherPeekWorkerFactory(
             get(),
             get(),
             get(),

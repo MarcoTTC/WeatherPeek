@@ -3,9 +3,9 @@ package br.com.marcottc.weatherpeek.util
 import android.util.Log
 import java.lang.Exception
 
-class LoggerUtil(private val className: String) {
+class LoggerUtil() {
 
-    fun e(msg: String, exception: Exception) {
-        Log.e(className, msg, exception)
+    fun e(tag: String, msg: String, exception: Exception) {
+        Log.e(tag, msg, exception)
     }
 }

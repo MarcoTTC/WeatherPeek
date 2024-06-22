@@ -340,6 +340,7 @@ class WeatherPeekViewModelTest {
                 ))
             }
             every { logger.e(
+                any(),
                 capture<String>(messageSlot),
                 any<Exception>()
             ) } answers {
@@ -372,6 +373,7 @@ class WeatherPeekViewModelTest {
         verify { appKeyUtil.getAppKey() }
         coVerify { oneCallService.getWeatherData(any(), any(), any()) }
         verify { logger.e(
+            any(),
             capture<String>(messageSlot),
             any<Exception>()
         ) }

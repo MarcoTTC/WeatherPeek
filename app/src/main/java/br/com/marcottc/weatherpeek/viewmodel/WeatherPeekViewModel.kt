@@ -40,7 +40,7 @@ class WeatherPeekViewModel(
     private val sharedPreferences: SharedPreferences,
     private val resources: Resources,
     private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
-    private val logger: LoggerUtil = LoggerUtil(WeatherPeekViewModel::class.java.simpleName),
+    private val logger: LoggerUtil,
 ) : ViewModel() {
 
     enum class State {
@@ -212,6 +212,7 @@ class WeatherPeekViewModel(
                         is JsonSyntaxException,
                         is JsonIOException -> {
                             logger.e(
+                                WeatherPeekViewModel::class.java.simpleName,
                                 exception.message ?: "",
                                 exception
                             )

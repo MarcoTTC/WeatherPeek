@@ -16,7 +16,7 @@ class UpdateWeatherCache(
     private val appKeyUtil: AppKeyUtil,
     private val oneCallService: OneCallService,
     private val weatherPeekRepository: WeatherPeekRepository,
-    private val logger: LoggerUtil = LoggerUtil(UpdateWeatherCache::class.java.simpleName)
+    private val logger: LoggerUtil
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
@@ -27,7 +27,8 @@ class UpdateWeatherCache(
 
                 val response = oneCallService.getWeatherData(
                     lat = locationValue.first,
-                    lon = locationValue.second
+                    lon = locationValue.second,
+                    appid = appKeyUtil.getAppKey()
                 )
                 return if (response.isSuccessful) {
                     val availableWeatherData = response.body()
@@ -46,6 +47,7 @@ class UpdateWeatherCache(
                     is JsonSyntaxException,
                     is JsonIOException -> {
                         logger.e(
+                            UpdateWeatherCache::class.java.simpleName,
                             exception.message ?: "",
                             exception
                         )
