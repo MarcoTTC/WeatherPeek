@@ -192,5 +192,9 @@ class MockGenerator {
         fun generateWeatherCache(): List<WeatherCache> {
             return listOf(WeatherCache(id=800, main="Clear", description="céu limpo", icon="01d"))
         }
+
+        fun generateLatitudeAndLongitude(): Pair<Double, Double> {
+            return Pair(37.422, -122.084)
+        }
     }
 }

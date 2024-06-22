@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
@@ -154,7 +155,7 @@ class WeatherPeekViewModelTest {
             coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
             every { appKeyUtil.getAppKey() } returns oneCallAppId
             coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-                Response.success(br.com.marcottc.weatherpeek.mock.MockGenerator.generateOneCallWeatherData())
+                Response.success(MockGenerator.generateOneCallWeatherData())
             }
             coEvery { repository.updateRepository(any()) } just Runs
 
