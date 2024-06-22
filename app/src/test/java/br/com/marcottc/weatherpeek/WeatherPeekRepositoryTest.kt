@@ -2,9 +2,9 @@ package br.com.marcottc.weatherpeek
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
+import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
-import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.room.CurrentWeatherDao
 import br.com.marcottc.weatherpeek.model.room.DailyWeatherCacheDao
 import br.com.marcottc.weatherpeek.model.room.HourlyWeatherCacheDao
@@ -90,8 +90,8 @@ class WeatherPeekRepositoryTest {
     fun databaseRefreshRequired_cachedDataLocationChanged() {
         var isDatabaseRefreshRequired = false
         runBlocking {
-            val currentWeather = MockGenerator.generateCurrentWeatherCache()
-            val hourlyWeatherList = MockGenerator.generateHourlyWeatherCacheList()
+            val currentWeather = br.com.marcottc.weatherpeek.mock.MockGenerator.generateCurrentWeatherCache()
+            val hourlyWeatherList = br.com.marcottc.weatherpeek.mock.MockGenerator.generateHourlyWeatherCacheList()
             coEvery { currentWeatherDao.getValues() } returns currentWeather
             coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherList
 
@@ -107,10 +107,10 @@ class WeatherPeekRepositoryTest {
     @Test
     fun databaseRefreshRequired_cachedDataLocationUnchangedForecastNotExpired() {
         var isDatabaseRefreshRequired = true
-        val hourlyWeatherCacheList = MockGenerator.generateHourlyWeatherCacheList()
+        val hourlyWeatherCacheList = br.com.marcottc.weatherpeek.mock.MockGenerator.generateHourlyWeatherCacheList()
         hourlyWeatherCacheList[0].dt = System.currentTimeMillis() / 1000
         runBlocking {
-            val currentWeather = MockGenerator.generateCurrentWeatherCache()
+            val currentWeather = br.com.marcottc.weatherpeek.mock.MockGenerator.generateCurrentWeatherCache()
             coEvery { currentWeatherDao.getValues() } returns currentWeather
             coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherCacheList
 
@@ -126,10 +126,10 @@ class WeatherPeekRepositoryTest {
     @Test
     fun databaseRefreshRequired_cachedDataLocationUnchangedForecastExpired() {
         var isDatabaseRefreshRequired = false
-        val hourlyWeatherCacheList = MockGenerator.generateHourlyWeatherCacheList()
+        val hourlyWeatherCacheList = br.com.marcottc.weatherpeek.mock.MockGenerator.generateHourlyWeatherCacheList()
         hourlyWeatherCacheList[0].dt = (System.currentTimeMillis() / 1000) - 3601
         runBlocking {
-            val currentWeather = MockGenerator.generateCurrentWeatherCache()
+            val currentWeather = br.com.marcottc.weatherpeek.mock.MockGenerator.generateCurrentWeatherCache()
             val hourlyWeatherListLiveData = MutableLiveData(hourlyWeatherCacheList)
             coEvery { currentWeatherDao.getValues() } returns currentWeather
             coEvery { hourlyWeatherCacheDao.getAll() } returns hourlyWeatherCacheList
