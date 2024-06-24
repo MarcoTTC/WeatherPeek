@@ -74,7 +74,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${versions.appcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.constraint}"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:${versions.swiperefresh}"
-    implementation 'androidx.test.espresso:espresso-idling-resource:3.5.1'
+    implementation "androidx.test.espresso:espresso-idling-resource:${versions.espresso}"
 
     // AndroidX Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
@@ -115,11 +115,11 @@ dependencies {
 
     // JUnit
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 
     // Jetpack
     testImplementation "androidx.arch.core:core-testing:2.2.0"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation "androidx.work:work-testing:${versions.work}"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation 'androidx.test:rules:1.5.0'
 }

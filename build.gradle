@@ -21,7 +21,8 @@ buildscript {
             'room'                  : '2.6.1',
             'work'                  : '2.9.0',
             'koin'                  : '3.5.6',
-            'mockk'                 : '1.13.11'
+            'mockk'                 : '1.13.11',
+            'espresso'              : '3.5.1'
     ]
 
     repositories {
