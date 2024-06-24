@@ -74,6 +74,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${versions.appcompat}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.constraint}"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:${versions.swiperefresh}"
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.5.1'
 
     // AndroidX Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
@@ -102,7 +103,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     ksp "com.github.bumptech.glide:compiler:${versions.glide}"
 
-    // Unit Test libraries
+    // Unit and Instrumented Test libraries
 
     // Mockk
     testImplementation "io.mockk:mockk:${versions.mockk}"
@@ -119,10 +120,6 @@ dependencies {
     // Jetpack
     testImplementation "androidx.arch.core:core-testing:2.2.0"
     androidTestImplementation "androidx.work:work-testing:${versions.work}"
-
-    // Instrumented Test libraries
-
-    // Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation 'androidx.test:rules:1.5.0'
 }

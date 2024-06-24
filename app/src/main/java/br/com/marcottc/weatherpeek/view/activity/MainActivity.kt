@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityMainLayoutBinding
+import br.com.marcottc.weatherpeek.espresso.BooleanIdlingResource
 import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
@@ -25,6 +26,7 @@ import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import org.jetbrains.annotations.TestOnly
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +41,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+
+    @TestOnly
+    val requestingWeatherDataIdlingResource = BooleanIdlingResource("requestingWeatherData")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,6 +196,7 @@ class MainActivity : AppCompatActivity() {
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.location_perm_denied)
                 builder.create().show()
+                requestingWeatherDataIdlingResource.setIdle(true)
             }
         }
 
@@ -215,6 +221,7 @@ class MainActivity : AppCompatActivity() {
         weatherPeekViewModel.requestingWeatherData.observe(this) { isRequesting ->
             if (!isRequesting) {
                 binding.swipeRefreshLayout.isRefreshing = false
+                requestingWeatherDataIdlingResource.setIdle(true)
             }
         }
 
@@ -229,6 +236,7 @@ class MainActivity : AppCompatActivity() {
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 weatherPeekViewModel.getWeatherData()
+                requestingWeatherDataIdlingResource.setIdle(false)
             }
 
         requestingLocationPermission()
@@ -250,6 +258,7 @@ class MainActivity : AppCompatActivity() {
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED -> {
                 weatherPeekViewModel.getWeatherData()
+                requestingWeatherDataIdlingResource.setIdle(false)
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -266,8 +275,10 @@ class MainActivity : AppCompatActivity() {
                     requestPermissionLauncher.launch(permissionArray)
                     dialog.dismiss()
                 }
+                // TODO - Check if I should remove the cancel listener on this dialog
                 builder.setOnCancelListener {
                     weatherPeekViewModel.getWeatherData()
+                    requestingWeatherDataIdlingResource.setIdle(false)
                 }
                 builder.create().show()
             }
