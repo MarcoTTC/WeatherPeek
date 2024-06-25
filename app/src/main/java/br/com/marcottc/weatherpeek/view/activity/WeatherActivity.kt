@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
+import br.com.marcottc.weatherpeek.espresso.BooleanIdlingResource
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
@@ -19,6 +20,7 @@ import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import org.jetbrains.annotations.TestOnly
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WeatherActivity : AppCompatActivity() {
@@ -30,6 +32,9 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var dailyForecastAdapter: DailyForecastAdapter
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+
+    @TestOnly
+    val requestingWeatherDataIdlingResource = BooleanIdlingResource("requestingWeatherData")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +115,7 @@ class WeatherActivity : AppCompatActivity() {
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.location_perm_denied)
                 builder.create().show()
+                requestingWeatherDataIdlingResource.setIdle(true)
             }
         }
 
@@ -128,6 +134,7 @@ class WeatherActivity : AppCompatActivity() {
         weatherPeekViewModel.requestingWeatherData.observe(this) { isRequesting ->
             if (!isRequesting) {
                 binding.swipeRefreshLayout.isRefreshing = false
+                requestingWeatherDataIdlingResource.setIdle(true)
             }
         }
 
@@ -141,6 +148,7 @@ class WeatherActivity : AppCompatActivity() {
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 weatherPeekViewModel.getWeatherData()
+                requestingWeatherDataIdlingResource.setIdle(false)
             }
 
         requestingLocationPermission()
@@ -162,6 +170,7 @@ class WeatherActivity : AppCompatActivity() {
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED -> {
                 weatherPeekViewModel.getWeatherData()
+                requestingWeatherDataIdlingResource.setIdle(false)
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -180,6 +189,7 @@ class WeatherActivity : AppCompatActivity() {
                 }
                 builder.setOnCancelListener {
                     weatherPeekViewModel.getWeatherData()
+                    requestingWeatherDataIdlingResource.setIdle(false)
                 }
                 builder.create().show()
             }

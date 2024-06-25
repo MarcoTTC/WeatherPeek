@@ -275,7 +275,6 @@ class MainActivity : AppCompatActivity() {
                     requestPermissionLauncher.launch(permissionArray)
                     dialog.dismiss()
                 }
-                // TODO - Check if I should remove the cancel listener on this dialog
                 builder.setOnCancelListener {
                     weatherPeekViewModel.getWeatherData()
                     requestingWeatherDataIdlingResource.setIdle(false)
