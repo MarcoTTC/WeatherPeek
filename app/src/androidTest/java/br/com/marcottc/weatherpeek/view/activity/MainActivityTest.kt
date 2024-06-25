@@ -3,7 +3,11 @@ package br.com.marcottc.weatherpeek.view.activity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -36,11 +40,12 @@ class MainActivityTest {
     private lateinit var requestIdlingResource: IdlingResource
 
     @Before
-    fun registerIdlingResource() {
+    fun setup() {
         mActivityScenarioRule.scenario.onActivity { mainActivity ->
             requestIdlingResource = mainActivity.requestingWeatherDataIdlingResource
         }
         IdlingRegistry.getInstance().register(requestIdlingResource)
+        Intents.init()
     }
 
     @Test
@@ -60,9 +65,17 @@ class MainActivityTest {
         onView(withId(R.id.precipitation_amount)).check(matches(isDisplayed()))
     }
 
+    @Test
+    fun mainActivity_navigateToWeatherActivity() {
+        onView(withId(R.id.fab)).perform(click())
+
+        intended(hasComponent(WeatherActivity::class.java.name))
+    }
+
     @After
-    fun unregisterIdlingResource() {
+    fun cleanup() {
         IdlingRegistry.getInstance().unregister(requestIdlingResource)
+        Intents.release()
     }
 
 }

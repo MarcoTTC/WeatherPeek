@@ -3,6 +3,7 @@ package br.com.marcottc.weatherpeek.view.activity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -12,6 +13,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import br.com.marcottc.weatherpeek.R
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,11 +36,13 @@ class WeatherActivityTest {
         )
 
     private lateinit var requestIdlingResource: IdlingResource
+    private lateinit var weatherActivity: WeatherActivity
 
     @Before
     fun registerIdlingResource() {
-        mActivityScenarioRule.scenario.onActivity { mainActivity ->
-            requestIdlingResource = mainActivity.requestingWeatherDataIdlingResource
+        mActivityScenarioRule.scenario.onActivity { weatherActivity ->
+            this.weatherActivity = weatherActivity
+            requestIdlingResource = weatherActivity.requestingWeatherDataIdlingResource
         }
         IdlingRegistry.getInstance().register(requestIdlingResource)
     }
@@ -57,6 +61,13 @@ class WeatherActivityTest {
         onView(withId(R.id.hourly_forecast_recycler_view)).check(matches(isDisplayed()))
         onView(withId(R.id.daily_forecast_recycler_view)).check(matches(isDisplayed()))
         onView(withId(R.id.uvi_meter)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun weatherActivity_finishActivity() {
+        onView(withId(R.id.close_icon)).perform(click())
+
+        assertTrue(weatherActivity.isFinishing)
     }
 
     @After
