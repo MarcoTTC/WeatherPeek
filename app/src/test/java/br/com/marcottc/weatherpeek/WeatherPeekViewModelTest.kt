@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.ErrorResponse
 import br.com.marcottc.weatherpeek.network.service.OneCallService
@@ -55,6 +56,8 @@ class WeatherPeekViewModelTest {
     private val messageSlot = slot<String>()
     private val location = mockk<Location>()
 
+    private val observer = Observer<Any> { }
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -77,94 +80,123 @@ class WeatherPeekViewModelTest {
     }
 
     @Test
-    fun weatherPeekViewModel_isInitialized() {
+    fun weatherPeekViewModel_isInitialized() = runTest {
+        viewModel.viewModelState.observeForever(observer)
+        viewModel.mustRequestPermissionFirst.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
+        viewModel.showMessage.observeForever(observer)
+
         assertEquals(WeatherPeekViewModel.State.LOADING, viewModel.viewModelState.value)
         assertEquals(false, viewModel.mustRequestPermissionFirst.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
         assertEquals("", viewModel.showMessage.value)
+
+        viewModel.viewModelState.removeObserver(observer)
+        viewModel.mustRequestPermissionFirst.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
+        viewModel.showMessage.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_noAppId_showsErrorMessage() {
-        runTest {
-            every { appKeyUtil.isEmpty() } returns true
-            viewModel.getWeatherData()
-        }
+    fun getWeatherData_noAppId_showsErrorMessage() = runTest {
+        every { appKeyUtil.isEmpty() } returns true
+
+        viewModel.showMessage.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
+        viewModel.viewModelState.observeForever(observer)
+
+        viewModel.getWeatherData()
+
         assertEquals("Please set up an app id before building the project!", viewModel.showMessage.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
         assertEquals(WeatherPeekViewModel.State.FAILED, viewModel.viewModelState.value)
         verify { appKeyUtil.isEmpty() }
+
+        viewModel.showMessage.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
+        viewModel.viewModelState.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_noInternetConnectivity_showsErrorMessage() {
-        runTest {
-            every { appKeyUtil.isEmpty() } returns false
-            every { networkUtil.hasConnectivity() } returns false
-            every { resources.getString(R.string.no_internet_connectivity) } returns "No internet connectivity!"
-            viewModel.getWeatherData()
-        }
+    fun getWeatherData_noInternetConnectivity_showsErrorMessage() = runTest {
+        every { appKeyUtil.isEmpty() } returns false
+        every { networkUtil.hasConnectivity() } returns false
+        every { resources.getString(R.string.no_internet_connectivity) } returns "No internet connectivity!"
+
+        viewModel.showMessage.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
+        viewModel.viewModelState.observeForever(observer)
+
+        viewModel.getWeatherData()
+
         assertEquals("No internet connectivity!", viewModel.showMessage.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
         assertEquals(WeatherPeekViewModel.State.FAILED, viewModel.viewModelState.value)
         verify { appKeyUtil.isEmpty() }
         verify { networkUtil.hasConnectivity() }
         verify { resources.getString(R.string.no_internet_connectivity) }
+
+        viewModel.showMessage.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
+        viewModel.viewModelState.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_noLocationPermission_showsErrorMessage() {
-        runTest {
-            every { appKeyUtil.isEmpty() } returns false
-            every { networkUtil.hasConnectivity() } returns true
-            every { permissionUtil.hasLocationPermission() } returns false
-            viewModel.getWeatherData()
-        }
+    fun getWeatherData_noLocationPermission_showsErrorMessage() = runTest {
+        every { appKeyUtil.isEmpty() } returns false
+        every { networkUtil.hasConnectivity() } returns true
+        every { permissionUtil.hasLocationPermission() } returns false
+
+        viewModel.mustRequestPermissionFirst.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
+        viewModel.viewModelState.observeForever(observer)
+
+        viewModel.getWeatherData()
+
         assertEquals(true, viewModel.mustRequestPermissionFirst.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
         assertEquals(WeatherPeekViewModel.State.FAILED, viewModel.viewModelState.value)
         verify { appKeyUtil.isEmpty() }
         verify { networkUtil.hasConnectivity() }
         verify { permissionUtil.hasLocationPermission() }
+
+        viewModel.mustRequestPermissionFirst.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
+        viewModel.viewModelState.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_networkCall_showsSuccess() {
-        runTest {
-            testScheduler.runCurrent()
-            viewModel.viewModelState.observeForever {  }
-            viewModel.requestingWeatherData.observeForever {  }
+    fun getWeatherData_networkCall_showsSuccess() = runTest {
+        testScheduler.runCurrent()
+        viewModel.viewModelState.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
 
-            every { appKeyUtil.isEmpty() } returns false
-            every { networkUtil.hasConnectivity() } returns true
-            every { permissionUtil.hasLocationPermission() } returns true
-            every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
-            every { location.accuracy } returns 1000000.0F
-            every { location.latitude } returns 37.422
-            every { location.longitude } returns -122.084
-            every { locationManager.requestLocationUpdates(
-                any(),
-                1000,
-                0.0F,
-                capture(locationListenerSlot)
-            ) } answers {
-                locationListenerSlot.captured.onLocationChanged(location)
-            }
-            every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
-            every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
-            coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-            every { appKeyUtil.getAppKey() } returns oneCallAppId
-            coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-                Response.success(MockGenerator.generateOneCallWeatherData())
-            }
-            coEvery { repository.updateRepository(any()) } just Runs
-
-            viewModel.getWeatherData()
-            viewModel.suspendUntilWeatherDataIsRetrieved()
+        every { appKeyUtil.isEmpty() } returns false
+        every { networkUtil.hasConnectivity() } returns true
+        every { permissionUtil.hasLocationPermission() } returns true
+        every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        every { location.accuracy } returns 1000000.0F
+        every { location.latitude } returns 37.422
+        every { location.longitude } returns -122.084
+        every { locationManager.requestLocationUpdates(
+            any(),
+            1000,
+            0.0F,
+            capture(locationListenerSlot)
+        ) } answers {
+            locationListenerSlot.captured.onLocationChanged(location)
         }
+        every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
+        every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
+        coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
+        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+            Response.success(MockGenerator.generateOneCallWeatherData())
+        }
+        coEvery { repository.updateRepository(any()) } just Runs
 
-        viewModel.viewModelState.removeObserver {  }
-        viewModel.requestingWeatherData.removeObserver {  }
+        viewModel.getWeatherData()
+        viewModel.suspendUntilWeatherDataIsRetrieved()
 
         assertEquals(WeatherPeekViewModel.State.SUCCESS, viewModel.viewModelState.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
@@ -185,47 +217,46 @@ class WeatherPeekViewModelTest {
         verify { appKeyUtil.getAppKey() }
         coVerify { oneCallService.getWeatherData(any(), any(), any()) }
         coVerify { repository.updateRepository(any()) }
+
+        viewModel.viewModelState.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_networkCall_showsFailureNotFound() {
-        runTest {
-            testScheduler.runCurrent()
-            viewModel.viewModelState.observeForever {  }
-            viewModel.requestingWeatherData.observeForever {  }
+    fun getWeatherData_networkCall_showsFailureNotFound() = runTest {
+        testScheduler.runCurrent()
+        viewModel.viewModelState.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
+        viewModel.showMessage.observeForever(observer)
 
-            every { appKeyUtil.isEmpty() } returns false
-            every { networkUtil.hasConnectivity() } returns true
-            every { permissionUtil.hasLocationPermission() } returns true
-            every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
-            every { location.accuracy } returns 1000000.0F
-            every { location.latitude } returns 37.422
-            every { location.longitude } returns -122.084
-            every { locationManager.requestLocationUpdates(
-                any(),
-                1000,
-                0.0F,
-                capture(locationListenerSlot)
-            ) } answers {
-                locationListenerSlot.captured.onLocationChanged(location)
-            }
-            every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
-            every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
-            coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-            every { appKeyUtil.getAppKey() } returns oneCallAppId
-            coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-                val gson = Gson()
-                val errorResponse = ErrorResponse(404, "Internal error")
-                val bodyContent = gson.toJson(errorResponse)
-                Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"), bodyContent))
-            }
-
-            viewModel.getWeatherData()
-            viewModel.suspendUntilWeatherDataIsRetrieved()
+        every { appKeyUtil.isEmpty() } returns false
+        every { networkUtil.hasConnectivity() } returns true
+        every { permissionUtil.hasLocationPermission() } returns true
+        every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        every { location.accuracy } returns 1000000.0F
+        every { location.latitude } returns 37.422
+        every { location.longitude } returns -122.084
+        every { locationManager.requestLocationUpdates(
+            any(),
+            1000,
+            0.0F,
+            capture(locationListenerSlot)
+        ) } answers {
+            locationListenerSlot.captured.onLocationChanged(location)
+        }
+        every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
+        every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
+        coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
+        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+            val gson = Gson()
+            val errorResponse = ErrorResponse(404, "Internal error")
+            val bodyContent = gson.toJson(errorResponse)
+            Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"), bodyContent))
         }
 
-        viewModel.viewModelState.removeObserver {  }
-        viewModel.requestingWeatherData.removeObserver {  }
+        viewModel.getWeatherData()
+        viewModel.suspendUntilWeatherDataIsRetrieved()
 
         assertEquals(WeatherPeekViewModel.State.FAILED, viewModel.viewModelState.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
@@ -246,44 +277,43 @@ class WeatherPeekViewModelTest {
         coVerify { repository.databaseRefreshRequired(any(), any()) }
         verify { appKeyUtil.getAppKey() }
         coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+
+        viewModel.viewModelState.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
+        viewModel.showMessage.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_networkCall_throwsIllegalStateException() {
-        runTest {
-            testScheduler.runCurrent()
-            viewModel.viewModelState.observeForever {  }
-            viewModel.requestingWeatherData.observeForever {  }
+    fun getWeatherData_networkCall_throwsIllegalStateException() = runTest {
+        testScheduler.runCurrent()
+        viewModel.viewModelState.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
 
-            every { appKeyUtil.isEmpty() } returns false
-            every { networkUtil.hasConnectivity() } returns true
-            every { permissionUtil.hasLocationPermission() } returns true
-            every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
-            every { location.accuracy } returns 1000000.0F
-            every { location.latitude } returns 37.422
-            every { location.longitude } returns -122.084
-            every { locationManager.requestLocationUpdates(
-                any(),
-                1000,
-                0.0F,
-                capture(locationListenerSlot)
-            ) } answers {
-                locationListenerSlot.captured.onLocationChanged(location)
-            }
-            every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
-            every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
-            coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-            every { appKeyUtil.getAppKey() } returns oneCallAppId
-            coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-                Response.error(404, ResponseBody.create(MediaType.get("text/plain"), ""))
-            }
-
-            viewModel.getWeatherData()
-            viewModel.suspendUntilWeatherDataIsRetrieved()
+        every { appKeyUtil.isEmpty() } returns false
+        every { networkUtil.hasConnectivity() } returns true
+        every { permissionUtil.hasLocationPermission() } returns true
+        every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        every { location.accuracy } returns 1000000.0F
+        every { location.latitude } returns 37.422
+        every { location.longitude } returns -122.084
+        every { locationManager.requestLocationUpdates(
+            any(),
+            1000,
+            0.0F,
+            capture(locationListenerSlot)
+        ) } answers {
+            locationListenerSlot.captured.onLocationChanged(location)
+        }
+        every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
+        every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
+        coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
+        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+            Response.error(404, ResponseBody.create(MediaType.get("text/plain"), ""))
         }
 
-        viewModel.viewModelState.removeObserver {  }
-        viewModel.requestingWeatherData.removeObserver {  }
+        viewModel.getWeatherData()
+        viewModel.suspendUntilWeatherDataIsRetrieved()
 
         assertEquals(WeatherPeekViewModel.State.FAILED, viewModel.viewModelState.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
@@ -303,56 +333,54 @@ class WeatherPeekViewModelTest {
         coVerify { repository.databaseRefreshRequired(any(), any()) }
         verify { appKeyUtil.getAppKey() }
         coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+
+        viewModel.viewModelState.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
     }
 
     @Test
-    fun getWeatherData_networkCall_throwsJsonSyntaxException() {
-        runTest {
-            testScheduler.runCurrent()
-            viewModel.viewModelState.observeForever {  }
-            viewModel.requestingWeatherData.observeForever {  }
+    fun getWeatherData_networkCall_throwsJsonSyntaxException() = runTest {
+        testScheduler.runCurrent()
+        viewModel.viewModelState.observeForever(observer)
+        viewModel.requestingWeatherData.observeForever(observer)
 
-            every { appKeyUtil.isEmpty() } returns false
-            every { networkUtil.hasConnectivity() } returns true
-            every { permissionUtil.hasLocationPermission() } returns true
-            every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
-            every { location.accuracy } returns 1000000.0F
-            every { location.latitude } returns 37.422
-            every { location.longitude } returns -122.084
-            every { locationManager.requestLocationUpdates(
-                any(),
-                1000,
-                0.0F,
-                capture(locationListenerSlot)
-            ) } answers {
-                locationListenerSlot.captured.onLocationChanged(location)
-            }
-            every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
-            every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
-            coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-            every { appKeyUtil.getAppKey() } returns oneCallAppId
-            coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-                val gson = Gson()
-                val errorResponse = ErrorResponse(404, "Internal error")
-                val bodyContent = gson.toJson(errorResponse)
-                Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"),
-                    "$bodyContent {{}"
-                ))
-            }
-            every { logger.e(
-                any(),
-                capture<String>(messageSlot),
-                any<Exception>()
-            ) } answers {
-                println(messageSlot.captured)
-            }
-
-            viewModel.getWeatherData()
-            viewModel.suspendUntilWeatherDataIsRetrieved()
+        every { appKeyUtil.isEmpty() } returns false
+        every { networkUtil.hasConnectivity() } returns true
+        every { permissionUtil.hasLocationPermission() } returns true
+        every { locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        every { location.accuracy } returns 1000000.0F
+        every { location.latitude } returns 37.422
+        every { location.longitude } returns -122.084
+        every { locationManager.requestLocationUpdates(
+            any(),
+            1000,
+            0.0F,
+            capture(locationListenerSlot)
+        ) } answers {
+            locationListenerSlot.captured.onLocationChanged(location)
+        }
+        every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
+        every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
+        coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
+        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+            val gson = Gson()
+            val errorResponse = ErrorResponse(404, "Internal error")
+            val bodyContent = gson.toJson(errorResponse)
+            Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"),
+                "$bodyContent {{}"
+            ))
+        }
+        every { logger.e(
+            any(),
+            capture<String>(messageSlot),
+            any<Exception>()
+        ) } answers {
+            println(messageSlot.captured)
         }
 
-        viewModel.viewModelState.removeObserver {  }
-        viewModel.requestingWeatherData.removeObserver {  }
+        viewModel.getWeatherData()
+        viewModel.suspendUntilWeatherDataIsRetrieved()
 
         assertEquals(WeatherPeekViewModel.State.FAILED, viewModel.viewModelState.value)
         assertEquals(false, viewModel.requestingWeatherData.value)
@@ -377,5 +405,8 @@ class WeatherPeekViewModelTest {
             capture<String>(messageSlot),
             any<Exception>()
         ) }
+
+        viewModel.viewModelState.removeObserver(observer)
+        viewModel.requestingWeatherData.removeObserver(observer)
     }
 }
