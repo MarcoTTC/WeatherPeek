@@ -22,6 +22,7 @@ android {
         versionName "${versions.versionName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas".toString())
@@ -44,9 +45,9 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    // This configurations is necessary to run the instrumented tests
-    // on an emulated x86_64 device
     testOptions {
+        // This configurations is necessary to run the instrumented tests
+        // on an emulated x86_64 device
         packagingOptions {
             jniLibs {
                 useLegacyPackaging true
@@ -122,6 +123,7 @@ dependencies {
     androidTestImplementation "androidx.work:work-testing:${versions.work}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "androidx.test.espresso:espresso-intents:${versions.espresso}"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:${versions.espresso}"
     androidTestImplementation "androidx.test:runner:1.5.0"
     androidTestImplementation "androidx.test:rules:1.5.0"
 }
