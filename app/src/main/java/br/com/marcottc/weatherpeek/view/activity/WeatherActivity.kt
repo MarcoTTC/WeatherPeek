@@ -1,7 +1,6 @@
 package br.com.marcottc.weatherpeek.view.activity
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,18 +14,21 @@ import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
 import br.com.marcottc.weatherpeek.espresso.BooleanIdlingResource
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
+import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.view.adapter.DailyForecastAdapter
 import br.com.marcottc.weatherpeek.view.adapter.HourlyForecastAdapter
 import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.jetbrains.annotations.TestOnly
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWeatherLayoutBinding
     private val weatherPeekViewModel: WeatherPeekViewModel by viewModel()
+    private val permissionUtil: PermissionUtil by inject()
 
     private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
     private lateinit var dailyForecastAdapter: DailyForecastAdapter
@@ -161,25 +163,17 @@ class WeatherActivity : AppCompatActivity() {
         )
 
         when {
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED -> {
+            permissionUtil.hasLocationPermission() -> {
                 weatherPeekViewModel.getWeatherData()
                 requestingWeatherDataIdlingResource.setIdle(false)
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) &&
-                    ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) -> {
+            ) && ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) -> {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(R.string.permission_needed_title)
                 builder.setMessage(R.string.need_perm_location)
