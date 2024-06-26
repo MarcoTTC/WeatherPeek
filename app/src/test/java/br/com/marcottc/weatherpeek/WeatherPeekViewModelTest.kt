@@ -100,6 +100,7 @@ class WeatherPeekViewModelTest {
     @Test
     fun getWeatherData_noAppId_showsErrorMessage() = runTest {
         every { appKeyUtil.isEmpty() } returns true
+        every { resources.getString(any()) } returns "Please set up an app id before building the project!"
 
         viewModel.showMessage.observeForever(observer)
         viewModel.requestingWeatherData.observeForever(observer)

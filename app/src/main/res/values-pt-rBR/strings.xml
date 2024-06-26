@@ -24,11 +24,14 @@
     <string name="forecast_label">PREVISÃO</string>
 
     <!-- Common text messages -->
-    <string name="no_internet_connectivity">Sem conectividade à internet!</string>
-    <string name="permission_needed_title">Permissão necessária</string>
-    <string name="need_perm_location">Este aplicativo precisa acessar a sua localização GPS ou localização de rede para fornecer informações meteorológicas precisas! Ele coleta dados de latitude e longitude para fins de previsão do tempo.</string>
     <string name="location_perm_denied">Este aplicativo não pode funcionar sem a permissão de acesso à localização!</string>
+    <string name="need_perm_location">Este aplicativo precisa acessar a sua localização GPS ou localização de rede para fornecer informações meteorológicas precisas! Ele coleta dados de latitude e longitude para fins de previsão do tempo.</string>
+    <string name="no_internet_connectivity">Sem conectividade à internet!</string>
+    <string name="no_valid_app_id">Por favor configure um app id antes de gerar o projeto!</string>
     <string name="now_label">AGORA</string>
+    <string name="permission_needed_title">Permissão necessária</string>
+    <string name="please_wait">Por favor aguarde…</string>
+    <string name="retrieved_cache">Dados locais carregados</string>
 
     <!-- Common button labels -->
     <string name="btn_label_i_accept">EU ACEITO</string>

@@ -116,10 +116,10 @@ class WeatherPeekViewModel(
     @SuppressLint("MissingPermission")
     fun getWeatherData() {
         if (_requestingWeatherData.value == true) {
-            _showMessage.value = "Please wait a moment..."
+            _showMessage.value = resources.getString(R.string.please_wait)
         } else {
             if (appKeyUtil.isEmpty()) {
-                _showMessage.value = "Please set up an app id before building the project!"
+                _showMessage.value = resources.getString(R.string.no_valid_app_id)
                 _requestingWeatherData.value = false
                 _viewModelState.value = State.FAILED
                 return
@@ -227,7 +227,7 @@ class WeatherPeekViewModel(
                 }
             } else {
                 withContext(mainDispatcher) {
-                    _showMessage.value = "Retrieved local cached data"
+                    _showMessage.value = resources.getString(R.string.retrieved_cache)
                     _requestingWeatherData.value = false
                     _viewModelState.value = State.SUCCESS
                 }
