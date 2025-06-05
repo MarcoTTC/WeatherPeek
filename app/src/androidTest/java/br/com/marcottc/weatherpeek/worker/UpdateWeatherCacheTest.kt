@@ -13,7 +13,6 @@ import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
 import br.com.marcottc.weatherpeek.util.oneCallAppId
-import br.com.marcottc.weatherpeek.worker.UpdateWeatherCache
 import com.google.gson.Gson
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -23,9 +22,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertTrue
 import org.junit.Before
