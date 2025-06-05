@@ -32,7 +32,9 @@ import retrofit2.Response
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -253,7 +255,10 @@ class WeatherPeekViewModelTest {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
             val bodyContent = gson.toJson(errorResponse)
-            Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"), bodyContent))
+            Response.error(
+                404,
+                bodyContent.toResponseBody(contentType = "application/json; charset=utf-8".toMediaType())
+            )
         }
 
         viewModel.getWeatherData()
@@ -310,7 +315,10 @@ class WeatherPeekViewModelTest {
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
         every { appKeyUtil.getAppKey() } returns oneCallAppId
         coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-            Response.error(404, ResponseBody.create(MediaType.get("text/plain"), ""))
+            Response.error(
+                404,
+                "".toResponseBody("text/plain".toMediaType())
+            )
         }
 
         viewModel.getWeatherData()
@@ -368,9 +376,11 @@ class WeatherPeekViewModelTest {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
             val bodyContent = gson.toJson(errorResponse)
-            Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"),
-                "$bodyContent {{}"
-            ))
+            Response.error(
+                404,
+                "$bodyContent {{}".toResponseBody("application/json; charset=utf-8".toMediaType()
+                )
+            )
         }
         every { logger.e(
             any(),

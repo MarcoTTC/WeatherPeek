@@ -24,7 +24,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -114,7 +116,10 @@ class UpdateWeatherCacheTest {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
             val bodyContent = gson.toJson(errorResponse)
-            Response.error(404, ResponseBody.create(MediaType.get("application/json; charset=utf-8"), bodyContent))
+            Response.error(
+                404,
+                bodyContent.toResponseBody("application/json; charset=utf-8".toMediaType())
+            )
         }
 
         val result = updateWeatherCacheWorker.doWork()
@@ -132,7 +137,10 @@ class UpdateWeatherCacheTest {
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
         every {appKeyUtil.getAppKey() } returns oneCallAppId
         coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
-            Response.error(404, ResponseBody.create(MediaType.get("text/plain"), ""))
+            Response.error(
+                404,
+                "".toResponseBody("text/plain".toMediaType())
+            )
         }
 
         val result = updateWeatherCacheWorker.doWork()
