@@ -2,7 +2,9 @@ package br.com.marcottc.weatherpeek.model.dto
 
 import com.google.gson.annotations.SerializedName
 
-// Hour based weather data
+// Hour based weather data.
+// The One Call 3.0 "hourly" section also carries "uvi" and "snow". Neither has a view able to
+// display it in this app, so both are left out here and silently dropped by Gson while parsing.
 data class HourlyWeatherData(
     var dt: Long,
     var temp: Double,

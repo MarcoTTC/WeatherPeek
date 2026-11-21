@@ -15,7 +15,13 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -33,14 +39,25 @@ class WeatherPeekRepositoryTest {
     @get:Rule
     var instantRule = InstantTaskExecutorRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
+        // The repository builds its LiveData with the liveData builder, which resolves
+        // Dispatchers.Main on construction, so the main dispatcher has to be set beforehand
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+
         repository = WeatherPeekRepository(
             weatherCacheDao,
             currentWeatherDao,
             hourlyWeatherCacheDao,
             dailyWeatherCacheDao
         )
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

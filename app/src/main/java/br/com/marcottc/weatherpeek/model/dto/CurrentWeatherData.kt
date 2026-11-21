@@ -2,7 +2,9 @@ package br.com.marcottc.weatherpeek.model.dto
 
 import com.google.gson.annotations.SerializedName
 
-// Current weather data at the service call time and location
+// Current weather data at the service call time and location.
+// The One Call 3.0 "current" section also carries "uvi", which is only displayed by this app
+// as a daily value, so it is left out here and silently dropped by Gson while parsing.
 data class CurrentWeatherData(
     var dt: Long,
     var sunrise: Long,

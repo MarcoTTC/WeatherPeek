@@ -29,10 +29,14 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -65,6 +69,11 @@ class WeatherPeekViewModelTest {
     @Before
     fun setup() {
         val mainTestDispatcher = UnconfinedTestDispatcher()
+
+        // The repository LiveData reached through this view model is built with the liveData
+        // builder, which resolves Dispatchers.Main, so the main dispatcher has to be set beforehand
+        Dispatchers.setMain(mainTestDispatcher)
+
         viewModel = WeatherPeekViewModel(
             repository,
             oneCallService,
@@ -77,6 +86,12 @@ class WeatherPeekViewModelTest {
             mainDispatcher = mainTestDispatcher,
             logger
         )
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
