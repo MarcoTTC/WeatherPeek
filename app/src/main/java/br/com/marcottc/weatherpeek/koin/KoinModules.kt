@@ -5,6 +5,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import androidx.room.Room
 import br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabase
+import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.network.service.OneCallService
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
@@ -68,6 +69,10 @@ val networkModule = module {
 
     single {
         get<Retrofit>().create(OneCallService::class.java)
+    }
+
+    single {
+        OneCallRemoteDataSource(get())
     }
 }
 

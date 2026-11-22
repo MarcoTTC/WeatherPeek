@@ -13,7 +13,7 @@ import br.com.marcottc.weatherpeek.model.dco.CurrentWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.DailyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.HourlyWeatherCache
 import br.com.marcottc.weatherpeek.model.dco.WeatherCache
-import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.TestOnly
 
 class WeatherPeekViewModel(
     private val weatherPeekRepository: WeatherPeekRepository,
-    private val oneCallService: OneCallService,
+    private val oneCallRemoteDataSource: OneCallRemoteDataSource,
     private val locationManager: LocationManager,
     private val networkUtil: NetworkUtil,
     private val permissionUtil: PermissionUtil,
@@ -172,7 +172,7 @@ class WeatherPeekViewModel(
             ) {
                 try {
                     val response =
-                        oneCallService.getWeatherData(
+                        oneCallRemoteDataSource.getWeatherData(
                             lat = latitude,
                             lon = longitude,
                             appid = appKeyUtil.getAppKey()

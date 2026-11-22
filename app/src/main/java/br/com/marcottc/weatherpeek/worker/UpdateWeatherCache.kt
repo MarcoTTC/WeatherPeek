@@ -3,7 +3,7 @@ package br.com.marcottc.weatherpeek.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
@@ -14,7 +14,7 @@ class UpdateWeatherCache(
     appContext: Context,
     params: WorkerParameters,
     private val appKeyUtil: AppKeyUtil,
-    private val oneCallService: OneCallService,
+    private val oneCallRemoteDataSource: OneCallRemoteDataSource,
     private val weatherPeekRepository: WeatherPeekRepository,
     private val logger: LoggerUtil
 ) : CoroutineWorker(appContext, params) {
@@ -25,7 +25,7 @@ class UpdateWeatherCache(
                 val locationValue = weatherPeekRepository.getLastLatitudeAndLongitude() ?:
                     return Result.failure()
 
-                val response = oneCallService.getWeatherData(
+                val response = oneCallRemoteDataSource.getWeatherData(
                     lat = locationValue.first,
                     lon = locationValue.second,
                     appid = appKeyUtil.getAppKey()

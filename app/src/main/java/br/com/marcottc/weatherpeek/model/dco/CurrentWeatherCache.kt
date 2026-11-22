@@ -4,8 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
+import kotlin.math.roundToInt
 
-// Cache object for CurrentWeatherData
+// Cache object for CurrentWeatherData.
+// One Call 4.0 sends pressure (hPa), humidity (%) and clouds (%) as fractional values. The views
+// display them as whole numbers, so they are rounded here and keep their INTEGER columns.
 @Entity
 data class CurrentWeatherCache(
     @PrimaryKey
@@ -29,6 +32,9 @@ data class CurrentWeatherCache(
     var snowAmount: Double,
     var humidity: Int,
     var clouds: Int,
+    // One Call 4.0 alert ids, resolvable through "onecall/alert/{id}"
+    @ColumnInfo(defaultValue = "[]")
+    var alertIds: List<String> = emptyList(),
 ) {
     constructor(data: OneCallWeatherDTO) :
             this(
@@ -39,13 +45,14 @@ data class CurrentWeatherCache(
                 data.current.sunrise,
                 data.current.sunset,
                 data.current.temp,
-                data.current.pressure,
+                data.current.pressure.roundToInt(),
                 data.current.windSpeed,
                 data.current.windDeg,
                 data.current.windGust,
                 data.current.rain?.oneHour ?: 0.0,
                 data.current.snow?.oneHour ?: 0.0,
-                data.current.humidity,
-                data.current.clouds
+                data.current.humidity.roundToInt(),
+                data.current.clouds.roundToInt(),
+                data.current.alertIds ?: emptyList()
             )
 }

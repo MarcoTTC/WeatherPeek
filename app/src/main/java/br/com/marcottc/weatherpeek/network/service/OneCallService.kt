@@ -1,23 +1,52 @@
 package br.com.marcottc.weatherpeek.network.service
 
-import br.com.marcottc.weatherpeek.model.dto.OneCallWeatherDTO
+import br.com.marcottc.weatherpeek.model.dto.CurrentWeatherData
+import br.com.marcottc.weatherpeek.model.dto.DailyWeatherData
+import br.com.marcottc.weatherpeek.model.dto.HourlyWeatherData
+import br.com.marcottc.weatherpeek.model.dto.OneCallTimelineDTO
 import br.com.marcottc.weatherpeek.util.oneCallAppId
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+// One Call 4.0 (https://openweathermap.org/api/one-call-4).
+//
+// 4.0 replaced the single "onecall" endpoint (and its "exclude" parameter) with one endpoint per
+// data set. Only the ones backing a view are declared here: the 1min/15min timelines and the alert
+// details endpoint ("onecall/alert/{id}") have no view able to display them yet.
+//
+// Every request is billed separately, so prefer OneCallRemoteDataSource, which combines these
+// calls into the snapshot the app caches.
 interface OneCallService {
 
-    // "minutely" and "alerts" are excluded on purpose: this app has no view able to display a
-    // minute by minute precipitation forecast, nor the government issued weather alerts, so they
-    // are dropped at the request level instead of being downloaded and thrown away afterwards.
-    @GET("data/3.0/onecall")
-    suspend fun getWeatherData(
+    @GET("data/4.0/onecall/current")
+    suspend fun getCurrentWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pt_br",
-        @Query("exclude") exclude: String = "minutely,alerts",
         @Query("appid") appid: String = oneCallAppId
-    ) : Response<OneCallWeatherDTO>
+    ): Response<OneCallTimelineDTO<CurrentWeatherData>>
+
+    // Up to 20 records per page. "start" (unix UTC seconds) defaults to now on the API side.
+    @GET("data/4.0/onecall/timeline/1h")
+    suspend fun getHourlyTimeline(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("start") start: Long? = null,
+        @Query("units") units: String = "metric",
+        @Query("lang") lang: String = "pt_br",
+        @Query("appid") appid: String = oneCallAppId
+    ): Response<OneCallTimelineDTO<HourlyWeatherData>>
+
+    // Up to 10 records per page. "start" (unix UTC seconds) defaults to now on the API side.
+    @GET("data/4.0/onecall/timeline/1day")
+    suspend fun getDailyTimeline(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("start") start: Long? = null,
+        @Query("units") units: String = "metric",
+        @Query("lang") lang: String = "pt_br",
+        @Query("appid") appid: String = oneCallAppId
+    ): Response<OneCallTimelineDTO<DailyWeatherData>>
 }

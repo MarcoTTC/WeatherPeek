@@ -9,7 +9,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.ErrorResponse
-import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
@@ -45,7 +45,7 @@ import org.junit.Test
 class WeatherPeekViewModelTest {
 
     private val repository: WeatherPeekRepository = mockk<WeatherPeekRepository>()
-    private val oneCallService: OneCallService = mockk<OneCallService>()
+    private val oneCallRemoteDataSource: OneCallRemoteDataSource = mockk<OneCallRemoteDataSource>()
     private val locationManager: LocationManager = mockk<LocationManager>()
     private val networkUtil: NetworkUtil = mockk<NetworkUtil>()
     private val permissionUtil: PermissionUtil = mockk<PermissionUtil>()
@@ -76,7 +76,7 @@ class WeatherPeekViewModelTest {
 
         viewModel = WeatherPeekViewModel(
             repository,
-            oneCallService,
+            oneCallRemoteDataSource,
             locationManager,
             networkUtil,
             permissionUtil,
@@ -206,7 +206,7 @@ class WeatherPeekViewModelTest {
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
         every { appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.success(MockGenerator.generateOneCallWeatherData())
         }
         coEvery { repository.updateRepository(any()) } just Runs
@@ -231,7 +231,7 @@ class WeatherPeekViewModelTest {
         verify { sharedPreferences.getBoolean(forceRefreshSettings, any()) }
         coVerify { repository.databaseRefreshRequired(any(), any()) }
         verify { appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
         coVerify { repository.updateRepository(any()) }
 
         viewModel.viewModelState.removeObserver(observer)
@@ -264,7 +264,7 @@ class WeatherPeekViewModelTest {
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
         every { appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
             val bodyContent = gson.toJson(errorResponse)
@@ -295,7 +295,7 @@ class WeatherPeekViewModelTest {
         verify { sharedPreferences.getBoolean(forceRefreshSettings, any()) }
         coVerify { repository.databaseRefreshRequired(any(), any()) }
         verify { appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
 
         viewModel.viewModelState.removeObserver(observer)
         viewModel.requestingWeatherData.removeObserver(observer)
@@ -327,7 +327,7 @@ class WeatherPeekViewModelTest {
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
         every { appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.error(
                 404,
                 "".toResponseBody("text/plain".toMediaType())
@@ -354,7 +354,7 @@ class WeatherPeekViewModelTest {
         verify { sharedPreferences.getBoolean(forceRefreshSettings, any()) }
         coVerify { repository.databaseRefreshRequired(any(), any()) }
         verify { appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
 
         viewModel.viewModelState.removeObserver(observer)
         viewModel.requestingWeatherData.removeObserver(observer)
@@ -385,7 +385,7 @@ class WeatherPeekViewModelTest {
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
         every { appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
             val bodyContent = gson.toJson(errorResponse)
@@ -423,7 +423,7 @@ class WeatherPeekViewModelTest {
         verify { sharedPreferences.getBoolean(forceRefreshSettings, any()) }
         coVerify { repository.databaseRefreshRequired(any(), any()) }
         verify { appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
         verify { logger.e(
             any(),
             capture<String>(messageSlot),

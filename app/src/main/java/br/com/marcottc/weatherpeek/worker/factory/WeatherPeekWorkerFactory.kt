@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
@@ -12,7 +12,7 @@ import br.com.marcottc.weatherpeek.worker.UpdateWeatherCache
 
 class WeatherPeekWorkerFactory(
     private val appKeyUtil: AppKeyUtil,
-    private val oneCallService: OneCallService,
+    private val oneCallRemoteDataSource: OneCallRemoteDataSource,
     private val weatherPeekRepository: WeatherPeekRepository,
     private val logger: LoggerUtil
 ): WorkerFactory() {
@@ -28,7 +28,7 @@ class WeatherPeekWorkerFactory(
                     appContext,
                     workerParameters,
                     appKeyUtil,
-                    oneCallService,
+                    oneCallRemoteDataSource,
                     weatherPeekRepository,
                     logger
                 )

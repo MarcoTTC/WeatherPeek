@@ -8,7 +8,7 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import br.com.marcottc.weatherpeek.worker.factory.WeatherPeekWorkerFactory
 import br.com.marcottc.weatherpeek.mock.MockGenerator
 import br.com.marcottc.weatherpeek.model.ErrorResponse
-import br.com.marcottc.weatherpeek.network.service.OneCallService
+import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
@@ -39,7 +39,7 @@ class UpdateWeatherCacheTest {
     private lateinit var executor: Executor
 
     private val appKeyUtil: AppKeyUtil = mockk<AppKeyUtil>()
-    private val oneCallService: OneCallService = mockk<OneCallService>()
+    private val oneCallRemoteDataSource: OneCallRemoteDataSource = mockk<OneCallRemoteDataSource>()
 
     private val weatherPeekRepository: WeatherPeekRepository = mockk<WeatherPeekRepository>()
 
@@ -54,7 +54,7 @@ class UpdateWeatherCacheTest {
 
         val weatherPeekWorkerFactory = WeatherPeekWorkerFactory(
             appKeyUtil,
-            oneCallService,
+            oneCallRemoteDataSource,
             weatherPeekRepository,
             logger
         )
@@ -89,7 +89,7 @@ class UpdateWeatherCacheTest {
         every { appKeyUtil.isEmpty() } returns false
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
         every {appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.success(MockGenerator.generateOneCallWeatherData())
         }
         coEvery { weatherPeekRepository.updateRepository(any()) } just Runs
@@ -100,7 +100,7 @@ class UpdateWeatherCacheTest {
         verify { appKeyUtil.isEmpty() }
         coVerify { weatherPeekRepository.getLastLatitudeAndLongitude() }
         verify {appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
         coVerify { weatherPeekRepository.updateRepository(any()) }
     }
 
@@ -109,7 +109,7 @@ class UpdateWeatherCacheTest {
         every { appKeyUtil.isEmpty() } returns false
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
         every {appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
             val bodyContent = gson.toJson(errorResponse)
@@ -125,7 +125,7 @@ class UpdateWeatherCacheTest {
         verify { appKeyUtil.isEmpty() }
         coVerify { weatherPeekRepository.getLastLatitudeAndLongitude() }
         verify {appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
     }
 
     @Test
@@ -133,7 +133,7 @@ class UpdateWeatherCacheTest {
         every { appKeyUtil.isEmpty() } returns false
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
         every {appKeyUtil.getAppKey() } returns oneCallAppId
-        coEvery { oneCallService.getWeatherData(any(), any(), any()) } answers {
+        coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.error(
                 404,
                 "".toResponseBody("text/plain".toMediaType())
@@ -146,6 +146,6 @@ class UpdateWeatherCacheTest {
         verify { appKeyUtil.isEmpty() }
         coVerify { weatherPeekRepository.getLastLatitudeAndLongitude() }
         verify {appKeyUtil.getAppKey() }
-        coVerify { oneCallService.getWeatherData(any(), any(), any()) }
+        coVerify { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) }
     }
 }
