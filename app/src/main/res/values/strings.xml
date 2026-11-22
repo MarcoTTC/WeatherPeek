@@ -26,7 +26,7 @@
     <string name="location_perm_denied">This app can\'t function without location access permission!</string>
     <string name="need_perm_location">This app needs access to your GPS location or network location to provide accurate weather information! It gathers latitude and longitude data for weather prediction purposes.</string>
     <string name="no_internet_connectivity">No internet connectivity!</string>
-    <string name="no_valid_app_id">Please set up an app id before building the project!</string>
+    <string name="no_valid_app_id">No OpenWeather app id found! Add oneCallAppId=YOUR_APP_ID to the local.properties file and rebuild the project.</string>
     <string name="now_label">NOW</string>
     <string name="permission_needed_title">Permission needed</string>
     <string name="please_wait">Please wait a moment…</string>

@@ -4,7 +4,6 @@ import br.com.marcottc.weatherpeek.model.dto.CurrentWeatherData
 import br.com.marcottc.weatherpeek.model.dto.DailyWeatherData
 import br.com.marcottc.weatherpeek.model.dto.HourlyWeatherData
 import br.com.marcottc.weatherpeek.model.dto.OneCallTimelineDTO
-import br.com.marcottc.weatherpeek.util.oneCallAppId
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -25,7 +24,7 @@ interface OneCallService {
         @Query("lon") lon: Double,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pt_br",
-        @Query("appid") appid: String = oneCallAppId
+        @Query("appid") appid: String
     ): Response<OneCallTimelineDTO<CurrentWeatherData>>
 
     // Up to 20 records per page. "start" (unix UTC seconds) defaults to now on the API side.
@@ -36,7 +35,7 @@ interface OneCallService {
         @Query("start") start: Long? = null,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pt_br",
-        @Query("appid") appid: String = oneCallAppId
+        @Query("appid") appid: String
     ): Response<OneCallTimelineDTO<HourlyWeatherData>>
 
     // Up to 10 records per page. "start" (unix UTC seconds) defaults to now on the API side.
@@ -47,6 +46,6 @@ interface OneCallService {
         @Query("start") start: Long? = null,
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "pt_br",
-        @Query("appid") appid: String = oneCallAppId
+        @Query("appid") appid: String
     ): Response<OneCallTimelineDTO<DailyWeatherData>>
 }

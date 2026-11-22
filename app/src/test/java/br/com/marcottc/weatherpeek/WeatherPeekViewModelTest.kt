@@ -16,7 +16,6 @@ import br.com.marcottc.weatherpeek.util.LoggerUtil
 import br.com.marcottc.weatherpeek.util.NetworkUtil
 import br.com.marcottc.weatherpeek.util.PermissionUtil
 import br.com.marcottc.weatherpeek.util.forceRefreshSettings
-import br.com.marcottc.weatherpeek.util.oneCallAppId
 import br.com.marcottc.weatherpeek.viewmodel.WeatherPeekViewModel
 import com.google.gson.Gson
 import io.mockk.Runs
@@ -43,6 +42,8 @@ import org.junit.Rule
 import org.junit.Test
 
 class WeatherPeekViewModelTest {
+
+    private val testAppId = "test-app-id"
 
     private val repository: WeatherPeekRepository = mockk<WeatherPeekRepository>()
     private val oneCallRemoteDataSource: OneCallRemoteDataSource = mockk<OneCallRemoteDataSource>()
@@ -205,7 +206,7 @@ class WeatherPeekViewModelTest {
         every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        every { appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.success(MockGenerator.generateOneCallWeatherData())
         }
@@ -263,7 +264,7 @@ class WeatherPeekViewModelTest {
         every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        every { appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
@@ -326,7 +327,7 @@ class WeatherPeekViewModelTest {
         every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        every { appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.error(
                 404,
@@ -384,7 +385,7 @@ class WeatherPeekViewModelTest {
         every { locationManager.removeUpdates(any<LocationListener>()) } just Runs
         every { sharedPreferences.getBoolean(forceRefreshSettings, any()) } returns false
         coEvery { repository.databaseRefreshRequired(any(), any()) } returns true
-        every { appKeyUtil.getAppKey() } returns oneCallAppId
+        every { appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")

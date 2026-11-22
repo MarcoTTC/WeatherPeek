@@ -12,7 +12,6 @@ import br.com.marcottc.weatherpeek.network.datasource.OneCallRemoteDataSource
 import br.com.marcottc.weatherpeek.repository.WeatherPeekRepository
 import br.com.marcottc.weatherpeek.util.AppKeyUtil
 import br.com.marcottc.weatherpeek.util.LoggerUtil
-import br.com.marcottc.weatherpeek.util.oneCallAppId
 import com.google.gson.Gson
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -34,6 +33,8 @@ import java.util.concurrent.Executors
 
 @RunWith(AndroidJUnit4::class)
 class UpdateWeatherCacheTest {
+
+    private val testAppId = "test-app-id"
 
     private lateinit var context: Context
     private lateinit var executor: Executor
@@ -88,7 +89,7 @@ class UpdateWeatherCacheTest {
     fun doWork_networkCall_showsSuccess() = runTest {
         every { appKeyUtil.isEmpty() } returns false
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
-        every {appKeyUtil.getAppKey() } returns oneCallAppId
+        every {appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.success(MockGenerator.generateOneCallWeatherData())
         }
@@ -108,7 +109,7 @@ class UpdateWeatherCacheTest {
     fun doWork_networkCall_notFound_showsFailure() = runTest {
         every { appKeyUtil.isEmpty() } returns false
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
-        every {appKeyUtil.getAppKey() } returns oneCallAppId
+        every {appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             val gson = Gson()
             val errorResponse = ErrorResponse(404, "Internal error")
@@ -132,7 +133,7 @@ class UpdateWeatherCacheTest {
     fun doWork_networkCall_throwsIllegalStateException() = runTest {
         every { appKeyUtil.isEmpty() } returns false
         coEvery { weatherPeekRepository.getLastLatitudeAndLongitude() } returns MockGenerator.generateLatitudeAndLongitude()
-        every {appKeyUtil.getAppKey() } returns oneCallAppId
+        every {appKeyUtil.getAppKey() } returns testAppId
         coEvery { oneCallRemoteDataSource.getWeatherData(any(), any(), any()) } answers {
             Response.error(
                 404,

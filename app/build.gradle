@@ -1,5 +1,22 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+// The OpenWeather One Call app id is read from the (git ignored) local.properties file:
+//     oneCallAppId=YOUR_APP_ID
+// A missing value does not fail the build: the app is built with an empty id and tells the user to
+// set one up at runtime (see AppKeyUtil and R.string.no_valid_app_id).
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader -> localProperties.load(reader) }
+}
+def oneCallAppId = (localProperties.getProperty('oneCallAppId') ?: '').trim()
+if (oneCallAppId.isEmpty()) {
+    logger.warn("WARNING: no OpenWeather app id found. Add 'oneCallAppId=YOUR_APP_ID' to " +
+            "local.properties and rebuild, or the app will not be able to retrieve weather data.")
+}
+// Java string literal for BuildConfig, with backslashes and quotes escaped so any value compiles
+def oneCallAppIdLiteral = '"' + oneCallAppId.replace('\\', '\\\\').replace('"', '\\"') + '"'
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.devtools.ksp'
@@ -24,6 +41,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
 
+        buildConfigField "String", "ONE_CALL_APP_ID", oneCallAppIdLiteral
+
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
@@ -31,6 +50,12 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
+    }
+
+    sourceSets {
+        // Exported Room schemas, read by MigrationTestHelper in the instrumentation tests
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
 
     buildTypes {
@@ -121,6 +146,7 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:2.2.0"
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation "androidx.work:work-testing:${versions.work}"
+    androidTestImplementation "androidx.room:room-testing:${versions.room}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "androidx.test.espresso:espresso-intents:${versions.espresso}"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:${versions.espresso}"

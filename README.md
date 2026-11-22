@@ -8,15 +8,22 @@ transition with shared elements, the MVVM architecture, Room database, Work Mana
 Glide for online image retrieval, and local image caching, plus custom android views created by
 myself.
 
-This app consumes the OpenWeather One Call API 3.0 endpoint
-(https://api.openweathermap.org/data/3.0/onecall).
+This app consumes the OpenWeather One Call API 4.0 endpoints
+(https://api.openweathermap.org/data/4.0/onecall/current, .../timeline/1h and .../timeline/1day).
 
 If you downloaded this project, and it doesn't work by itself out of the box, it is because
-you need to add an openweathermap.org app id key to the project, in the val oneCallAppId of
-the file Constants.kt. Otherwise, this app won't retrieve any data. Be aware that One Call 3.0
-is sold as a separate "One Call by Call" subscription: a brand new account key will not be
-accepted by this endpoint until you subscribe to that plan (it includes a free daily call
-allowance, but the subscription itself still has to be activated).
+you need to add an openweathermap.org app id key to the project. Add it to the `local.properties`
+file in the project root (this file is ignored by git, so the key never gets committed):
+
+```properties
+oneCallAppId=YOUR_APP_ID
+```
+
+The project still builds without it, but it prints a warning while building and the app shows a
+message asking for the app id instead of retrieving any data. Be aware that One Call is sold as a
+separate "One Call API" subscription: a brand new account key will not be accepted by these
+endpoints until you subscribe to that plan (it includes a free daily call allowance, but the
+subscription itself still has to be activated). Each weather refresh costs 5 calls.
 
 It is currently licensed under MIT license, so feel free to use it as you please.
 
