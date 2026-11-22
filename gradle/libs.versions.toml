@@ -9,9 +9,11 @@ minSdk = "24"
 targetSdk = "33"
 
 # Build plugins
-agp = "8.10.1"
-kotlin = "2.0.0"
-ksp = "2.0.0-1.0.21"
+# AGP compiles Kotlin itself (built-in Kotlin). "kotlin" picks the Kotlin Gradle plugin it uses,
+# instead of the older one AGP bundles. KSP2 is versioned on its own since 2.3.0.
+agp = "9.5.2"
+kotlin = "2.4.21"
+ksp = "2.3.14"
 
 # Kotlin
 coroutines = "1.10.2"
@@ -43,6 +45,9 @@ junit = "4.13.2"
 mockk = "1.14.2"
 
 [libraries]
+# Build plugins, put on the root buildscript classpath
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
 # Kotlin
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -87,5 +92,4 @@ mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
