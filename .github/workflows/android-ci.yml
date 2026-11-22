@@ -1,0 +1,94 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch or PR cancels the run still in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Compiles the app and runs the JVM unit tests. No OpenWeather app id is needed: the build only
+  # warns when local.properties has none, and the tests use a fake id.
+  build:
+    name: Build and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # Caches Gradle dependencies and validates the wrapper jar
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build and run unit tests
+        run: ./gradlew assembleDebug testDebugUnitTest
+
+      - name: Upload unit test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: app/build/reports/tests/
+          retention-days: 7
+
+  # Runs the instrumentation tests that need no network or location on an emulator.
+  # MainActivityTest and WeatherActivityTest are left out: they call the real API with a real app id
+  # and need a location fix, neither of which the CI emulator has.
+  instrumented-tests:
+    name: Instrumentation tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      # Hardware acceleration for the emulator on the Linux runners
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run instrumentation tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: >-
+            ./gradlew connectedDebugAndroidTest
+            -Pandroid.testInstrumentationRunnerArguments.class=br.com.marcottc.weatherpeek.model.room.WeatherPeekDatabaseMigrationTest,br.com.marcottc.weatherpeek.worker.UpdateWeatherCacheTest
+
+      - name: Upload instrumentation test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumentation-test-reports
+          path: app/build/reports/androidTests/
+          retention-days: 7
