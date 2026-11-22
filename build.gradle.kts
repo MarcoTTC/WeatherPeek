@@ -5,7 +5,7 @@ buildscript {
         // AGP 9 compiles Kotlin itself (built-in Kotlin), so the kotlin-android plugin is gone.
         // AGP bundles an older Kotlin Gradle plugin; this classpath entry makes it use the one
         // from the version catalog instead (the approach in the AGP 9 release notes).
-        classpath libs.kotlin.gradle.plugin
+        classpath(libs.kotlin.gradle.plugin)
     }
 }
 
@@ -14,6 +14,6 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-tasks.register('clean', Delete) { clean ->
-    delete rootProject.layout.buildDirectory
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }

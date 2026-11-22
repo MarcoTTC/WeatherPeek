@@ -4,7 +4,7 @@
 
 [versions]
 # Android SDK levels
-compileSdk = "36"
+compileSdk = "37"
 minSdk = "24"
 targetSdk = "33"
 
@@ -17,6 +17,9 @@ ksp = "2.3.14"
 
 # Kotlin
 coroutines = "1.10.2"
+# Not used directly: aligns the kotlinx-serialization artifacts other libraries bring in (see the
+# BOM in app/build.gradle.kts)
+serialization = "1.8.1"
 
 # AndroidX
 activity = "1.10.1"
@@ -25,12 +28,12 @@ constraintlayout = "2.2.1"
 coreKtx = "1.16.0"
 fragment = "1.8.8"
 lifecycle = "2.9.1"
-room = "2.7.1"
+room = "2.8.5"
 swiperefreshlayout = "1.1.0"
 work = "2.10.1"
 
 # Third party
-glide = "4.16.0"
+glide = "5.0.10"
 koin = "4.0.4"
 material = "1.12.0"
 retrofit = "3.0.0"
@@ -51,6 +54,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 # Kotlin
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-serialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "serialization" }
 
 # AndroidX
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
@@ -70,7 +74,6 @@ androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "
 
 # Third party
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
