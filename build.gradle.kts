@@ -1,0 +1,19 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Library and plugin versions live in gradle/libs.versions.toml.
+buildscript {
+    dependencies {
+        // AGP 9 compiles Kotlin itself (built-in Kotlin), so the kotlin-android plugin is gone.
+        // AGP bundles an older Kotlin Gradle plugin; this classpath entry makes it use the one
+        // from the version catalog instead (the approach in the AGP 9 release notes).
+        classpath(libs.kotlin.gradle.plugin)
+    }
+}
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.ksp) apply false
+}
+
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
+}

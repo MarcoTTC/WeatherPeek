@@ -15,7 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 // Validates WeatherPeekDatabase's auto-migrations against the schemas exported to app/schemas
-// (wired as androidTest assets in app/build.gradle).
+// (wired as androidTest assets in app/build.gradle.kts).
 //
 // Every migration is validated twice: by MigrationTestHelper, which compares the migrated tables
 // with the exported schema, and by opening the migrated file through Room itself, which also checks

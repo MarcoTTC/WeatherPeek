@@ -25,11 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up JDK 17
+      # Must match toolchainVersion in gradle/gradle-daemon-jvm.properties, so the Gradle daemon
+      # uses this JDK instead of downloading one on every run. The app is compiled for the same
+      # Java version (compileOptions in app/build.gradle.kts).
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 25
 
       # Caches Gradle dependencies and validates the wrapper jar
       - name: Set up Gradle
@@ -58,11 +61,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up JDK 17
+      # Must match toolchainVersion in gradle/gradle-daemon-jvm.properties, so the Gradle daemon
+      # uses this JDK instead of downloading one on every run. The app is compiled for the same
+      # Java version (compileOptions in app/build.gradle.kts).
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 25
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
