@@ -45,7 +45,7 @@ androidxTestRules = "1.6.1"
 androidxTestRunner = "1.6.2"
 espresso = "3.6.1"
 junit = "4.13.2"
-mockk = "1.14.2"
+mockk = "1.14.12"
 
 [libraries]
 # Build plugins, put on the root buildscript classpath

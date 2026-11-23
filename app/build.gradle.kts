@@ -27,7 +27,7 @@ val oneCallAppIdLiteral =
     "\"" + oneCallAppId.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
 // Kotlin compiles with AGP's built-in Kotlin support, whose jvmTarget follows
-// compileOptions.targetCompatibility (17), so no kotlin { compilerOptions } block is needed.
+// compileOptions.targetCompatibility (25), so no kotlin { compilerOptions } block is needed.
 
 android {
     namespace = "br.com.marcottc.weatherpeek"
@@ -67,8 +67,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
 
     // This configurations is necessary to run the instrumented tests on an emulated x86_64 device.
