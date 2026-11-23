@@ -1,14 +1,20 @@
 package br.com.marcottc.weatherpeek.view.activity
 
 import android.Manifest
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import br.com.marcottc.weatherpeek.R
 import br.com.marcottc.weatherpeek.databinding.ActivityWeatherLayoutBinding
 import br.com.marcottc.weatherpeek.espresso.BooleanIdlingResource
@@ -39,10 +45,17 @@ class WeatherActivity : AppCompatActivity() {
     val requestingWeatherDataIdlingResource = BooleanIdlingResource("requestingWeatherData")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Draws the activity behind the status and navigation bars, which become transparent.
+        // The status bar sits on the light orange background, so it keeps dark icons (the app
+        // theme is always light, so this does not follow the system dark mode).
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+        )
         super.onCreate(savedInstanceState)
 
         binding = ActivityWeatherLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+        applySystemBarInsets()
 
         binding.swipeRefreshLayout.setColorSchemeColors(
             ContextCompat.getColor(
@@ -154,6 +167,24 @@ class WeatherActivity : AppCompatActivity() {
             }
 
         requestingLocationPermission()
+    }
+
+    // Keeps the forecast card clear of the system bars and the display cutout while edge-to-edge.
+    // The background still fills the whole screen behind the bars; only the content is padded.
+    // The insets are consumed here, so the views below do not apply them a second time.
+    private fun applySystemBarInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.coordinatorLayout) { content, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            content.updatePadding(
+                left = insets.left,
+                top = insets.top,
+                right = insets.right,
+                bottom = insets.bottom
+            )
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun requestingLocationPermission() {

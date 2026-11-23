@@ -7,30 +7,42 @@
     android:layout_height="match_parent"
     tools:context=".view.activity.MainActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/top_bar"
+    <!-- Edge-to-edge: the app bar's background is drawn behind the status bar, and MainActivity pads
+         the app bar by the status bar height, so the toolbar itself stays below it. -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primaryDarkColor">
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/force_refresh_switch"
-            android:layout_width="wrap_content"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/force_refresh"
-            android:paddingHorizontal="8dp"
-            android:textSize="18sp"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center_vertical|end"
-            app:switchPadding="8dp" />
+            android:background="@color/primaryDarkColor">
 
-    </com.google.android.material.appbar.MaterialToolbar>
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/force_refresh_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/force_refresh"
+                android:paddingHorizontal="8dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical|end"
+                app:switchPadding="8dp" />
 
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Placed below the app bar by the behavior, whatever height the status bar adds to it
+         (it used to be a fixed 64dp top margin, the toolbar height alone) -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
-        android:layout_marginTop="64dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_layout"
